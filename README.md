@@ -46,4 +46,4 @@ Without Task: `npm start`, `npm run verify`, `npm run build`.
 
 ## License
 
-Not chosen yet, see [LICENSE](LICENSE).
+[Mozilla Public License 2.0](LICENSE).

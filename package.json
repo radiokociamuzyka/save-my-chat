@@ -5,6 +5,7 @@
   "description": "Firefox extension to export your AI chat history out of webapps and save it on your local machine in clear unified formatting",
   "repository": "github:radiokociamuzyka/save-my-chat",
   "author": "Sett Sarverott",
+  "license": "MPL-2.0",
   "type": "module",
   "engines": {
     "node": ">=24"
