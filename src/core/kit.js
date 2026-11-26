@@ -75,19 +75,79 @@
 		return copy;
 	}
 
-	function markdown(element) {
+	// `exclude`: a selector of parts left out, e.g. a turn of another role
+	// nested inside this one, which becomes a turn of its own.
+	function markdown(element, exclude = "") {
+		const copy = absolute(element);
+		if (exclude) for (const part of copy.querySelectorAll(exclude)) part.remove();
 		return turndown()
-			.turndown(absolute(element))
+			.turndown(copy)
 			.replace(/\n{3,}/g, "\n\n")
 			.trim();
 	}
 
 	// ---- the unified format -----------------------------------------------
 
-	function turn(role, element, extra = {}) {
+	function turn(role, element, extra = {}, exclude = "") {
 		if (!ROLES.includes(role)) throw new Error(`unknown role: ${role}`);
-		const text = typeof element === "string" ? element.trim() : markdown(element);
+		const text = typeof element === "string" ? element.trim() : markdown(element, exclude);
 		return { role, text, ...extra };
+	}
+
+	// ---- selector sets ------------------------------------------------------
+	// Webapps built by a compiler (Google's are) rename their classes with
+	// each build, so a reader names a set of candidates per part, newest
+	// first, and the user can put fixes in front of them (storage.local,
+	// "selectors": { <reader id>: { <part>: [...] } }) without a release.
+
+	// The candidates that are valid CSS, joined; a broken override is skipped, not fatal.
+	function selector(list, doc = root.document) {
+		return []
+			.concat(list || [])
+			.filter((s) => {
+				if (typeof s !== "string" || !s.trim()) return false;
+				try {
+					doc.querySelector(s);
+					return true;
+				} catch {
+					return false;
+				}
+			})
+			.join(", ");
+	}
+
+	// The reader's sets with the user's overrides in front.
+	function effective(defaults = {}, overrides = {}) {
+		const out = {};
+		for (const key of new Set([...Object.keys(defaults), ...Object.keys(overrides)]))
+			out[key] = [...[].concat(overrides[key] || []), ...[].concat(defaults[key] || [])];
+		return out;
+	}
+
+	// Every element matching any role's set, in page order: what Sett's proof
+	// of work did with one querySelectorAll. An element inside a turn of the
+	// same role is a duplicate and skipped; one of another role becomes its
+	// own turn and is left out of the outer turn's text, so nothing is lost
+	// and nothing is written twice.
+	function turnsBy(doc, roles, scope = doc) {
+		const sets = Object.entries(roles)
+			.map(([role, list]) => [role, selector(list, doc)])
+			.filter(([, css]) => css);
+		const all = sets.map(([, css]) => css).join(", ");
+		if (!all) return [];
+		const taken = [];
+		const turns = [];
+		for (const el of scope.querySelectorAll(all)) {
+			const [role] = sets.find(([, css]) => el.matches(css));
+			if (taken.some((t) => t.role === role && t.el.contains(el))) continue;
+			taken.push({ role, el });
+			const others = sets
+				.filter(([r]) => r !== role)
+				.map(([, c]) => c)
+				.join(", ");
+			turns.push(turn(role, el, {}, others));
+		}
+		return turns;
 	}
 
 	function conversation(reader, read, url, now = new Date()) {
@@ -124,11 +184,22 @@
 		return def;
 	}
 
+	async function overridesOf(id) {
+		try {
+			const { selectors = {} } = await root.browser.storage.local.get("selectors");
+			return selectors[id] || {};
+		} catch {
+			return {}; // tests, or a page where storage is not reachable
+		}
+	}
+
 	// What a content script answers when the popup asks it to read the page.
-	function readPage(doc = root.document, url = root.location?.href) {
+	// A reader's read() gets its selector sets, overrides in front, as a third argument.
+	async function readPage(doc = root.document, url = root.location?.href, overrides) {
 		for (const r of readers.values()) {
 			if (!r.detect(doc, url)) continue;
-			return conversation(r, r.read(doc, url), url);
+			const sets = effective(r.selectors, overrides ?? (await overridesOf(r.id)));
+			return conversation(r, r.read(doc, url, sets), url);
 		}
 		return null;
 	}
@@ -145,6 +216,9 @@
 		ROLES,
 		markdown,
 		turn,
+		selector,
+		effective,
+		turnsBy,
 		conversation,
 		validate,
 		reader,
@@ -160,7 +234,7 @@
 		root.SaveMyChat.listening = true;
 		root.browser.runtime.onMessage.addListener((msg) => {
 			if (msg?.type === "save-my-chat:present") return Promise.resolve(present());
-			if (msg?.type === "save-my-chat:read") return Promise.resolve(readPage());
+			if (msg?.type === "save-my-chat:read") return readPage();
 		});
 	}
 })();

@@ -15,7 +15,7 @@ describe("readers", () => {
 		}
 	});
 
-	it("google-ai-mode reads exchanges on a udm=50 page", () => {
+	it("google-ai-mode reads exchanges on a udm=50 page", async () => {
 		const html = `<body>
 			<div data-smc-exchange><div data-smc-question>What is MV3?</div><div data-smc-answer><p>Manifest <b>V3</b>.</p></div></div>
 			<div data-smc-exchange><div data-smc-question>And Firefox?</div><div data-smc-answer><p>Event pages.</p></div></div>
@@ -24,7 +24,7 @@ describe("readers", () => {
 			html,
 			url: "https://www.google.com/search?q=what+is+mv3&udm=50",
 		});
-		const c = w.SaveMyChat.readPage();
+		const c = await w.SaveMyChat.readPage();
 		expect(c.title).toBe("what is mv3");
 		expect(c.turns).toEqual([
 			{ role: "user", text: "What is MV3?" },
@@ -39,13 +39,13 @@ describe("readers", () => {
 		expect(w.SaveMyChat.present()).toBeNull();
 	});
 
-	it("github-copilot reads messages by role", () => {
+	it("github-copilot reads messages by role", async () => {
 		const html = `<body><h1 data-smc-title>Fix the build</h1>
 			<div data-smc-role="user"><div data-smc-body>Why does it fail?</div></div>
 			<div data-smc-role="assistant"><div data-smc-body><p>Missing <code>await</code>.</p></div></div>
 		</body>`;
 		const w = load([...KIT, "readers/github-copilot.js"], { html, url: "https://github.com/copilot/c/abc" });
-		const c = w.SaveMyChat.readPage();
+		const c = await w.SaveMyChat.readPage();
 		expect(c.title).toBe("Fix the build");
 		expect(c.turns).toEqual([
 			{ role: "user", text: "Why does it fail?" },
