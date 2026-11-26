@@ -1,38 +1,28 @@
-// NOTE: unverified. Written without the live page: the selectors below are
-// guesses to be replaced by Sett's existing script for AI Mode, or checked
-// against a saved page (tests/fixtures/google-ai-mode.html).
-// AI Mode is Google Search with udm=50; a follow-up keeps the same address.
+// Google Search, AI Mode (udm=50; a follow-up keeps the same address).
+// Fitted from Sett's proof of work, drafted-snippets/google-ai-mode.turndown.js:
+// one query over the classes of both roles, read in page order.
+// NOTE: the class names are Google's generated ones, seen by Sett on
+// 2026-11-26; Google renames them with its builds. Add a new name in front
+// of its set (or as an override in storage.local) and keep the old ones.
 (() => {
 	const SMC = globalThis.SaveMyChat;
-
-	const SELECTORS = {
-		// one block per exchange: the question asked, then the answer
-		exchange: "[data-smc-exchange], [data-scope-id], [data-subtree='aimc']",
-		question: "[data-smc-question], [role='heading'][aria-level='2']",
-		answer: "[data-smc-answer], [data-container-id='main-col']",
-	};
 
 	SMC.reader({
 		id: "google-ai-mode",
 		name: "Google Search, AI Mode",
 		service: "google.com/search (AI Mode)",
+		selectors: {
+			user: [".ilZyRc", ".L4dlbc"],
+			assistant: [".CKgc1d"],
+		},
 		detect: (_doc, url) => new URL(url).searchParams.get("udm") === "50",
-		read(doc, url) {
-			const turns = [];
-			for (const block of doc.querySelectorAll(SELECTORS.exchange)) {
-				const q = block.querySelector(SELECTORS.question);
-				const a = block.querySelector(SELECTORS.answer);
-				if (q) turns.push(SMC.turn("user", q));
-				if (a) turns.push(SMC.turn("assistant", a));
-			}
-			// Fallback: the query of the address and the main column as one answer.
-			if (!turns.length) {
-				const q = new URL(url).searchParams.get("q");
-				const main = doc.querySelector("#rcnt, main, [role='main']");
-				if (q) turns.push(SMC.turn("user", q));
-				if (main) turns.push(SMC.turn("assistant", main));
-			}
-			const q = new URL(url).searchParams.get("q");
+		read(doc, url, sets) {
+			const q = (new URL(url).searchParams.get("q") || "").trim();
+			const turns = SMC.turnsBy(doc, { user: sets.user, assistant: sets.assistant });
+			// Sett's snippet missed user messages too. The first question is
+			// always in the address: if no user turn opens the conversation,
+			// it is taken from there rather than lost.
+			if (q && turns[0]?.role !== "user") turns.unshift(SMC.turn("user", q, { from: "address" }));
 			return { title: q || doc.title.replace(/ - Google Search$/, ""), turns };
 		},
 	});

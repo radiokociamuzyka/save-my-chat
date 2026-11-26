@@ -34,6 +34,7 @@ before anything is written.
 | `turns[].role` | `user`, `assistant`, `system` or `tool` |
 | `turns[].text` | the message as Markdown |
 | `turns[].author` | optional: the model or person named by the webapp |
+| `turns[].from` | optional: where a turn came from when not from the page itself, e.g. `"address"` for an AI Mode question taken from `q=` |
 
 A reader may add fields to a turn; tools reading the files ignore what they
 do not know.

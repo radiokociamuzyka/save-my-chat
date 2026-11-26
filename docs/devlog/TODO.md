@@ -32,7 +32,7 @@ names its `Q<n>`.
 
 - [x] Turndown (with its GFM plugin) converts messages instead of the hand-written converter, vendored unchanged into `src/vendor/`
 - [x] Selectors as sets of candidates; the kit collects turns of every role in page order
-- [ ] Google AI Mode reader rebuilt from Sett's proof of work, the snippet kept in `src/readers/drafted-snippets/` (Q5)
+- [x] Google AI Mode reader rebuilt from Sett's proof of work, the snippet kept in `src/readers/drafted-snippets/` (Q5)
 - [ ] The lost user messages in the almanac: case, cause, solution
 - [ ] Selector overrides from `storage.local`, so a changed class name is fixed without a release
 - [ ] The "minor changes" of the v0.0.1 demo (Q7)
