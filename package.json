@@ -1,0 +1,27 @@
+{
+  "name": "save-my-chat",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Firefox extension to export your AI chat history out of webapps and save it on your local machine in clear unified formatting",
+  "repository": "github:radiokociamuzyka/save-my-chat",
+  "author": "Sett Sarverott",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "check": "biome check .",
+    "format": "biome check --write .",
+    "lint:ext": "web-ext lint",
+    "test": "vitest run",
+    "verify": "npm run check && npm run lint:ext && npm run test",
+    "start": "web-ext run",
+    "build": "web-ext build --overwrite-dest"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.9",
+    "jsdom": "31.0.1",
+    "vitest": "5.1.2",
+    "web-ext": "10.8.0"
+  }
+}
