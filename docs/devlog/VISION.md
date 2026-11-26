@@ -28,13 +28,22 @@ same whichever service it came from.
 ## The idea of each phase
 
 - **Phase 0, the skeleton.** BOS anatomy, devlog, the reader contract, the
-  unified format with Markdown and JSON, two draft readers, checks.
-- **Phase 1, the first readers for real.** Sett's existing scripts for
-  Google AI Mode and GitHub Copilot brought in as the default readers; saved
-  pages of each as test fixtures; checked by hand in Firefox.
-- **Phase 2, prototypes.** The options page copies a default reader into an
+  unified format with Markdown and JSON, two draft readers, checks; then
+  the full set of branches and husky hooks automating the standard flow.
+- **Phase 1, the first readers for real.** Turndown converts messages, as
+  in Sett's proof of work; selectors are sets of candidates, because a
+  webapp's generated class names change with each of its builds; Sett's
+  snippets kept in `src/readers/drafted-snippets/` and fitted into readers.
+- **Phase 2, GitHub integration.** The devlog shown on GitHub: every `Q<n>`
+  and `PP<n>` an issue, milestones and phases from the roadmap, a project
+  board; discussions for announcements and for almanac Q&A about known
+  cases and solutions; workflows for the standard flow.
+- **Phase 3, prototypes.** The options page copies a default reader into an
   editor; the user's prototype is stored locally and run through the
   `userScripts` API instead of the default it came from.
-- **Phase 3, more webapps.** New default readers (PP2), each with a fixture.
-- **Phase 4, release.** Icons, store listing, privacy statement, signed on
-  AMO (listed or self-distributed, Q3).
+- **Phase 4, the frontend.** Astro, Vue and Bulma for the settings page,
+  the manuals, and a viewer of saved conversations; Playwright tests in a
+  real Firefox. A build step comes with it, if needed (Q6).
+- **Phase 5, more webapps.** New default readers (PP2), each with a fixture.
+- **Phase 6, release.** Icons, store listing, privacy statement; listed on
+  AMO (signed unlisted until then, Q3).
