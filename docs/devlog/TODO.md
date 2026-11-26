@@ -27,7 +27,7 @@ names its `Q<n>`.
 - [x] Husky hooks: commitlint on `commit-msg`, `task verify` on `pre-push`
 - [x] Dependabot into `dev/dependabot`
 - [x] `.github/workflows/checks.yml` seen green on GitHub
-- [ ] Version bumped by a hook per commit: `Z` of `vX.Y.Z` on every `dev/*` commit, a merge driver taking the higher version (Q7)
+- [x] Version bumped by a hook per commit: `Z` of `vX.Y.Z` on every `dev/*` commit, a merge driver taking the higher version (Q7)
 - [ ] Release on `master`: a merged pull request from `development` tags `vX.Y.Z`, attaches the packed extension, marks it the latest; `master` merged back into `development` (Q7)
 - [ ] The phase closed: a pull request `development` → `master` (Q7)
 
