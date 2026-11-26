@@ -11,4 +11,5 @@ solved gets its case here, so the next one is recognised faster.
 ## Cases
 
 - [gecko-id-format](cataclistics/gecko-id-format.md): a domain is not an add-on id
+- [turndown-fences-and-pipes](cataclistics/turndown-fences-and-pipes.md): turndown closes fences early and splits table cells
 - [lost-user-messages](cataclistics/lost-user-messages.md): AI Mode saved without the user's messages
