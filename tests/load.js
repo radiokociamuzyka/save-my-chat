@@ -5,6 +5,9 @@ import { JSDOM } from "jsdom";
 
 const SRC = new URL("../src/", import.meta.url);
 
+// What a page gets before a reader: turndown, its GFM plugin, the kit.
+export const KIT = ["vendor/turndown.js", "vendor/turndown-plugin-gfm.js", "core/kit.js"];
+
 export function load(files, { html = "<!doctype html><body></body>", url = "https://example.com/" } = {}) {
 	const dom = new JSDOM(html, { url, runScripts: "outside-only" });
 	for (const file of files) dom.window.eval(readFileSync(new URL(file, SRC), "utf8"));

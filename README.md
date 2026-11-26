@@ -8,20 +8,28 @@ and the conversation is saved as Markdown (or JSON) into your downloads.
 Nothing is sent anywhere: the extension reads the page you have open and
 writes a file.
 
-> Status: phase 0, the skeleton. The readers below are drafts not yet
-> checked against the live webapps. See [docs/devlog/TODO.md](docs/devlog/TODO.md).
+> Status: phase 1, the first readers for real. See
+> [docs/devlog/TODO.md](docs/devlog/TODO.md).
 
 ## Supported webapps
 
 | Webapp | Reader | State |
 | --- | --- | --- |
-| Google Search, AI Mode | `src/readers/google-ai-mode.js` | draft, unverified |
+| Google Search, AI Mode | `src/readers/google-ai-mode.js` | from Sett's snippet; warns when a message may be missing |
 | GitHub Copilot chat | `src/readers/github-copilot.js` | draft, unverified |
 
 Each webapp has its own **reader**, a small script injected into its pages.
 The ones shipped with the extension are the defaults; you will be able to
 copy one into your own **prototype**, change it, and run it instead
 (phase 2, through Firefox's `userScripts` API).
+
+## Install
+
+The newest release, packed:
+[save-my-chat.zip](https://github.com/radiokociamuzyka/save-my-chat/releases/latest/download/save-my-chat.zip)
+(every version: [releases](https://github.com/radiokociamuzyka/save-my-chat/releases)).
+Until builds are signed by AMO, load it in Firefox from `about:debugging` →
+*This Firefox* → *Load Temporary Add-on…*.
 
 ## Getting started
 
@@ -46,4 +54,4 @@ Without Task: `npm start`, `npm run verify`, `npm run build`.
 
 ## License
 
-Not chosen yet, see [LICENSE](LICENSE).
+[Mozilla Public License 2.0](LICENSE).

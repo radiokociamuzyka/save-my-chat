@@ -22,6 +22,12 @@
 		try {
 			const done = await browser.runtime.sendMessage({ type: "save-my-chat:save", tabId: tab.id, as });
 			result.textContent = `Saved "${done.title}", ${done.turns} messages.`;
+			for (const warning of done.warnings) {
+				const line = document.createElement("span");
+				line.className = "warning";
+				line.textContent = warning;
+				result.append(document.createElement("br"), line);
+			}
 		} catch (error) {
 			result.className = "error";
 			result.textContent = error.message;

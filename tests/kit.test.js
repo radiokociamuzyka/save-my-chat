@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { load } from "./load.js";
+import { KIT, load } from "./load.js";
 
 function mdOf(html) {
-	const w = load(["core/kit.js"], { html: `<!doctype html><body><div id="x">${html}</div></body>` });
+	const w = load(KIT, { html: `<!doctype html><body><div id="x">${html}</div></body>` });
 	return w.SaveMyChat.markdown(w.document.getElementById("x"));
 }
 
@@ -19,7 +19,7 @@ describe("DOM to markdown", () => {
 	});
 
 	it("writes nested and ordered lists", () => {
-		expect(mdOf("<ol start='3'><li>one</li><li>two</li></ol><ul><li>x</li></ul>")).toBe("3. one\n4. two\n\n- x");
+		expect(mdOf("<ol start='3'><li>one</li><li>two</li></ol><ul><li>x</li></ul>")).toBe("3.  one\n4.  two\n\n-   x");
 	});
 
 	it("writes tables", () => {
@@ -35,7 +35,7 @@ describe("DOM to markdown", () => {
 
 describe("the unified format", () => {
 	it("stamps a conversation that validates", () => {
-		const w = load(["core/kit.js"]);
+		const w = load(KIT);
 		const S = w.SaveMyChat;
 		const c = S.conversation(
 			{ id: "t", service: "test" },
@@ -57,12 +57,12 @@ describe("the unified format", () => {
 	});
 
 	it("rejects unknown roles", () => {
-		const w = load(["core/kit.js"]);
+		const w = load(KIT);
 		expect(() => w.SaveMyChat.turn("bot", "x")).toThrow(/unknown role/);
 	});
 
-	it("reads a page with the first reader that detects it", () => {
-		const w = load(["core/kit.js"], { html: "<body><p class='q'>Q</p><p class='a'>A</p></body>" });
+	it("reads a page with the first reader that detects it", async () => {
+		const w = load(KIT, { html: "<body><p class='q'>Q</p><p class='a'>A</p></body>" });
 		w.SaveMyChat.reader({
 			id: "demo",
 			name: "Demo",
@@ -75,8 +75,52 @@ describe("the unified format", () => {
 				],
 			}),
 		});
-		const c = w.SaveMyChat.readPage();
+		const c = await w.SaveMyChat.readPage();
 		expect(c.turns.map((t) => t.text)).toEqual(["Q", "A"]);
 		expect(w.SaveMyChat.present()).toEqual({ id: "demo", name: "Demo" });
+	});
+});
+
+describe("selector sets", () => {
+	it("joins valid candidates and skips broken ones", () => {
+		const w = load(KIT);
+		expect(w.SaveMyChat.selector([".a", "", "..broken[", ".b"])).toBe(".a, .b");
+	});
+
+	it("puts the user's overrides in front of the reader's sets", () => {
+		const w = load(KIT);
+		expect(w.SaveMyChat.effective({ user: [".old"], assistant: [".ai"] }, { user: ".new" })).toEqual({
+			user: [".new", ".old"],
+			assistant: [".ai"],
+		});
+	});
+
+	it("collects turns of every role in page order", () => {
+		const html = `<body>
+			<div class="u">first question</div>
+			<div class="a"><p>first answer</p></div>
+			<div class="u2">second question</div>
+			<div class="a"><p>second answer</p></div>
+		</body>`;
+		const w = load(KIT, { html });
+		const turns = w.SaveMyChat.turnsBy(w.document, { user: [".u", ".u2"], assistant: [".a"] });
+		expect(turns.map((t) => `${t.role}: ${t.text}`)).toEqual([
+			"user: first question",
+			"assistant: first answer",
+			"user: second question",
+			"assistant: second answer",
+		]);
+	});
+
+	it("keeps a nested turn of another role apart and skips duplicates of the same role", () => {
+		const html = `<body>
+			<div class="a"><p>intro</p><div class="u">a question inside</div><div class="a"><p>inner copy</p></div><p>outro</p></div>
+		</body>`;
+		const w = load(KIT, { html });
+		const turns = w.SaveMyChat.turnsBy(w.document, { user: [".u"], assistant: [".a"] });
+		expect(turns).toEqual([
+			{ role: "assistant", text: "intro\n\ninner copy\n\noutro" },
+			{ role: "user", text: "a question inside" },
+		]);
 	});
 });

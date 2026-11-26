@@ -1,0 +1,5 @@
+# Every commit on a dev/* branch bumps the patch (pre-commit hook), so the version fields of two
+# branches always differ: this driver keeps the higher one (scripts/version.mjs merge).
+package.json merge=version
+package-lock.json merge=version
+src/manifest.json merge=version
