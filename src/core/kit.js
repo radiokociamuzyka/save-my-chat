@@ -9,131 +9,145 @@
 	const ROLES = ["user", "assistant", "system", "tool"];
 
 	// ---- DOM to markdown -------------------------------------------------
+	// Turndown (src/vendor/, loaded before the kit in pages) with its GFM
+	// plugin for tables, strikethrough and task lists, as in Sett's proof of
+	// work. The background never converts, so it does not load them.
 
-	const SKIP = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "TEMPLATE", "svg", "SVG", "BUTTON"]);
+	let service = null;
 
-	function inline(node) {
-		let out = "";
-		for (const child of node.childNodes) out += md(child);
-		return out;
+	function turndown() {
+		if (service) return service;
+		if (!root.TurndownService) throw new Error("turndown is not loaded before the kit");
+		service = new root.TurndownService({
+			headingStyle: "atx",
+			hr: "---",
+			bulletListMarker: "-",
+			codeBlockStyle: "fenced",
+			emDelimiter: "*",
+		});
+		if (root.turndownPluginGfm) service.use(root.turndownPluginGfm.gfm);
+		service.remove(["script", "style", "noscript", "template", "button", "svg"]);
+		// Rules added last win over turndown's and the plugin's own.
+		// A fence longer than any run of backticks inside, so code that
+		// itself contains ``` does not close its block early.
+		service.addRule("fence", {
+			filter: (node) => node.nodeName === "PRE",
+			replacement: (_content, node) => {
+				const code = node.querySelector("code") || node;
+				const lang = (code.getAttribute("class") || "").match(/language-([\w+#-]+)/)?.[1] || "";
+				const text = code.textContent.replace(/\n$/, "");
+				const longest = Math.max(0, ...(text.match(/`+/g) || []).map((run) => run.length));
+				const fence = "`".repeat(Math.max(3, longest + 1));
+				return `\n\n${fence}${lang}\n${text}\n${fence}\n\n`;
+			},
+		});
+		// A pipe inside a cell escaped, or it splits the cell in two.
+		service.addRule("cell", {
+			filter: ["th", "td"],
+			replacement: (content, node) => {
+				const first = node.parentNode.firstElementChild === node;
+				const text = content
+					.replace(/\n+/g, " ")
+					.replace(/(^|[^\\])\|/g, "$1\\|")
+					.trim();
+				return `${first ? "| " : " "}${text} |`;
+			},
+		});
+		// Parts the webapp hides from people (icons, screen-reader duplicates).
+		service.addRule("hidden", {
+			filter: (node) => node.hidden || node.getAttribute?.("aria-hidden") === "true",
+			replacement: () => "",
+		});
+		return service;
 	}
 
-	function fence(text, lang = "") {
-		const longest = Math.max(2, ...(text.match(/`+/g) || []).map((s) => s.length));
-		const ticks = "`".repeat(longest + 1);
-		return `\n\n${ticks}${lang}\n${text.replace(/\n$/, "")}\n${ticks}\n\n`;
-	}
-
-	function list(node, ordered) {
-		let i = Number(node.getAttribute?.("start")) || 1;
-		let out = "\n\n";
-		for (const li of node.children) {
-			if (li.tagName !== "LI") continue;
-			const mark = ordered ? `${i++}. ` : "- ";
-			const body = inline(li)
-				.trim()
-				.replace(/\n/g, `\n${" ".repeat(mark.length)}`);
-			out += `${mark}${body}\n`;
+	// Links and images made absolute on a copy, so the page stays untouched.
+	function absolute(element) {
+		const copy = element.cloneNode(true);
+		const base = element.ownerDocument.baseURI;
+		for (const a of copy.querySelectorAll("a[href]")) {
+			const href = a.getAttribute("href");
+			if (href.startsWith("javascript:")) a.removeAttribute("href");
+			else a.setAttribute("href", new URL(href, base).href);
 		}
-		return `${out}\n`;
+		for (const img of copy.querySelectorAll("img[src]"))
+			img.setAttribute("src", new URL(img.getAttribute("src"), base).href);
+		return copy;
 	}
 
-	function table(node) {
-		const rows = [...node.querySelectorAll("tr")].map((tr) =>
-			[...tr.children].map((cell) => inline(cell).trim().replace(/\|/g, "\\|").replace(/\n+/g, " ")),
-		);
-		if (!rows.length) return "";
-		const width = Math.max(...rows.map((r) => r.length));
-		const line = (r) => `| ${Array.from({ length: width }, (_, i) => r[i] ?? "").join(" | ")} |`;
-		const head = line(rows[0]);
-		const rule = `| ${Array(width).fill("---").join(" | ")} |`;
-		return `\n\n${[head, rule, ...rows.slice(1).map(line)].join("\n")}\n\n`;
-	}
-
-	function md(node) {
-		if (node.nodeType === 3) return node.nodeValue.replace(/\s+/g, " ");
-		if (node.nodeType !== 1 || SKIP.has(node.tagName)) return "";
-		if (node.hidden || node.getAttribute("aria-hidden") === "true") return "";
-		const tag = node.tagName;
-		switch (tag) {
-			case "BR":
-				return "  \n";
-			case "HR":
-				return "\n\n---\n\n";
-			case "H1":
-			case "H2":
-			case "H3":
-			case "H4":
-			case "H5":
-			case "H6":
-				return `\n\n${"#".repeat(Number(tag[1]))} ${inline(node).trim()}\n\n`;
-			case "P":
-			case "DIV":
-			case "SECTION":
-			case "ARTICLE":
-				return `\n\n${inline(node).trim()}\n\n`;
-			case "STRONG":
-			case "B": {
-				const t = inline(node).trim();
-				return t ? `**${t}**` : "";
-			}
-			case "EM":
-			case "I": {
-				const t = inline(node).trim();
-				return t ? `*${t}*` : "";
-			}
-			case "DEL":
-			case "S":
-				return `~~${inline(node).trim()}~~`;
-			case "CODE":
-				if (node.parentElement?.tagName === "PRE") return node.textContent;
-				return `\`${node.textContent}\``;
-			case "PRE": {
-				const code = node.querySelector("code");
-				const lang = (code?.className.match(/language-([\w+-]+)/) || [])[1] || "";
-				return fence(node.textContent, lang);
-			}
-			case "A": {
-				const text = inline(node).trim();
-				const href = node.getAttribute("href");
-				if (!href || href.startsWith("javascript:")) return text;
-				const url = new URL(href, node.ownerDocument.baseURI).href;
-				return text ? `[${text}](${url})` : `<${url}>`;
-			}
-			case "IMG": {
-				const src = node.getAttribute("src");
-				return src ? `![${node.getAttribute("alt") || ""}](${new URL(src, node.ownerDocument.baseURI).href})` : "";
-			}
-			case "UL":
-				return list(node, false);
-			case "OL":
-				return list(node, true);
-			case "BLOCKQUOTE":
-				return `\n\n${inline(node)
-					.trim()
-					.split("\n")
-					.map((l) => `> ${l}`)
-					.join("\n")}\n\n`;
-			case "TABLE":
-				return table(node);
-			default:
-				return inline(node);
-		}
-	}
-
-	function markdown(element) {
-		return md(element)
-			.replace(/[ \t]+\n/g, (m) => (m.startsWith("  ") ? "  \n" : "\n"))
+	// `exclude`: a selector of parts left out, e.g. a turn of another role
+	// nested inside this one, which becomes a turn of its own.
+	function markdown(element, exclude = "") {
+		const copy = absolute(element);
+		if (exclude) for (const part of copy.querySelectorAll(exclude)) part.remove();
+		return turndown()
+			.turndown(copy)
 			.replace(/\n{3,}/g, "\n\n")
 			.trim();
 	}
 
 	// ---- the unified format -----------------------------------------------
 
-	function turn(role, element, extra = {}) {
+	function turn(role, element, extra = {}, exclude = "") {
 		if (!ROLES.includes(role)) throw new Error(`unknown role: ${role}`);
-		const text = typeof element === "string" ? element.trim() : markdown(element);
+		const text = typeof element === "string" ? element.trim() : markdown(element, exclude);
 		return { role, text, ...extra };
+	}
+
+	// ---- selector sets ------------------------------------------------------
+	// Webapps built by a compiler (Google's are) rename their classes with
+	// each build, so a reader names a set of candidates per part, newest
+	// first, and the user can put fixes in front of them (storage.local,
+	// "selectors": { <reader id>: { <part>: [...] } }) without a release.
+
+	// The candidates that are valid CSS, joined; a broken override is skipped, not fatal.
+	function selector(list, doc = root.document) {
+		return []
+			.concat(list || [])
+			.filter((s) => {
+				if (typeof s !== "string" || !s.trim()) return false;
+				try {
+					doc.querySelector(s);
+					return true;
+				} catch {
+					return false;
+				}
+			})
+			.join(", ");
+	}
+
+	// The reader's sets with the user's overrides in front.
+	function effective(defaults = {}, overrides = {}) {
+		const out = {};
+		for (const key of new Set([...Object.keys(defaults), ...Object.keys(overrides)]))
+			out[key] = [...[].concat(overrides[key] || []), ...[].concat(defaults[key] || [])];
+		return out;
+	}
+
+	// Every element matching any role's set, in page order: what Sett's proof
+	// of work did with one querySelectorAll. An element inside a turn of the
+	// same role is a duplicate and skipped; one of another role becomes its
+	// own turn and is left out of the outer turn's text, so nothing is lost
+	// and nothing is written twice.
+	function turnsBy(doc, roles, scope = doc) {
+		const sets = Object.entries(roles)
+			.map(([role, list]) => [role, selector(list, doc)])
+			.filter(([, css]) => css);
+		const all = sets.map(([, css]) => css).join(", ");
+		if (!all) return [];
+		const taken = [];
+		const turns = [];
+		for (const el of scope.querySelectorAll(all)) {
+			const [role] = sets.find(([, css]) => el.matches(css));
+			if (taken.some((t) => t.role === role && t.el.contains(el))) continue;
+			taken.push({ role, el });
+			const others = sets
+				.filter(([r]) => r !== role)
+				.map(([, c]) => c)
+				.join(", ");
+			turns.push(turn(role, el, {}, others));
+		}
+		return turns;
 	}
 
 	function conversation(reader, read, url, now = new Date()) {
@@ -170,11 +184,38 @@
 		return def;
 	}
 
+	// Signs that a selector set is out of date: in a chat every question has
+	// its answer. Shown to the user by the popup, never written to the file.
+	function suspicions(turns) {
+		const count = (role) => turns.filter((t) => t.role === role).length;
+		const of = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
+		const asked = count("user");
+		const answered = count("assistant");
+		if (answered > asked)
+			return [`${of(answered, "answer")} but ${of(asked, "question")}: a user selector may be out of date.`];
+		if (asked > answered + 1)
+			return [`${of(asked, "question")} but ${of(answered, "answer")}: an assistant selector may be out of date.`];
+		return [];
+	}
+
+	async function overridesOf(id) {
+		try {
+			const { selectors = {} } = await root.browser.storage.local.get("selectors");
+			return selectors[id] || {};
+		} catch {
+			return {}; // tests, or a page where storage is not reachable
+		}
+	}
+
 	// What a content script answers when the popup asks it to read the page.
-	function readPage(doc = root.document, url = root.location?.href) {
+	// A reader's read() gets its selector sets, overrides in front, as a third argument.
+	async function readPage(doc = root.document, url = root.location?.href, overrides) {
 		for (const r of readers.values()) {
 			if (!r.detect(doc, url)) continue;
-			return conversation(r, r.read(doc, url), url);
+			const sets = effective(r.selectors, overrides ?? (await overridesOf(r.id)));
+			const c = conversation(r, r.read(doc, url, sets), url);
+			const warnings = suspicions(c.turns);
+			return warnings.length ? { ...c, warnings } : c;
 		}
 		return null;
 	}
@@ -191,6 +232,10 @@
 		ROLES,
 		markdown,
 		turn,
+		selector,
+		effective,
+		turnsBy,
+		suspicions,
 		conversation,
 		validate,
 		reader,
@@ -206,7 +251,7 @@
 		root.SaveMyChat.listening = true;
 		root.browser.runtime.onMessage.addListener((msg) => {
 			if (msg?.type === "save-my-chat:present") return Promise.resolve(present());
-			if (msg?.type === "save-my-chat:read") return Promise.resolve(readPage());
+			if (msg?.type === "save-my-chat:read") return readPage();
 		});
 	}
 })();

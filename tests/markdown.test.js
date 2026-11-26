@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { load } from "./load.js";
+import { KIT, load } from "./load.js";
 
 const conversation = {
 	format: "save-my-chat/0",
@@ -13,7 +13,7 @@ const conversation = {
 };
 
 describe("conversation to a .md file", () => {
-	const S = load(["core/kit.js", "core/markdown.js"]).SaveMyChat;
+	const S = load([...KIT, "core/markdown.js"]).SaveMyChat;
 
 	it("has front matter, a title and one section per turn", () => {
 		expect(S.toMarkdown(conversation)).toBe(
