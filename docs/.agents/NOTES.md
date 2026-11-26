@@ -4,6 +4,18 @@ Findings, newest on top, dated. People answer in `docs/devlog/`, not here.
 What waits for a decision or was not verified is kept in
 [things-to-check.md](things-to-check.md).
 
+## 2026-11-26 · Cleo · phase 2 begun: the devlog on GitHub
+
+- `task github:devlog` ran once from this machine: milestones M0-M6, issues
+  #1-#7 (phases), #8-#13 (Q1-Q6, closed with Sett's words), #14 (Q7),
+  #15-#16 (PP1, PP2), and the board https://github.com/orgs/radiokociamuzyka/projects/1
+  (made by gh, so private to the organization until Sett opens it). A second
+  run changed nothing.
+- `checks.yml` passed on GitHub for `dev/Cleo`, `development` and the bots'
+  branches.
+- The board needs a person's token (scope `project`); `devlog.yml` runs
+  with `--no-board`, as in P_JOL_ROLL.
+
 ## 2026-11-26 · Cleo · phase 1: turndown, selector sets, AI Mode for real
 
 - Sett's test of v0.0.1: AI Mode saved without user messages. The guessed
