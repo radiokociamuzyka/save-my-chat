@@ -33,8 +33,9 @@ names its `Q<n>`.
 - [x] Turndown (with its GFM plugin) converts messages instead of the hand-written converter, vendored unchanged into `src/vendor/`
 - [x] Selectors as sets of candidates; the kit collects turns of every role in page order
 - [x] Google AI Mode reader rebuilt from Sett's proof of work, the snippet kept in `src/readers/drafted-snippets/` (Q5)
-- [ ] The lost user messages in the almanac: case, cause, solution
-- [ ] Selector overrides from `storage.local`, so a changed class name is fixed without a release
+- [x] The lost user messages in the almanac: case, cause, solution
+- [x] Selector overrides from `storage.local`, so a changed class name is fixed without a release (set from the console for now)
+- [ ] The options page edits the selector overrides of each reader
 - [ ] The "minor changes" of the v0.0.1 demo (Q7)
 - [ ] GitHub Copilot reader from a snippet of Sett's or a saved page
 - [ ] A saved, anonymised page of each as `tests/fixtures/`, and tests reading them
