@@ -2,6 +2,8 @@
 export default {
 	sourceDir: "src",
 	artifactsDir: "dist",
+	// Sett's snippets are sources of readers, not part of the extension (Q5).
+	ignoreFiles: ["readers/drafted-snippets"],
 	build: {
 		overwriteDest: true,
 	},
