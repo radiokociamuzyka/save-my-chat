@@ -1,0 +1,62 @@
+# https://taskfile.dev
+version: "3"
+
+includes:
+  devlog:
+    taskfile: docs/devlog/Taskfile.yml
+    dir: docs/devlog
+
+tasks:
+  default:
+    cmds:
+      - task --list
+    silent: true
+
+  install:
+    desc: dependencies from the lockfile
+    cmds:
+      - npm ci
+
+  run:
+    desc: Firefox with the extension loaded, reloads on save
+    cmds:
+      - npx web-ext run {{.CLI_ARGS}}
+
+  check:
+    desc: Biome, changes nothing
+    cmds:
+      - npx biome check .
+
+  format:
+    desc: Biome with safe fixes
+    cmds:
+      - npx biome check --write .
+
+  lint:ext:
+    desc: web-ext lint, the validator AMO runs
+    cmds:
+      - npx web-ext lint
+
+  test:
+    desc: vitest
+    cmds:
+      - npx vitest run {{.CLI_ARGS}}
+
+  verify:
+    desc: check, lint:ext, test - run before a step is reported done
+    cmds:
+      - task: check
+      - task: lint:ext
+      - task: test
+
+  build:
+    desc: the .zip for AMO into dist/
+    cmds:
+      - npx web-ext build
+
+  # NOTE: signing is Sett's move (AMO API key and secret in .env); never run by an agent.
+  sign:unlisted:
+    desc: sign for self-distribution through AMO (unlisted channel)
+    dotenv: [".env"]
+    cmds:
+      - npx web-ext sign --channel unlisted --api-key "$AMO_JWT_ISSUER" --api-secret "$AMO_JWT_SECRET"
