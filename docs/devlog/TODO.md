@@ -22,7 +22,7 @@ names its `Q<n>`.
 - [x] First commit on `master`, then `development`, `dev/Sarverott`, `dev/Cleo`, `dev/Jarvis`, `dev/Joker`, `dev/dependabot` (Q4)
 - [x] The owner's answers and inquiries moved word for word into the changelog; the plan renumbered
 - [x] License MPL-2.0 (Q1)
-- [ ] Gecko id `@save-my-chat.radiokociamuzyka.pl` (Q2)
+- [x] Gecko id `@save-my-chat.radiokociamuzyka.pl` (Q2)
 - [ ] Cleo in `.github/AUTHORS`; AGENTS.md: a commit per step, the branch set (Q4)
 - [ ] Husky hooks: commitlint on `commit-msg`, `task verify` on `pre-push`
 - [ ] Dependabot into `dev/dependabot`
