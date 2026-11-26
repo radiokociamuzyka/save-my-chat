@@ -1,0 +1,27 @@
+name: checks
+
+on:
+  push:
+    branches: [development, "dev/**"]
+  pull_request:
+    branches: [development, master]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run verify
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: save-my-chat-zip
+          path: dist/*.zip
