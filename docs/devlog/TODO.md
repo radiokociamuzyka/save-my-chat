@@ -27,7 +27,9 @@ names its `Q<n>`.
 - [x] Husky hooks: commitlint on `commit-msg`, `task verify` on `pre-push`
 - [x] Dependabot into `dev/dependabot`
 - [x] `.github/workflows/checks.yml` seen green on GitHub
-- [ ] Version bumped by a hook per commit, as in P_JOL_ROLL (`.github/bos.json` versioning)
+- [x] Version bumped by a hook per commit: `Z` of `vX.Y.Z` on every `dev/*` commit, a merge driver taking the higher version (Q7)
+- [x] Release on `master`: a merged pull request from `development` tags `vX.Y.Z`, attaches the packed extension, marks it the latest; `master` merged back into `development` (Q7)
+- [ ] The phase closed: a pull request `development` → `master` (Q7)
 
 ## Phase 1: the first readers for real
 
@@ -37,7 +39,6 @@ names its `Q<n>`.
 - [x] The lost user messages in the almanac: case, cause, solution
 - [x] Selector overrides from `storage.local`, so a changed class name is fixed without a release (set from the console for now)
 - [ ] The options page edits the selector overrides of each reader
-- [ ] The "minor changes" of the v0.0.1 demo (Q7)
 - [ ] GitHub Copilot reader from a snippet of Sett's or a saved page
 - [ ] A saved, anonymised page of each as `tests/fixtures/`, and tests reading them
 - [ ] Each reader checked by hand in Firefox on a live conversation, the result in `docs/.agents/NOTES.md`
@@ -46,7 +47,11 @@ names its `Q<n>`.
 
 - [x] `task github:devlog`: a milestone per milestone of ROADMAP, an issue per phase (its items a task list), per `Q<n>` and per `PP<n>`; answered and decided ones closed with the owner's words
 - [x] A project board for the devlog (organization project #1, private until Sett opens it)
-- [ ] Discussions: announcements of steps, phases and releases; almanac cases as Q&A (both categories exist in the repository)
+- [ ] Announcements (discussion #17): short notes with links - changelog posts, proposals with their issue and a discussion of their own, changes of phases and concepts, releases introduced, other news
+- [ ] Almanac cases as Q&A discussions, their solution the answer
+- [ ] The wiki (`save-my-chat.wiki.git`) for developers and contributors: the almanac and the devlog generated into it, in more than one language
+- [ ] Read the Docs: the documentation of the project, without what the wiki holds
+- [ ] A static page of the project on the `github-pages` branch
 - [x] Workflow `devlog.yml`: the devlog synced on each push of it to `development`
 - [ ] Workflows: the gate of a pull request into `master`, the release
 

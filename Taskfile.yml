@@ -61,6 +61,11 @@ tasks:
     cmds:
       - npx web-ext sign --channel unlisted --api-key "$AMO_JWT_ISSUER" --api-secret "$AMO_JWT_SECRET"
 
+  version:
+    desc: 'the version of package.json written into every copy (-- bump patch|minor|major to raise it)'
+    cmds:
+      - node scripts/version.mjs {{.CLI_ARGS | default "sync"}}
+
   vendor:
     desc: copy third-party libraries unchanged from node_modules into src/vendor (committed; AMO compares them with the originals)
     cmds:

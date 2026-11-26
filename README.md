@@ -23,6 +23,14 @@ The ones shipped with the extension are the defaults; you will be able to
 copy one into your own **prototype**, change it, and run it instead
 (phase 2, through Firefox's `userScripts` API).
 
+## Install
+
+The newest release, packed:
+[save-my-chat.zip](https://github.com/radiokociamuzyka/save-my-chat/releases/latest/download/save-my-chat.zip)
+(every version: [releases](https://github.com/radiokociamuzyka/save-my-chat/releases)).
+Until builds are signed by AMO, load it in Firefox from `about:debugging` →
+*This Firefox* → *Load Temporary Add-on…*.
+
 ## Getting started
 
 You need Node.js 24, npm and Firefox 142 or later.
