@@ -83,7 +83,10 @@ src/                     the extension itself, loaded by Firefox as written (web
   popup/                 the toolbar button: which reader sees this tab, save as md / json
   options/               readers on/off; later the prototypes editor (userScripts)
 tests/                   vitest + jsdom; fixtures/ are saved HTML of real chats, anonymised
-docs/devlog/             the BOS devlog: VISION, ROADMAP, TODO, BRAINSTORM, PROPOSALS, ORDERS, INQUIRIES
+docs/devlog/             the BOS devlog: VISION, ROADMAP, TODO, BRAINSTORM, PROPOSALS, ORDERS, INQUIRIES;
+                         shown on GitHub as milestones, issues and a board (scripts/github/devlog.py) -
+                         an issue changed by hand is overwritten: answer in ORDERS.md, ask in INQUIRIES.md
+scripts/github/          devlog.py, adapted from P_JOL_ROLL
 docs/changelog/          what happened per phase, the owner's words word for word, append-only
 docs/guides/             how to write a reader, the unified format
 docs/almanac/            what was learnt the hard way: cataclistics/ (a case per page), solutions/ (a topic each)
@@ -123,6 +126,8 @@ stamps the format, source and time. The format is described in
 | `task verify` | check, lint:ext, test — run before a step is reported done |
 | `task build` | the `.zip` for AMO into `dist/` |
 | `task devlog:scrapnote` | a new scrapnote in `docs/devlog/` |
+| `task vendor` | turndown and its GFM plugin copied unchanged into `src/vendor/` |
+| `task github:devlog` (`-- --dry`) | the devlog on GitHub: milestones, an issue per phase, `Q<n>`, `PP<n>`, the board; `devlog.yml` does it on each push of the devlog to `development`, but the board |
 
 ## Conventions
 

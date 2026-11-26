@@ -44,10 +44,11 @@ names its `Q<n>`.
 
 ## Phase 2: GitHub integration
 
-- [ ] `task github:devlog`: a milestone per milestone of ROADMAP, an issue per phase (its items a task list), per `Q<n>` and per `PP<n>`; answered and decided ones closed with the owner's words
+- [x] `task github:devlog`: a milestone per milestone of ROADMAP, an issue per phase (its items a task list), per `Q<n>` and per `PP<n>`; answered and decided ones closed with the owner's words
 - [ ] A project board for the devlog
 - [ ] Discussions: announcements of steps, phases and releases; almanac cases as Q&A
-- [ ] Workflows: the devlog synced on each push to `development`, the gate of a pull request into `master`, the release
+- [x] Workflow `devlog.yml`: the devlog synced on each push of it to `development`
+- [ ] Workflows: the gate of a pull request into `master`, the release
 
 ## Phase 3: prototypes
 

@@ -1,0 +1,30 @@
+name: devlog
+
+# The devlog on GitHub (phase 2): milestones, an issue per phase, per Q<n> and per PP<n>,
+# written again from docs/devlog and docs/changelog whenever they change on development.
+# The board is left to `task github:devlog` from a terminal: the workflow's token cannot
+# reach a project of the organization.
+on:
+  push:
+    branches: [development]
+    paths: ["docs/devlog/**", "docs/changelog/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: devlog
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # Q<n> and PP<n> are read as they stood, from the history of their files
+      - run: python3 scripts/github/devlog.py --no-board
+        env:
+          GH_TOKEN: ${{ github.token }}
