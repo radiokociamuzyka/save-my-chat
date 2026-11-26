@@ -27,6 +27,7 @@ names its `Q<n>`.
 - [x] Husky hooks: commitlint on `commit-msg`, `task verify` on `pre-push`
 - [x] Dependabot into `dev/dependabot`
 - [ ] `.github/workflows/checks.yml` seen green on GitHub
+- [ ] Version bumped by a hook per commit, as in P_JOL_ROLL (`.github/bos.json` versioning)
 
 ## Phase 1: the first readers for real
 
