@@ -4,6 +4,23 @@ Findings, newest on top, dated. People answer in `docs/devlog/`, not here.
 What waits for a decision or was not verified is kept in
 [things-to-check.md](things-to-check.md).
 
+## 2026-11-26 · Cleo · Q7: the flow of versions and releases
+
+- Sett's answer came as a comment on issue #14 and discussion #17 opened
+  the feed; Cleo copied both into ORDERS.md / INQUIRIES.md and committed
+  them on `dev/Sarverott`, as Sett asked. An answer on GitHub has to be
+  carried into the markdown by hand: `devlog.py` writes issues, it does
+  not read their comments.
+- `scripts/version.mjs` (from P_JOL_ROLL's `version.ts`): the hook bumped
+  0.1.0 → 0.1.1 on the commit that brought it. `git commit --amend` on a
+  `dev/*` branch runs pre-commit again and bumps once more, so no amends
+  there (written into AGENTS.md).
+- `release.yml` is written and its build step checked here
+  (`save-my-chat-0.1.2.zip`, manifest at 0.1.2); the tag, the release and
+  the merge back run only on GitHub, on the first merge into `master`.
+- A release is unsigned until Sett adds `AMO_JWT_ISSUER` and
+  `AMO_JWT_SECRET` as repository secrets.
+
 ## 2026-11-26 · Cleo · phase 2 begun: the devlog on GitHub
 
 - `task github:devlog` ran once from this machine: milestones M0-M6, issues
