@@ -4,6 +4,25 @@ Findings, newest on top, dated. People answer in `docs/devlog/`, not here.
 What waits for a decision or was not verified is kept in
 [things-to-check.md](things-to-check.md).
 
+## 2026-11-26 · Cleo · phase 1: turndown, selector sets, AI Mode for real
+
+- Sett's test of v0.0.1: AI Mode saved without user messages. The guessed
+  reader is gone; the new one is fitted from Sett's devtools snippet
+  (`src/readers/drafted-snippets/`). Case: `docs/almanac/cataclistics/lost-user-messages.md`.
+- Turndown replaced the hand-written converter. The old tests showed two
+  places where it loses data: fences around code holding ``` and pipes in
+  table cells. Two rules override them. Case: `turndown-fences-and-pipes.md`.
+- Turndown's list items read `-   x` (three spaces): valid CommonMark,
+  kept as it is.
+- commitlint's parser takes a body line starting with `word:` for a
+  footer and warns "footer must have leading blank line"; the message is
+  stored intact. Avoid starting a body line with `word:`.
+- Q2's domain is not a valid gecko id; `@` in front makes it one.
+  Case: `gecko-id-format.md`.
+- Not seen: the live AI Mode page. The class names are Sett's, the tests
+  are hand-made pages using them. A saved AI Mode page as a fixture would
+  let the tests follow Google's real markup.
+
 ## 2026-11-26 · Cleo · phase 0: the skeleton
 
 - Read before building: the workshop's AGENTS.md, the BOS skillset's
