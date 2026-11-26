@@ -9,121 +9,75 @@
 	const ROLES = ["user", "assistant", "system", "tool"];
 
 	// ---- DOM to markdown -------------------------------------------------
+	// Turndown (src/vendor/, loaded before the kit in pages) with its GFM
+	// plugin for tables, strikethrough and task lists, as in Sett's proof of
+	// work. The background never converts, so it does not load them.
 
-	const SKIP = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "TEMPLATE", "svg", "SVG", "BUTTON"]);
+	let service = null;
 
-	function inline(node) {
-		let out = "";
-		for (const child of node.childNodes) out += md(child);
-		return out;
+	function turndown() {
+		if (service) return service;
+		if (!root.TurndownService) throw new Error("turndown is not loaded before the kit");
+		service = new root.TurndownService({
+			headingStyle: "atx",
+			hr: "---",
+			bulletListMarker: "-",
+			codeBlockStyle: "fenced",
+			emDelimiter: "*",
+		});
+		if (root.turndownPluginGfm) service.use(root.turndownPluginGfm.gfm);
+		service.remove(["script", "style", "noscript", "template", "button", "svg"]);
+		// Rules added last win over turndown's and the plugin's own.
+		// A fence longer than any run of backticks inside, so code that
+		// itself contains ``` does not close its block early.
+		service.addRule("fence", {
+			filter: (node) => node.nodeName === "PRE",
+			replacement: (_content, node) => {
+				const code = node.querySelector("code") || node;
+				const lang = (code.getAttribute("class") || "").match(/language-([\w+#-]+)/)?.[1] || "";
+				const text = code.textContent.replace(/\n$/, "");
+				const longest = Math.max(0, ...(text.match(/`+/g) || []).map((run) => run.length));
+				const fence = "`".repeat(Math.max(3, longest + 1));
+				return `\n\n${fence}${lang}\n${text}\n${fence}\n\n`;
+			},
+		});
+		// A pipe inside a cell escaped, or it splits the cell in two.
+		service.addRule("cell", {
+			filter: ["th", "td"],
+			replacement: (content, node) => {
+				const first = node.parentNode.firstElementChild === node;
+				const text = content
+					.replace(/\n+/g, " ")
+					.replace(/(^|[^\\])\|/g, "$1\\|")
+					.trim();
+				return `${first ? "| " : " "}${text} |`;
+			},
+		});
+		// Parts the webapp hides from people (icons, screen-reader duplicates).
+		service.addRule("hidden", {
+			filter: (node) => node.hidden || node.getAttribute?.("aria-hidden") === "true",
+			replacement: () => "",
+		});
+		return service;
 	}
 
-	function fence(text, lang = "") {
-		const longest = Math.max(2, ...(text.match(/`+/g) || []).map((s) => s.length));
-		const ticks = "`".repeat(longest + 1);
-		return `\n\n${ticks}${lang}\n${text.replace(/\n$/, "")}\n${ticks}\n\n`;
-	}
-
-	function list(node, ordered) {
-		let i = Number(node.getAttribute?.("start")) || 1;
-		let out = "\n\n";
-		for (const li of node.children) {
-			if (li.tagName !== "LI") continue;
-			const mark = ordered ? `${i++}. ` : "- ";
-			const body = inline(li)
-				.trim()
-				.replace(/\n/g, `\n${" ".repeat(mark.length)}`);
-			out += `${mark}${body}\n`;
+	// Links and images made absolute on a copy, so the page stays untouched.
+	function absolute(element) {
+		const copy = element.cloneNode(true);
+		const base = element.ownerDocument.baseURI;
+		for (const a of copy.querySelectorAll("a[href]")) {
+			const href = a.getAttribute("href");
+			if (href.startsWith("javascript:")) a.removeAttribute("href");
+			else a.setAttribute("href", new URL(href, base).href);
 		}
-		return `${out}\n`;
-	}
-
-	function table(node) {
-		const rows = [...node.querySelectorAll("tr")].map((tr) =>
-			[...tr.children].map((cell) => inline(cell).trim().replace(/\|/g, "\\|").replace(/\n+/g, " ")),
-		);
-		if (!rows.length) return "";
-		const width = Math.max(...rows.map((r) => r.length));
-		const line = (r) => `| ${Array.from({ length: width }, (_, i) => r[i] ?? "").join(" | ")} |`;
-		const head = line(rows[0]);
-		const rule = `| ${Array(width).fill("---").join(" | ")} |`;
-		return `\n\n${[head, rule, ...rows.slice(1).map(line)].join("\n")}\n\n`;
-	}
-
-	function md(node) {
-		if (node.nodeType === 3) return node.nodeValue.replace(/\s+/g, " ");
-		if (node.nodeType !== 1 || SKIP.has(node.tagName)) return "";
-		if (node.hidden || node.getAttribute("aria-hidden") === "true") return "";
-		const tag = node.tagName;
-		switch (tag) {
-			case "BR":
-				return "  \n";
-			case "HR":
-				return "\n\n---\n\n";
-			case "H1":
-			case "H2":
-			case "H3":
-			case "H4":
-			case "H5":
-			case "H6":
-				return `\n\n${"#".repeat(Number(tag[1]))} ${inline(node).trim()}\n\n`;
-			case "P":
-			case "DIV":
-			case "SECTION":
-			case "ARTICLE":
-				return `\n\n${inline(node).trim()}\n\n`;
-			case "STRONG":
-			case "B": {
-				const t = inline(node).trim();
-				return t ? `**${t}**` : "";
-			}
-			case "EM":
-			case "I": {
-				const t = inline(node).trim();
-				return t ? `*${t}*` : "";
-			}
-			case "DEL":
-			case "S":
-				return `~~${inline(node).trim()}~~`;
-			case "CODE":
-				if (node.parentElement?.tagName === "PRE") return node.textContent;
-				return `\`${node.textContent}\``;
-			case "PRE": {
-				const code = node.querySelector("code");
-				const lang = (code?.className.match(/language-([\w+-]+)/) || [])[1] || "";
-				return fence(node.textContent, lang);
-			}
-			case "A": {
-				const text = inline(node).trim();
-				const href = node.getAttribute("href");
-				if (!href || href.startsWith("javascript:")) return text;
-				const url = new URL(href, node.ownerDocument.baseURI).href;
-				return text ? `[${text}](${url})` : `<${url}>`;
-			}
-			case "IMG": {
-				const src = node.getAttribute("src");
-				return src ? `![${node.getAttribute("alt") || ""}](${new URL(src, node.ownerDocument.baseURI).href})` : "";
-			}
-			case "UL":
-				return list(node, false);
-			case "OL":
-				return list(node, true);
-			case "BLOCKQUOTE":
-				return `\n\n${inline(node)
-					.trim()
-					.split("\n")
-					.map((l) => `> ${l}`)
-					.join("\n")}\n\n`;
-			case "TABLE":
-				return table(node);
-			default:
-				return inline(node);
-		}
+		for (const img of copy.querySelectorAll("img[src]"))
+			img.setAttribute("src", new URL(img.getAttribute("src"), base).href);
+		return copy;
 	}
 
 	function markdown(element) {
-		return md(element)
-			.replace(/[ \t]+\n/g, (m) => (m.startsWith("  ") ? "  \n" : "\n"))
+		return turndown()
+			.turndown(absolute(element))
 			.replace(/\n{3,}/g, "\n\n")
 			.trim();
 	}

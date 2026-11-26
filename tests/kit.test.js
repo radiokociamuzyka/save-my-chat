@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { load } from "./load.js";
+import { KIT, load } from "./load.js";
 
 function mdOf(html) {
-	const w = load(["core/kit.js"], { html: `<!doctype html><body><div id="x">${html}</div></body>` });
+	const w = load(KIT, { html: `<!doctype html><body><div id="x">${html}</div></body>` });
 	return w.SaveMyChat.markdown(w.document.getElementById("x"));
 }
 
@@ -19,7 +19,7 @@ describe("DOM to markdown", () => {
 	});
 
 	it("writes nested and ordered lists", () => {
-		expect(mdOf("<ol start='3'><li>one</li><li>two</li></ol><ul><li>x</li></ul>")).toBe("3. one\n4. two\n\n- x");
+		expect(mdOf("<ol start='3'><li>one</li><li>two</li></ol><ul><li>x</li></ul>")).toBe("3.  one\n4.  two\n\n-   x");
 	});
 
 	it("writes tables", () => {
@@ -35,7 +35,7 @@ describe("DOM to markdown", () => {
 
 describe("the unified format", () => {
 	it("stamps a conversation that validates", () => {
-		const w = load(["core/kit.js"]);
+		const w = load(KIT);
 		const S = w.SaveMyChat;
 		const c = S.conversation(
 			{ id: "t", service: "test" },
@@ -57,12 +57,12 @@ describe("the unified format", () => {
 	});
 
 	it("rejects unknown roles", () => {
-		const w = load(["core/kit.js"]);
+		const w = load(KIT);
 		expect(() => w.SaveMyChat.turn("bot", "x")).toThrow(/unknown role/);
 	});
 
 	it("reads a page with the first reader that detects it", () => {
-		const w = load(["core/kit.js"], { html: "<body><p class='q'>Q</p><p class='a'>A</p></body>" });
+		const w = load(KIT, { html: "<body><p class='q'>Q</p><p class='a'>A</p></body>" });
 		w.SaveMyChat.reader({
 			id: "demo",
 			name: "Demo",

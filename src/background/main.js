@@ -3,6 +3,8 @@
 (() => {
 	const SMC = globalThis.SaveMyChat;
 	const PREFIX = "smc-reader-";
+	// What a page gets before a reader: turndown, its GFM plugin, the kit.
+	const PAGE_KIT = ["vendor/turndown.js", "vendor/turndown-plugin-gfm.js", "core/kit.js"];
 
 	async function enabledReaders() {
 		const { disabled = [] } = await browser.storage.local.get("disabled");
@@ -19,7 +21,7 @@
 			readers.map((r) => ({
 				id: PREFIX + r.id,
 				matches: r.matches,
-				js: ["core/kit.js", r.file],
+				js: [...PAGE_KIT, r.file],
 				runAt: "document_idle",
 				persistAcrossSessions: false,
 			})),
@@ -33,7 +35,7 @@
 		try {
 			return await browser.tabs.sendMessage(tabId, { type });
 		} catch {
-			const files = ["core/kit.js", ...(await enabledReaders()).map((r) => r.file)];
+			const files = [...PAGE_KIT, ...(await enabledReaders()).map((r) => r.file)];
 			await browser.scripting.executeScript({ target: { tabId }, files });
 			return await browser.tabs.sendMessage(tabId, { type });
 		}

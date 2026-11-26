@@ -30,7 +30,7 @@ names its `Q<n>`.
 
 ## Phase 1: the first readers for real
 
-- [ ] Turndown (with its GFM plugin) converts messages instead of the hand-written converter, vendored unchanged into `src/vendor/`
+- [x] Turndown (with its GFM plugin) converts messages instead of the hand-written converter, vendored unchanged into `src/vendor/`
 - [ ] Selectors as sets of candidates; the kit collects turns of every role in page order
 - [ ] Google AI Mode reader rebuilt from Sett's proof of work, the snippet kept in `src/readers/drafted-snippets/` (Q5)
 - [ ] The lost user messages in the almanac: case, cause, solution
