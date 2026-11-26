@@ -25,7 +25,7 @@ names its `Q<n>`.
 - [x] Gecko id `@save-my-chat.radiokociamuzyka.pl` (Q2)
 - [x] Cleo in `.github/AUTHORS`; AGENTS.md: a commit per step, the branch set (Q4)
 - [x] Husky hooks: commitlint on `commit-msg`, `task verify` on `pre-push`
-- [ ] Dependabot into `dev/dependabot`
+- [x] Dependabot into `dev/dependabot`
 - [ ] `.github/workflows/checks.yml` seen green on GitHub
 
 ## Phase 1: the first readers for real
