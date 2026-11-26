@@ -60,3 +60,11 @@ tasks:
     dotenv: [".env"]
     cmds:
       - npx web-ext sign --channel unlisted --api-key "$AMO_JWT_ISSUER" --api-secret "$AMO_JWT_SECRET"
+
+  vendor:
+    desc: copy third-party libraries unchanged from node_modules into src/vendor (committed; AMO compares them with the originals)
+    cmds:
+      - cp node_modules/turndown/dist/turndown.js src/vendor/turndown.js
+      - cp node_modules/turndown/LICENSE src/vendor/turndown.LICENSE
+      - cp node_modules/turndown-plugin-gfm/dist/turndown-plugin-gfm.js src/vendor/turndown-plugin-gfm.js
+      - cp node_modules/turndown-plugin-gfm/LICENSE src/vendor/turndown-plugin-gfm.LICENSE
