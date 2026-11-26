@@ -42,8 +42,9 @@
 	}
 
 	async function save({ tabId, as = "md" }) {
-		const c = await ask(tabId, "save-my-chat:read");
-		if (!c) throw new Error("No conversation found on this page.");
+		const read = await ask(tabId, "save-my-chat:read");
+		if (!read) throw new Error("No conversation found on this page.");
+		const { warnings = [], ...c } = read;
 		const problems = SMC.validate(c);
 		if (problems.length) throw new Error(`The reader gave a broken conversation: ${problems.join("; ")}`);
 		if (!c.turns.length) throw new Error("The reader found no messages on this page.");
@@ -55,7 +56,7 @@
 		} finally {
 			setTimeout(() => URL.revokeObjectURL(url), 60_000);
 		}
-		return { title: c.title, turns: c.turns.length };
+		return { title: c.title, turns: c.turns.length, warnings };
 	}
 
 	browser.runtime.onInstalled.addListener(register);

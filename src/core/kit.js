@@ -184,6 +184,20 @@
 		return def;
 	}
 
+	// Signs that a selector set is out of date: in a chat every question has
+	// its answer. Shown to the user by the popup, never written to the file.
+	function suspicions(turns) {
+		const count = (role) => turns.filter((t) => t.role === role).length;
+		const of = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
+		const asked = count("user");
+		const answered = count("assistant");
+		if (answered > asked)
+			return [`${of(answered, "answer")} but ${of(asked, "question")}: a user selector may be out of date.`];
+		if (asked > answered + 1)
+			return [`${of(asked, "question")} but ${of(answered, "answer")}: an assistant selector may be out of date.`];
+		return [];
+	}
+
 	async function overridesOf(id) {
 		try {
 			const { selectors = {} } = await root.browser.storage.local.get("selectors");
@@ -199,7 +213,9 @@
 		for (const r of readers.values()) {
 			if (!r.detect(doc, url)) continue;
 			const sets = effective(r.selectors, overrides ?? (await overridesOf(r.id)));
-			return conversation(r, r.read(doc, url, sets), url);
+			const c = conversation(r, r.read(doc, url, sets), url);
+			const warnings = suspicions(c.turns);
+			return warnings.length ? { ...c, warnings } : c;
 		}
 		return null;
 	}
@@ -219,6 +235,7 @@
 		selector,
 		effective,
 		turnsBy,
+		suspicions,
 		conversation,
 		validate,
 		reader,

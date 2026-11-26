@@ -29,3 +29,7 @@ button {
 .error {
 	color: #b00020;
 }
+
+.warning {
+	color: #8a5a00;
+}
