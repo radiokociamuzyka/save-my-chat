@@ -26,7 +26,7 @@ names its `Q<n>`.
 - [x] Cleo in `.github/AUTHORS`; AGENTS.md: a commit per step, the branch set (Q4)
 - [x] Husky hooks: commitlint on `commit-msg`, `task verify` on `pre-push`
 - [x] Dependabot into `dev/dependabot`
-- [ ] `.github/workflows/checks.yml` seen green on GitHub
+- [x] `.github/workflows/checks.yml` seen green on GitHub
 - [ ] Version bumped by a hook per commit, as in P_JOL_ROLL (`.github/bos.json` versioning)
 
 ## Phase 1: the first readers for real
@@ -44,10 +44,11 @@ names its `Q<n>`.
 
 ## Phase 2: GitHub integration
 
-- [ ] `task github:devlog`: a milestone per milestone of ROADMAP, an issue per phase (its items a task list), per `Q<n>` and per `PP<n>`; answered and decided ones closed with the owner's words
-- [ ] A project board for the devlog
-- [ ] Discussions: announcements of steps, phases and releases; almanac cases as Q&A
-- [ ] Workflows: the devlog synced on each push to `development`, the gate of a pull request into `master`, the release
+- [x] `task github:devlog`: a milestone per milestone of ROADMAP, an issue per phase (its items a task list), per `Q<n>` and per `PP<n>`; answered and decided ones closed with the owner's words
+- [x] A project board for the devlog (organization project #1, private until Sett opens it)
+- [ ] Discussions: announcements of steps, phases and releases; almanac cases as Q&A (both categories exist in the repository)
+- [x] Workflow `devlog.yml`: the devlog synced on each push of it to `development`
+- [ ] Workflows: the gate of a pull request into `master`, the release
 
 ## Phase 3: prototypes
 
