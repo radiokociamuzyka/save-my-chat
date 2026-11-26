@@ -24,7 +24,7 @@ names its `Q<n>`.
 - [x] License MPL-2.0 (Q1)
 - [x] Gecko id `@save-my-chat.radiokociamuzyka.pl` (Q2)
 - [x] Cleo in `.github/AUTHORS`; AGENTS.md: a commit per step, the branch set (Q4)
-- [ ] Husky hooks: commitlint on `commit-msg`, `task verify` on `pre-push`
+- [x] Husky hooks: commitlint on `commit-msg`, `task verify` on `pre-push`
 - [ ] Dependabot into `dev/dependabot`
 - [ ] `.github/workflows/checks.yml` seen green on GitHub
 

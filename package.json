@@ -17,10 +17,14 @@
     "test": "vitest run",
     "verify": "npm run check && npm run lint:ext && npm run test",
     "start": "web-ext run",
-    "build": "web-ext build --overwrite-dest"
+    "build": "web-ext build --overwrite-dest",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.9",
+    "@commitlint/cli": "21.2.4",
+    "@commitlint/config-conventional": "21.2.4",
+    "husky": "9.1.7",
     "jsdom": "31.0.1",
     "vitest": "5.1.2",
     "web-ext": "10.8.0"
