@@ -87,6 +87,11 @@ tasks:
     cmds:
       - node scripts/wiki/build.mjs {{.CLI_ARGS}}
 
+  pages:
+    desc: the project's static page into dist/pages - resources/pages filled from package.json and chats.yaml; pages.yml puts it on the github-pages branch
+    cmds:
+      - node scripts/pages/build.mjs {{.CLI_ARGS}}
+
   translate:server:
     desc: LibreTranslate in a container on 127.0.0.1:5000 with the wiki's languages, for task wiki (or set LIBRETRANSLATE_URL to a server)
     cmds:
