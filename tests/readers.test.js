@@ -97,4 +97,21 @@ describe("readers", () => {
 		const c = await w.SaveMyChat.readPage(undefined, undefined, { user: [".chat-msg.you"] });
 		expect(c.turns.map((t) => t.role)).toEqual(["user", "assistant"]);
 	});
+
+	it("inspect says what each selector found, without the conversation's text", async () => {
+		const html = `<body><div class="message-container user__a">secret question</div>
+			<div class="message-container ai__b">secret answer</div><div class="message-container ai__c">two</div></body>`;
+		const w = load([...KIT, "readers/github-copilot.js"], { html, url: "https://github.com/copilot/c/abc" });
+		const seen = await w.SaveMyChat.inspect(undefined, undefined, { user: ["div[", ".gone"] });
+		expect(seen.reader).toBe("github-copilot");
+		expect(seen.host).toBe("github.com");
+		expect(seen.turns).toEqual({ user: 1, assistant: 2 });
+		expect(seen.warnings).toEqual(["2 answers but 1 question: a user selector may be out of date."]);
+		expect(seen.parts.user).toEqual([
+			{ css: "div[", found: null, override: true },
+			{ css: ".gone", found: 0, override: true },
+			{ css: ".message-container[class*='user__']", found: 1, override: false },
+		]);
+		expect(JSON.stringify(seen)).not.toMatch(/secret/);
+	});
 });

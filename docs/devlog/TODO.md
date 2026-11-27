@@ -41,7 +41,7 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 - [x] The lost user messages in the almanac: case, cause, solution
 - [x] Selector overrides from `storage.local`, so a changed class name is fixed without a release (set from the console for now)
 - [ ] The options page edits the selector overrides of each reader
-- [ ] The popup reports what the reader saw: messages per role, which selector found them, so a test in the wild says what to fix
+- [x] The popup reports what the reader saw: messages per role, which selector found them, so a test in the wild says what to fix
 - [x] GitHub Copilot reader from Sett's snippet (`.message-container`, `user__` / `ai__`)
 - [x] The add-on id corrected to `save-my-chat@radiokociamuzyka.pl` (Sett's inquiry)
 - [x] `dev/dependabot` caught up with `development`, every workflow on the same actions; the almanac case
