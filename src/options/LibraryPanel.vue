@@ -1,6 +1,7 @@
 <!-- The library (PP1): what was saved, searched, saved again, forgotten; the background keeps it. -->
 <script setup>
-import { onMounted, ref } from "vue";
+import { onActivated, onMounted, ref } from "vue";
+import { backup } from "./backup.js";
 import { shown } from "./shown.js";
 
 const query = ref("");
@@ -21,7 +22,21 @@ async function read(e) {
 }
 const when = (iso) => new Date(iso).toLocaleString();
 
+// the whole library as one .zip into the downloads (backup.js)
+const packing = ref("");
+async function pack() {
+	packing.value = "Packing...";
+	try {
+		const SMC = globalThis.SaveMyChat;
+		const n = await backup(ask, { markdown: SMC.toMarkdown, slug: SMC.slug });
+		packing.value = `${n} ${n === 1 ? "chat" : "chats"} packed into your downloads.`;
+	} catch (error) {
+		packing.value = `Not packed: ${error.message}`;
+	}
+}
+
 onMounted(list);
+onActivated(list); // shown again (the tabs are kept alive): what Gather added since is listed
 </script>
 
 <template>
@@ -30,9 +45,17 @@ onMounted(list);
 			A copy of each chat you save is kept here, in Firefox's storage for this extension, so you can find it, save it
 			again, and see in the popup when it grew since. It never leaves your machine; Forget removes it.
 		</p>
-		<div class="field">
-			<input v-model="query" type="search" class="input" placeholder="search titles and messages" @input="list" />
+		<div class="field has-addons">
+			<div class="control is-expanded">
+				<input v-model="query" type="search" class="input" placeholder="search titles and messages" @input="list" />
+			</div>
+			<div class="control">
+				<button type="button" class="button pack" :disabled="!entries?.length || query !== ''" @click="pack">
+					Back up all as .zip
+				</button>
+			</div>
 		</div>
+		<p v-if="packing" role="status" class="is-size-7 mb-3 pack-status">{{ packing }}</p>
 		<p v-if="entries" role="status" class="is-size-7 mb-3 library-status">
 			{{
 				entries.length

@@ -56,6 +56,35 @@ const data = {
 };
 let granted = false;
 
+// the demo's page of GitHub Copilot lists three chats (phase 5): the first saved already
+const LISTED = [
+	{ url: CHATS[0].source.url, title: CHATS[0].title },
+	{ url: "https://github.com/copilot/c/demo-2", title: "Name this variable" },
+	{ url: "https://github.com/copilot/c/demo-3", title: "A regex for a date" },
+];
+// the background tabs gathering opens: here only a number and the chat it shows
+const opened = new Map();
+const updated = new Set();
+let nextTab = 2;
+
+function gathered(tabId) {
+	const { url, title } = opened.get(tabId);
+	const c = {
+		format: "save-my-chat/0",
+		source: { reader: "github-copilot", service: "github.com/copilot", url },
+		title,
+		savedAt: new Date().toISOString(),
+		turns: [
+			{ role: "user", text: `${title}?` },
+			{ role: "assistant", text: "A made-up answer, gathered by the demo." },
+		],
+	};
+	const old = data.library[keyOf(c)];
+	data.library[keyOf(c)] = { ...entryOf(c, (old?.saves ?? 0) + 1), firstSavedAt: old?.firstSavedAt ?? c.savedAt };
+	data[`chat:${keyOf(c)}`] = c;
+	return { title, turns: c.turns.length, warnings: [], key: keyOf(c) };
+}
+
 const SEEN = {
 	reader: "github-copilot",
 	host: "github.com",
@@ -88,6 +117,14 @@ function answer(msg) {
 				})
 				.sort((a, b) => b.savedAt.localeCompare(a.savedAt));
 		}
+		case "save-my-chat:list":
+			return {
+				reader: "github-copilot",
+				name: "GitHub Copilot",
+				chats: LISTED.map((c) => ({ ...c, savedAt: data.library[`github-copilot ${c.url}`]?.savedAt ?? null })),
+			};
+		case "save-my-chat:collect":
+			return gathered(msg.tabId);
 		case "save-my-chat:library-chat":
 			return data[`chat:${msg.key}`] ?? null;
 		case "save-my-chat:library-forget":
@@ -101,9 +138,27 @@ function answer(msg) {
 globalThis.browser = {
 	runtime: {
 		getManifest: () => ({ version: "demo" }),
+		getURL: (path) => path,
 		sendMessage: async (msg) => structuredClone(answer(msg)),
 	},
-	tabs: { query: async () => [{ id: 1, url: CHATS[0].source.url }] },
+	tabs: {
+		query: async () => [{ id: 1, url: CHATS[0].source.url }],
+		// the popup's Gather opens the options' tab of it; gathering opens a chat's page
+		create: async ({ url }) => {
+			if (url.endsWith("#gather")) {
+				location.hash = "#gather";
+				return { id: 0 };
+			}
+			const id = nextTab++;
+			opened.set(id, LISTED.find((c) => c.url === url) ?? { url, title: "A chat" });
+			setTimeout(() => {
+				for (const heard of updated) heard(id, { status: "complete" });
+			}, 300);
+			return { id, url };
+		},
+		onUpdated: { addListener: (f) => updated.add(f), removeListener: (f) => updated.delete(f) },
+		remove: async (id) => opened.delete(id),
+	},
 	storage: {
 		local: {
 			get: async (keys) => Object.fromEntries([].concat(keys).map((k) => [k, structuredClone(data[k])])),

@@ -75,7 +75,9 @@ The extension is then `dist/extension/` and packed as
    (`src/popup/`) into `dist/extension/`, **not minified**, Vue and Bulma
    bundled in, and copies the rest of `src/` there as it is: the
    background, the content scripts and the readers are plain JavaScript,
-   not processed.
+   not processed. It writes `THIRD-PARTY.md`, every package built in with
+   its license, and stops at a license not looked at yet
+   (`scripts/notice.mjs`).
 4. `web-ext build` packs `dist/extension/`.
 
 ## Where to read on
@@ -90,4 +92,7 @@ The extension is then `dist/extension/` and packed as
 
 ## License
 
-[Mozilla Public License 2.0](LICENSE).
+[Mozilla Public License 2.0](LICENSE). The packages the extension is
+built with, and their licenses, are listed by the build in
+`THIRD-PARTY.md` at the root of the extension: ZenFS among them, under
+the LGPL 3.0 (almanac: [licenses-met](docs/almanac/cataclistics/licenses-met.md)).

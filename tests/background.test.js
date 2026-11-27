@@ -179,6 +179,45 @@ describe("background: the library", () => {
 	});
 });
 
+describe("background: gathering (phase 5)", () => {
+	const chat = {
+		format: "save-my-chat/0",
+		source: { reader: "github-copilot", service: "github.com/copilot", url: "https://github.com/copilot/c/1" },
+		title: "Fix the build",
+		savedAt: "2026-11-28T09:00:00.000Z",
+		turns: [
+			{ role: "user", text: "Why?" },
+			{ role: "assistant", text: "Because." },
+		],
+	};
+
+	it("reads a tab into the library without writing a file", async () => {
+		const { calls, send } = background({ url: chat.source.url, page: chat });
+		expect(await send({ type: "save-my-chat:collect", tabId: 7 })).toMatchObject({ title: "Fix the build", turns: 2 });
+		expect(calls.downloads).toEqual([]);
+		expect((await send({ type: "save-my-chat:library" })).map((e) => e.title)).toEqual(["Fix the build"]);
+	});
+
+	it("lists the chats a tab offers, by the reader's chat addresses, marked when saved", async () => {
+		const asked = [];
+		const { w, send } = background({ url: chat.source.url, page: chat });
+		await send({ type: "save-my-chat:collect", tabId: 7 });
+		w.browser.tabs.sendMessage = async (_tab, msg) => {
+			asked.push(msg);
+			return [
+				{ url: "https://github.com/copilot/c/1", title: "Fix the build" },
+				{ url: "https://github.com/copilot/c/2", title: "Another" },
+			];
+		};
+		const found = await send({ type: "save-my-chat:list", tabId: 7 });
+		expect(asked).toEqual([{ type: "save-my-chat:list", patterns: ["https://github.com/copilot/c/*"] }]);
+		expect(found).toMatchObject({ reader: "github-copilot", name: "GitHub Copilot" });
+		expect(found.chats.map((c) => c.savedAt)).toEqual([chat.savedAt, null]);
+		const elsewhere = background({ url: "https://example.org/" });
+		expect(await elsewhere.send({ type: "save-my-chat:list", tabId: 7 })).toBeNull();
+	});
+});
+
 describe("background: the toolbar button's menu", () => {
 	it("offers the library and settings, and opens them", async () => {
 		const { w, calls } = background();

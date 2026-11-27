@@ -99,7 +99,11 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 
 ## Phase 5: more webapps
 
-- [ ] A reader for each `planned` chat of `resources/data/chats.yaml` (PP2), each with a fixture, its host an optional permission
+- [x] The licenses met in phase 4 (LGPL-3.0 in MPL-2.0) an almanac case: what each asks, how the extension meets it
+- [x] The library packed into one `.zip`: every chat as Markdown and JSON, in the folders of the downloads (a backup)
+- [x] The conversations a webapp lists found on its page: links matching the chat's addresses in `chats.yaml`, or the reader's own `list()`
+- [x] Gathering them one by one into the library, at the user's click: each opened in a background tab, read, closed; progress, a stop, then the zip
+- [ ] A reader for each `planned` chat of `resources/data/chats.yaml` (PP2), each with a fixture, its host an optional permission granted from the Readers tab
 - [ ] Each one's patterns checked on the live webapp, `verified: true`
 
 ## Phase 6: release

@@ -32,7 +32,7 @@ describe("in Firefox: the options", () => {
 	it("open on the library, empty, with the five tabs", async () => {
 		await open(driver, "options/options.html");
 		await find(driver, ".library-status");
-		expect(await texts(driver, ".tabs li")).toEqual(["Library", "Viewer", "Files", "Readers", "Prototypes"]);
+		expect(await texts(driver, ".tabs li")).toEqual(["Library", "Viewer", "Files", "Gather", "Readers", "Prototypes"]);
 		expect(await (await find(driver, ".library-status")).getText()).toMatch(/Nothing saved yet/);
 	});
 
