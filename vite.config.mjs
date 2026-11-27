@@ -50,6 +50,11 @@ export default defineConfig({
 	root: SRC,
 	base: "/",
 	plugins: [vue(), copyRest()],
+	resolve: {
+		// a dependency of isomorphic-git's whose shims hold eval, in its native form (rule 5;
+		// src/explorer/typed-array-buffer.js says why, almanac: shims-with-eval)
+		alias: { "typed-array-buffer": `${SRC}explorer/typed-array-buffer.js` },
+	},
 	build: {
 		outDir: OUT,
 		emptyOutDir: true,
