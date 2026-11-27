@@ -76,8 +76,8 @@ def phase_posts(issue_of: dict[str, int]) -> list[dict]:
         issue = issue_of.get(f"phase-{n}")
         link = f"{SITE}/issues/{issue}" if issue else f"{BLOB}docs/devlog/TODO.md"
         state = "done" if done else "begun"
-        body = (f"Phase {n}, {phase['title']}, is {'done: all' if done else 'under way:'} {ticked} of "
-                f"{len(items)} steps ticked.\n\nIts steps: {link}\nIts idea: {BLOB}docs/devlog/VISION.md")
+        body = (f"Phase {n}, {phase['title']}, {'is done: every step of it is ticked' if done else 'has begun'}."
+                f"\n\nIts steps: {link}\nIts idea: {BLOB}docs/devlog/VISION.md")
         posts.append({"key": f"phase:{n}:{state}", "category": "Announcements",
                       "title": f"Phase {n} {state}: {phase['title']}", "body": body})
     return posts
@@ -156,6 +156,10 @@ WAITS = (60, 120, 240, 480)
 TOO_QUICK = ("submitted too quickly", "secondary rate limit", "abuse detection")
 
 
+class Refused(Exception):
+    """GitHub said no (other than "too quickly"): the post is skipped, the run goes on"""
+
+
 def graphql(query: str, **variables):
     writes = query.lstrip().startswith("mutation")
     for wait in (*WAITS, None):
@@ -167,7 +171,7 @@ def graphql(query: str, **variables):
                 time.sleep(PAUSE)
             return json.loads(done.stdout)["data"]
         if wait is None or not any(sign in said for sign in TOO_QUICK):
-            sys.exit(f"graphql: {(done.stderr or done.stdout).strip()}")
+            raise Refused((done.stderr or done.stdout).strip())
         print(f"  GitHub says too quickly: waiting {wait} s")
         time.sleep(wait)
 
@@ -193,6 +197,10 @@ def sync(post: dict, repo_id: str, categories: dict, have: dict) -> dict | None:
     old = have.get(post["key"])
     if old and old["title"] == post["title"] and old["body"].strip() == body.strip():
         print(f"{post['key']}: same, #{old['number']}")
+        found = old
+    elif old and post["category"] == "Announcements":
+        # a note of the feed is a notice of its moment: written once, never edited
+        print(f"{post['key']}: posted already, #{old['number']} (an announcement is not edited)")
         found = old
     elif DRY:
         print(f"{post['key']}: {'changed' if old else 'new'} - {post['category']}: {post['title']}")
@@ -246,13 +254,20 @@ def main():
     posts = (changelog_posts() + phase_posts(issue_of) + proposal_posts(issue_of) + release_posts()
              + almanac_posts())
     made = {}
+    refused = []
     for post in posts:
         if post.get("discussion_of"):
             ideas = made.get(post["discussion_of"]) or have.get(post["discussion_of"])
             if ideas:
                 post["body"] += f" Its discussion: {ideas['url']}"
-        made[post["key"]] = sync(post, repo_id, categories, have)
+        try:
+            made[post["key"]] = sync(post, repo_id, categories, have)
+        except Refused as said:
+            refused.append(f"{post['key']}: {said}")
+            print(f"{post['key']}: refused by GitHub - {said}")
     print(f"{len(posts)} posts{' (dry: nothing written)' if DRY else ''}")
+    if refused:
+        sys.exit(f"{len(refused)} refused:\n" + "\n".join(refused))
 
 
 if __name__ == "__main__":

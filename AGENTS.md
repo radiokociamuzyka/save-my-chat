@@ -125,6 +125,7 @@ scripts/github/          devlog.py, adapted from P_JOL_ROLL; discussions.py, the
 scripts/version.mjs      the one version: sync, bump, bump-commit (pre-commit hook), merge driver (.gitattributes)
 scripts/release/         release.sh: what release.yml does on master, runnable by hand
 docs/changelog/          what happened per phase, the owner's words word for word, append-only
+docs/index.md, manual/   the user's manual, on Read the Docs with the guides (mkdocs.yml, .readthedocs.yaml)
 docs/guides/             how to write a reader, the unified format
 docs/almanac/            what was learnt the hard way: cataclistics/ (a case per page), solutions/ (a topic each)
 docs/.agents/            agents' own domain
@@ -169,6 +170,7 @@ stamps the format, source and time. The format is described in
 | `task github:devlog` (`-- --dry`) | the devlog on GitHub: milestones, an issue per phase, `Q<n>`, `PP<n>`, the board; `devlog.yml` does it on each push of the devlog to `development`, but the board |
 | `task github:discussions` (`-- --dry`) | the devlog's news in Discussions (#17): changelog posts, phases, proposals, releases in Announcements, a discussion per `PP<n>` in Ideas, almanac cases in Q&A with their solution as the answer; `feed.yml` runs it after each release |
 | `task wiki` (`-- --translator none`) | the wiki into `dist/wiki/` from `docs/` in the languages of `resources/data/wiki.yaml`; new texts translated by LibreTranslate (`task translate:server`, or `LIBRETRANSLATE_URL`) or Argos, kept in `resources/data/translations/`; `wiki.yml` pushes it after each release |
+| `task docs` (`-- serve -a 0.0.0.0:8000`) | the Read the Docs site (`mkdocs.yml`, `.readthedocs.yaml`): the manual and the guides, strictly; the devlog, changelog and almanac are the wiki's |
 
 ## Conventions
 
