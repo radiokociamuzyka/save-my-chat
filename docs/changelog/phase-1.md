@@ -178,3 +178,28 @@ From issue #25, Sett, 2026-11-27:
 **Decision:** `.github/AUTHORS` gets Jarvis's line as P_JOL_ROLL has it and
 Joker's in the same form (the Codex app's GitHub noreply address). Actions
 may open pull requests now, so `dependabot.yml`'s `land` job can work.
+
+## 2026-11-27, the owner's review of TODO (TODO.md, then the chat, word for word)
+
+On "The phase closed: a pull request `development` → `master` (Q7)", struck out.
+
+On "A saved, anonymised page of each as `tests/fixtures/`, and tests reading them", struck out:
+
+> for now we do not need other's people input, so if issues will come then we will make that anonymised raporting of page tests
+
+On "Each reader checked by hand in Firefox on a live conversation, the result in `docs/.agents/NOTES.md`":
+
+> __there i have no access as i claim it your own sovereign domain! i can only read it__ but sounds that this was done when i raport you that copilot's reader does not work... just close that step or move out of phase 1
+
+In the chat:
+
+> every time when you stop work to inform me send PR from development to master so releasing will be performed - i want to check with public flow if it was fixed what i told you about copilot, we need to increase rate of checking how it works in the wild. i reviewed todo and some of steps was removed. continue your work so i will be able to proper test that reader for you. please follow that pattern of work. thank you in advance
+
+**Decision:** a pull request `development` → `master` is opened at every
+stop of work, so a merge releases a build to test in the wild; the
+phase-closing item goes, phases end by the same pull request. Fixtures
+leave phase 1: anonymised pages come when an issue needs one. The live
+check is Sett's, by the released build; Sett's reports are written down
+by Cleo in `docs/.agents/NOTES.md`, so the step leaves phase 1 as a
+standing practice. To make that testing easier, phase 1 gets the
+selector editor in the options page and a report of what a reader saw.

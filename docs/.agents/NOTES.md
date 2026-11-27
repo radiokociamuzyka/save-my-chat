@@ -114,3 +114,15 @@ What waits for a decision or was not verified is kept in
 - With `src/vendor/` out of git a fresh clone runs nothing until
   `npm run vendor` (the test, verify, start and build scripts do it).
   Loading `src/` as a temporary add-on straight from a clone needs it too.
+
+## Live checks reported by Sett (written down by Cleo, as Sett asked on 2026-11-27)
+
+| Date | Reader | Build | What Sett saw | Answer |
+| --- | --- | --- | --- | --- |
+| 2026-11-26 | google-ai-mode | v0.0.1 | user messages missing from the saved file | selector sets, page order, the address fallback (0.1.0) |
+| 2026-11-27 | github-copilot | v0.1.3 | no messages found at `https://github.com/copilot/c/*` | rebuilt from Sett's snippet (0.1.31); waits for the next release to be checked |
+
+From the next release on, the popup's "Copy report" (under "What the
+reader saw") is the easiest thing to paste into an issue or the chat: it
+names the build, the reader, every selector with how many elements it
+found, and no text of the conversation.

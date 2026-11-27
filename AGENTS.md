@@ -38,8 +38,11 @@ repository: `forge/sarverott/github-repos/Sarverott/AGENTS.md` and its
    version by hand and never `--amend` on `dev/*` (each amend bumps again).
    A phase ends with the dev branches gathered in `development` and a pull
    request `development` → `master`; its merge releases (`release.yml`:
-   tag, packed extension, the latest). Merging into `master`, AMO uploads
-   and repository settings are always asked for first.
+   tag, packed extension, the latest). **Every stop of work** (each report
+   to Sett) first opens, or updates, that pull request, so its merge
+   releases a build Sett tests in the wild (Sett, 2026-11-27). Merging into
+   `master`, AMO uploads and repository settings are always asked for
+   first.
    **The owner's edits** found in the working tree go first, as they are,
    one commit per change on `dev/Sarverott`, with a message saying how the
    agent understood them; then that branch is merged into `development`.

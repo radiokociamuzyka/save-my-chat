@@ -6,7 +6,10 @@ history: [../changelog/](../changelog/phase-0.md).
 
 Every item is one commit on `dev/<name>` (`dev/Cleo`, or `dev/Sarverott`
 for the owner's edits), ticking its box. An item waiting for an answer
-names its `Q<n>`.
+names its `Q<n>`. Every stop of work opens a pull request `development` →
+`master`; its merge releases a build Sett tests in the wild, and Sett's
+reports are written in `docs/.agents/NOTES.md` by Cleo (Sett, 2026-11-27).
+Anonymised pages as `tests/fixtures/` come when an issue needs one.
 
 ## Phase 0: the skeleton
 
@@ -29,7 +32,6 @@ names its `Q<n>`.
 - [x] `.github/workflows/checks.yml` seen green on GitHub
 - [x] Version bumped by a hook per commit: `Z` of `vX.Y.Z` on every `dev/*` commit, a merge driver taking the higher version (Q7)
 - [x] Release on `master`: a merged pull request from `development` tags `vX.Y.Z`, attaches the packed extension, marks it the latest; `master` merged back into `development` (Q7)
-- [ ] The phase closed: a pull request `development` → `master` (Q7)
 
 ## Phase 1: the first readers for real
 
@@ -37,11 +39,10 @@ names its `Q<n>`.
 - [x] Selectors as sets of candidates; the kit collects turns of every role in page order
 - [x] Google AI Mode reader rebuilt from Sett's proof of work, the snippet kept in `src/readers/drafted-snippets/` (Q5)
 - [x] The lost user messages in the almanac: case, cause, solution
-- [x] Selector overrides from `storage.local`, so a changed class name is fixed without a release (set from the console for now)
-- [ ] The options page edits the selector overrides of each reader
+- [x] Selector overrides from `storage.local`, so a changed class name is fixed without a release
+- [x] The options page edits the selector overrides of each reader
+- [x] The popup reports what the reader saw: messages per role, which selector found them, so a test in the wild says what to fix
 - [x] GitHub Copilot reader from Sett's snippet (`.message-container`, `user__` / `ai__`)
-- [ ] A saved, anonymised page of each as `tests/fixtures/`, and tests reading them
-- [ ] Each reader checked by hand in Firefox on a live conversation, the result in `docs/.agents/NOTES.md`
 - [x] The add-on id corrected to `save-my-chat@radiokociamuzyka.pl` (Sett's inquiry)
 - [x] `dev/dependabot` caught up with `development`, every workflow on the same actions; the almanac case
 - [x] The version hook: a merge neither bumps nor reformats a file; the almanac case
