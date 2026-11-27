@@ -1,6 +1,6 @@
 {
   "name": "save-my-chat",
-  "version": "0.1.47",
+  "version": "0.1.53",
   "private": true,
   "description": "Firefox extension to export your AI chat history out of webapps and save it on your local machine in clear unified formatting",
   "repository": "github:radiokociamuzyka/save-my-chat",
@@ -14,7 +14,7 @@
     "check": "biome check .",
     "format": "biome check --write .",
     "lint:ext": "web-ext lint",
-    "test": "npm run vendor && vitest run",
+    "test": "vitest run",
     "verify": "npm run vendor && npm run check && npm run lint:ext && vitest run",
     "start": "npm run vendor && web-ext run",
     "build": "npm run vendor && npm run chats && web-ext build --overwrite-dest",

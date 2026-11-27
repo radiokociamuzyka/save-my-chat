@@ -25,10 +25,12 @@ export function plan(pkg) {
 	);
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+export function gather() {
 	const copies = plan(JSON.parse(readFileSync(at("package.json"), "utf8")));
 	rmSync(at(OUT), { recursive: true, force: true });
 	mkdirSync(at(OUT), { recursive: true });
 	for (const { from, to } of copies) copyFileSync(at(from), at(to));
-	console.log(`vendor: ${copies.length} files into ${OUT}`);
+	return copies.length;
 }
+
+if (import.meta.url === `file://${process.argv[1]}`) console.log(`vendor: ${gather()} files into ${OUT}`);

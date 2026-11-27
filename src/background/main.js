@@ -68,6 +68,7 @@
 	browser.runtime.onMessage.addListener((msg) => {
 		if (msg?.type === "save-my-chat:save") return save(msg);
 		if (msg?.type === "save-my-chat:present") return ask(msg.tabId, msg.type).catch(() => null);
+		if (msg?.type === "save-my-chat:inspect") return ask(msg.tabId, msg.type).catch(() => null);
 		if (msg?.type === "save-my-chat:defaults") return Promise.resolve(SMC.defaults);
 	});
 })();

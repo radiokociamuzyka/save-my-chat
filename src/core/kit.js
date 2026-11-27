@@ -220,6 +220,40 @@
 		return null;
 	}
 
+	// What the reader saw, for the popup's report and for testing in the wild:
+	// each selector candidate with how many elements it finds (null: not valid
+	// CSS), the messages per role, the warnings. No text of the conversation.
+	async function inspect(doc = root.document, url = root.location?.href, overrides) {
+		for (const r of readers.values()) {
+			if (!r.detect(doc, url)) continue;
+			const own = overrides ?? (await overridesOf(r.id));
+			const sets = effective(r.selectors, own);
+			const parts = {};
+			for (const [part, list] of Object.entries(sets)) {
+				const mine = [].concat(own[part] || []).length;
+				parts[part] = list.map((css, i) => {
+					let found = null;
+					try {
+						found = doc.querySelectorAll(css).length;
+					} catch {
+						// not valid CSS: skipped by selector(), shown as such here
+					}
+					return { css, found, override: i < mine };
+				});
+			}
+			const seen = { reader: r.id, name: r.name, host: new URL(url).host, parts, turns: {}, warnings: [] };
+			try {
+				const c = conversation(r, r.read(doc, url, sets), url);
+				for (const t of c.turns) seen.turns[t.role] = (seen.turns[t.role] || 0) + 1;
+				seen.warnings = suspicions(c.turns);
+			} catch (error) {
+				seen.error = String(error?.message || error);
+			}
+			return seen;
+		}
+		return null;
+	}
+
 	function present(doc = root.document, url = root.location?.href) {
 		for (const r of readers.values()) if (r.detect(doc, url)) return { id: r.id, name: r.name };
 		return null;
@@ -241,6 +275,7 @@
 		reader,
 		readers,
 		readPage,
+		inspect,
 		present,
 	};
 
@@ -252,6 +287,7 @@
 		root.browser.runtime.onMessage.addListener((msg) => {
 			if (msg?.type === "save-my-chat:present") return Promise.resolve(present());
 			if (msg?.type === "save-my-chat:read") return readPage();
+			if (msg?.type === "save-my-chat:inspect") return inspect();
 		});
 	}
 })();

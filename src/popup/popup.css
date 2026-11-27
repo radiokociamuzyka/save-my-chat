@@ -33,3 +33,15 @@ button {
 .warning {
 	color: #8a5a00;
 }
+
+#seen pre {
+	font-size: 12px;
+	white-space: pre-wrap;
+	word-break: break-all;
+	max-height: 14rem;
+	overflow: auto;
+}
+
+#seen button {
+	width: 100%;
+}

@@ -41,3 +41,6 @@ point was added.
   snippet; run only on hand-made pages in jsdom. To check: messages found
   in order, the turndown text has no leftover labels ("You said",
   avatars, names) that `innerText` hid or showed, the title is the chat's.
+- **2026-11-27. The popup's report and the options' selector editor in a
+  real Firefox.** Both tested in jsdom only; the clipboard write and the
+  options page loading reader files as scripts are Firefox's to confirm.

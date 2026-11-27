@@ -3,13 +3,22 @@
 	<head>
 		<meta charset="utf-8" />
 		<title>save-my-chat: readers</title>
+		<link rel="stylesheet" href="options.css" />
 	</head>
 	<body>
 		<h1>Readers</h1>
 		<p>Each chat webapp has its own reader. Turn off the ones you do not want injected.</p>
+		<p>
+			Webapps rename their classes with their builds. When a reader stops seeing messages (the popup's
+			"What the reader saw" tells which part), put a CSS selector that finds them under that part, one per line:
+			yours are tried before the built-in ones and take effect on the next save, no update needed.
+		</p>
 		<ul id="readers"></ul>
-		<!-- NOTE: phase 2 - prototypes: copy a default reader into an editor, change it,
+		<!-- NOTE: phase 3 - prototypes: copy a default reader into an editor, change it,
 		     and run it through the userScripts API (optional permission, asked here). -->
+		<!-- the kit and the default readers, for their built-in selectors only -->
+		<script src="../core/kit.js"></script>
+		<script src="../core/readers.js"></script>
 		<script src="options.js"></script>
 	</body>
 </html>
