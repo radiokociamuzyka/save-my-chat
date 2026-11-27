@@ -44,3 +44,9 @@ point was added.
 - **2026-11-27. The popup's report and the options' selector editor in a
   real Firefox.** Both tested in jsdom only; the clipboard write and the
   options page loading reader files as scripts are Firefox's to confirm.
+- **2026-11-27. The feed's first run.** `feed.yml` after the release of
+  0.2.x: 34 discussions (15 changelog posts, 3 phases, 2 proposals twice,
+  5 releases, 7 almanac Q&A). To check: categories right, links working,
+  the Q&A answers marked, a second run saying "same" for all. The
+  workflow's token may be refused marking answers; then the comment stays
+  unmarked and the run fails, saying so.

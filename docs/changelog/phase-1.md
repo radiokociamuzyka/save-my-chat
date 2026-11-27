@@ -222,3 +222,11 @@ the shape on the live page.
 **Decision:** the order of both readers is confirmed in the wild. The
 report gets an `order:` line of roles, and the kit warns when a chat does
 not start with the user, end with the agent and alternate.
+
+## 2026-11-27, the owner's live check of v0.1.62 (the chat, word for word)
+
+> see for yourself: [the reports of github-copilot and google-ai-mode, 4 user and 4 assistant each, `order: U A U A U A U A`, no warnings] - i think we can go ahead to next things we have to do.
+
+**Decision:** phase 1 is closed: both readers save real chats in their
+true order, confirmed in the wild. Phase 2 (GitHub integration) begins,
+and the version moves to `0.2.x` as ROADMAP says.
