@@ -78,8 +78,8 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 
 - [ ] Options page: copy a default reader into an editor, save as a prototype in `storage.local`
 - [ ] `userScripts` permission asked from the options page (optional permission in Firefox)
-- [ ] Prototypes registered with `userScripts.register` in the `USER_SCRIPT` world, messaging on (`configureWorld`), re-registered on update
-- [ ] A prototype replaces its default for the same matches; turning it off brings the default back
+- [x] Prototypes registered with `userScripts.register` in the `USER_SCRIPT` world, messaging on (`configureWorld`), re-registered on update
+- [x] A prototype replaces its default for the same matches; turning it off brings the default back
 - [ ] Export and import of prototypes as files
 
 ## Phase 4: the frontend
