@@ -43,7 +43,12 @@ same whichever service it came from.
   `userScripts` API instead of the default it came from.
 - **Phase 4, the frontend.** Astro, Vue and Bulma for the settings page,
   the manuals, and a viewer of saved conversations; Playwright tests in a
-  real Firefox. A build step comes with it, if needed (Q6).
-- **Phase 5, more webapps.** New default readers (PP2), each with a fixture.
+  real Firefox. A build step comes with it, if needed (Q6). The saved
+  chats become a library (PP1): an index of what was saved, and an
+  explorer of the stored files on a browser file system with git in it
+  (isomorphic-git, Q8), so a chat can become a gist (Octokit, Q9).
+- **Phase 5, more webapps.** New default readers (PP2), each with a fixture,
+  declared first in `resources/data/chats.yaml` with their domains and
+  conversation addresses (Q10).
 - **Phase 6, release.** Icons, store listing, privacy statement; listed on
-  AMO (signed unlisted until then, Q3).
+  AMO, the first signing with it (until then a temporary add-on).
