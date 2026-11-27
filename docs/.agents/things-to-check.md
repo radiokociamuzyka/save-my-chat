@@ -58,3 +58,10 @@ point was added.
 - **2026-11-27. The feed's second run** should create only the almanac
   case `version-hook-merges` and the new changelog posts of phase 2,
   saying "same" for the 34 others.
+- **2026-11-27. Read the Docs' first build.** The project's address is
+  unknown here (`save-my-chat.readthedocs.io` answers 404, the API knows no
+  such project). Once Sett names it, it goes into README and the wiki's
+  Home. The build is pinned and strict; `task docs` builds the same.
+- **2026-11-27. The feed's third run** (after the next release) should
+  post the release note and the two almanac cases left, and say
+  "posted already" for the phase notes.
