@@ -6,3 +6,13 @@ on `PP<n>` of [PROPOSALS.md](PROPOSALS.md), each under `### Q<n>` or
 changelog and leave this file with its header only.
 
 ---
+
+### PP1
+
+From issue #15, Sett, 2026-11-27:
+
+> # Approved
+>
+> sounds reasonable
+>
+> also add explorer of these stored files with browserfs and isomorphic-git mechanics so we will be able to threat it as gist material by including octokit integration
