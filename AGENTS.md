@@ -112,6 +112,7 @@ src/                     the extension itself, loaded by Firefox as written (web
   core/                  shared by every context, classic scripts on globalThis.SaveMyChat
     kit.js               the unified format, DOM-to-markdown, reader registration
     bridge.js            loaded after a prototype in the USER_SCRIPT world: answers the background by runtime.sendMessage
+    library.js           the library (PP1): an index of saved chats and their last copies in storage.local, background only
     markdown.js          conversation -> .md file
     readers.js           the list of default readers, written from resources/data/chats.yaml (task chats)
   readers/               one default reader per chat webapp, each calls SaveMyChat.reader({...})
@@ -119,7 +120,7 @@ src/                     the extension itself, loaded by Firefox as written (web
   vendor/                not in git: every dependency of package.json copied unchanged at build (scripts/vendor.mjs, Q10)
   background/main.js     event page: registers enabled readers, answers "save" from the popup, downloads
   popup/                 the toolbar button: which reader sees this tab, save as md / json
-  options/               readers on/off, selector overrides; prototypes.js: the user's own readers (userScripts)
+  options/               readers on/off, selector overrides; library.js: the saved chats; prototypes.js: the user's own readers (userScripts)
 resources/data/          declarations: chats.yaml, the chat webapps, their domains and conversation addresses (PP2)
 tests/                   vitest + jsdom; fixtures/ are saved HTML of real chats, anonymised
 docs/devlog/             the BOS devlog: VISION, ROADMAP, TODO, BRAINSTORM, PROPOSALS, ORDERS, INQUIRIES;

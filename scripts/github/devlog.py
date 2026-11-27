@@ -131,11 +131,18 @@ def as_they_stood(path: str) -> dict[str, str]:
 
 def answers() -> dict[str, tuple[int, str]]:
     """Q<n>/PP<n>/RR<n> -> (the phase whose changelog holds the answer, the answer's section)"""
+    # every section of a key, in order: an RR not done yet is reported again when it is
     found: dict[str, tuple[int, str]] = {}
     for page in sorted(CHANGELOG.glob("phase-*.md"), key=lambda one: int(one.stem.split("-")[1])):
         phase = int(page.stem.split("-")[1])
-        for key, text in sections(page.read_text(), "###").items():
-            found.setdefault(key, (phase, text))
+        for part in re.split(r"^(?=### )", page.read_text(), flags=re.M):
+            head = re.match(r"### ((?:Q|PP|RR)\d+)\b", part)
+            if not head:
+                continue
+            text = part.strip()
+            if head[1] in found:
+                text = f"{found[head[1]][1]}\n\n{text}"
+            found[head[1]] = (phase, text)
     return found
 
 

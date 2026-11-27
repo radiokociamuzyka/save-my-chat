@@ -16,22 +16,29 @@ const event = () => {
 	return { addListener: (f) => listeners.push(f), listeners };
 };
 
-function background({ granted = true, stored = {}, url = "https://github.com/copilot/c/1", tabWorld } = {}) {
-	const w = load(["core/kit.js", "core/markdown.js", "core/readers.js"]);
+function background({ granted = true, stored = {}, url = "https://github.com/copilot/c/1", tabWorld, page } = {}) {
+	const w = load(["core/kit.js", "core/markdown.js", "core/readers.js", "core/library.js"]);
 	const data = structuredClone(stored);
-	const calls = { contentScripts: [], userScripts: [], world: null, executed: [] };
+	const calls = { contentScripts: [], userScripts: [], world: null, executed: [], downloads: [] };
+	w.URL.createObjectURL = () => "blob:x";
+	w.URL.revokeObjectURL = () => {};
 	const onUserScriptMessage = event();
 	w.browser = {
 		storage: {
-			local: { get: async (keys) => Object.fromEntries([].concat(keys).map((k) => [k, structuredClone(data[k])])) },
+			local: {
+				get: async (keys) => Object.fromEntries([].concat(keys).map((k) => [k, structuredClone(data[k])])),
+				set: async (values) => Object.assign(data, structuredClone(values)),
+				remove: async (key) => delete data[key],
+			},
 			onChanged: event(),
 		},
 		runtime: { onInstalled: event(), onStartup: event(), onMessage: event(), onUserScriptMessage },
 		permissions: { contains: async () => granted, onAdded: event(), onRemoved: event() },
 		tabs: {
 			get: async () => ({ url }),
-			sendMessage: async () => ({ from: "default" }),
+			sendMessage: async () => page ?? { from: "default" },
 		},
+		downloads: { download: async (d) => calls.downloads.push(d.filename) },
 		scripting: {
 			getRegisteredContentScripts: async () => [],
 			unregisterContentScripts: async () => {},
@@ -62,7 +69,8 @@ function background({ granted = true, stored = {}, url = "https://github.com/cop
 	};
 	w.document.dispatchEvent = () => true; // the background's own document is not the tab's
 	w.eval(load.source("background/main.js"));
-	return { w, calls, bg: w.SaveMyChat.background };
+	const send = (msg) => w.browser.runtime.onMessage.listeners[0](msg);
+	return { w, calls, data, send, bg: w.SaveMyChat.background };
 }
 
 function copilotTab() {
@@ -127,5 +135,38 @@ describe("background: prototypes", () => {
 		const present = await bg.ask(7, "save-my-chat:present");
 		expect(present).toMatchObject({ id: "github-copilot", prototype: true });
 		expect(present.error).toMatch(/reload the page/);
+	});
+});
+
+describe("background: the library", () => {
+	const page = {
+		format: "save-my-chat/0",
+		source: { reader: "google-ai-mode", service: "google.com/search", url: "https://www.google.com/search?q=a&udm=50" },
+		title: "Turtles",
+		savedAt: "2026-11-28T09:00:00.000Z",
+		turns: [
+			{ role: "user", text: "Turtles?" },
+			{ role: "assistant", text: "Slow." },
+		],
+	};
+
+	it("keeps what was saved, lists it, saves it again from its copy, forgets it", async () => {
+		const { calls, send } = background({ url: page.source.url, page });
+		expect(await send({ type: "save-my-chat:save", tabId: 7, as: "md" })).toMatchObject({ title: "Turtles", turns: 2 });
+		const [entry] = await send({ type: "save-my-chat:library" });
+		expect(entry).toMatchObject({ title: "Turtles", turns: 2, saves: 1 });
+		await send({ type: "save-my-chat:library-save", key: entry.key, as: "json" });
+		expect(calls.downloads).toEqual([
+			"save-my-chat/google-ai-mode/2026-11-28-turtles.md",
+			"save-my-chat/google-ai-mode/2026-11-28-turtles.json",
+		]);
+		expect(
+			await send({ type: "save-my-chat:since", reader: "google-ai-mode", url: page.source.url, turns: 5 }),
+		).toMatchObject({
+			grew: 3,
+		});
+		await send({ type: "save-my-chat:library-forget", key: entry.key });
+		expect(await send({ type: "save-my-chat:library" })).toEqual([]);
+		await expect(send({ type: "save-my-chat:library-save", key: entry.key })).rejects.toThrow(/not in the library/);
 	});
 });
