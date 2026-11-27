@@ -14,6 +14,9 @@ export function load(files, { html = "<!doctype html><body></body>", url = "http
 	return dom.window;
 }
 
+// a file of src/ as text, to eval into a window that load() made
+load.source = (file) => readFileSync(new URL(file, SRC), "utf8");
+
 export function fixture(name) {
 	return readFileSync(new URL(`fixtures/${name}`, import.meta.url), "utf8");
 }
