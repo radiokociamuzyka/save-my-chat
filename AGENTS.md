@@ -93,6 +93,9 @@ review. Flag as P1 anything that breaks a rule above.
   `src/vendor/` equals its npm packages (`tests/vendor.test.js`); breaking
   changes of a major bump are checked against how this code uses it; no
   new dependency, permission, host or network request rides along.
+- **Known lint findings** (`scripts/lint.mjs` `KNOWN`): each one exact
+  (code, file, message), with its reason and almanac case; an entry that
+  excuses a real problem, or a rule turned off instead, is P1.
 - **Versions** change only by the hook or the merge driver; a merge that
   bumps or reformats a JSON file is a bug (almanac: version-hook-merges).
 - **The owner's words** stay word for word in `docs/changelog/`; nothing
@@ -162,7 +165,7 @@ stamps the format, source and time. The format is described in
 | `task run` | Firefox with the extension loaded, reloads on save (`web-ext run`) |
 | `task check` | Biome, changes nothing |
 | `task format` | Biome with safe fixes |
-| `task lint:ext` | `web-ext lint` (AMO's validator) |
+| `task lint:ext` | `web-ext lint` (AMO's validator), warnings as errors, but the false positives named one by one in `scripts/lint.mjs` |
 | `task test` | vitest |
 | `task verify` | check, lint:ext, test — run before a step is reported done |
 | `task build` | the batch (Q10): dependencies into `src/vendor/`, `readers.js` and host permissions from `chats.yaml`, the `.zip` into `dist/` |
