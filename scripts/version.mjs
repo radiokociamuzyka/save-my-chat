@@ -82,7 +82,22 @@ const git = (...args) => execFileSync("git", args, { cwd: ROOT, encoding: "utf8"
 export const matches = (branch, pattern) =>
 	pattern.endsWith("*") ? branch.startsWith(pattern.slice(0, -1)) : branch === pattern;
 
+// a merge stopped by a conflict (or a refused message) and concluded with
+// `git commit` runs pre-commit as well: a merge does not bump
+const merging = () => {
+	try {
+		git("rev-parse", "-q", "--verify", "MERGE_HEAD");
+		return true;
+	} catch {
+		return false;
+	}
+};
+
 function bumpCommit() {
+	if (merging()) {
+		console.log("version: a merge does not bump");
+		return;
+	}
 	const commits = readJson(at(".github/bos.json")).versioning?.commits ?? {};
 	const branch = git("rev-parse", "--abbrev-ref", "HEAD");
 	if (!(commits.branches ?? []).some((pattern) => matches(branch, pattern))) {
