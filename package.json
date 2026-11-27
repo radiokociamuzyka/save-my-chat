@@ -1,6 +1,6 @@
 {
   "name": "save-my-chat",
-  "version": "0.4.10",
+  "version": "0.4.11",
   "private": true,
   "description": "Firefox extension to export your AI chat history out of webapps and save it on your local machine in clear unified formatting",
   "repository": "github:radiokociamuzyka/save-my-chat",
@@ -13,30 +13,39 @@
   "scripts": {
     "check": "biome check .",
     "format": "biome check --write .",
-    "lint:ext": "node scripts/lint.mjs",
+    "lint:ext": "npm run extension && node scripts/lint.mjs",
     "test": "vitest run",
     "verify": "npm run vendor && npm run check && npm run lint:ext && vitest run",
-    "start": "npm run vendor && web-ext run",
-    "build": "npm run vendor && npm run chats && web-ext build --overwrite-dest",
+    "start": "npm run vendor && npm run extension && node scripts/run.mjs",
+    "build": "npm run vendor && npm run chats && npm run extension && web-ext build --overwrite-dest",
     "prepare": "husky",
     "vendor": "node scripts/vendor.mjs",
-    "chats": "node scripts/chats.mjs"
+    "chats": "node scripts/chats.mjs",
+    "extension": "vite build"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.9",
     "@commitlint/cli": "21.2.4",
     "@commitlint/config-conventional": "21.2.4",
+    "@vitejs/plugin-vue": "6.0.11",
+    "@vue/test-utils": "2.6.0",
     "husky": "9.1.7",
     "jsdom": "31.0.1",
+    "vite": "8.4.0",
     "vitest": "5.1.2",
     "web-ext": "10.8.0",
     "yaml": "2.9.1"
   },
   "dependencies": {
+    "bulma": "1.0.4",
     "turndown": "7.2.5",
-    "turndown-plugin-gfm": "1.0.2"
+    "turndown-plugin-gfm": "1.0.2",
+    "vue": "3.5.46"
   },
   "vendor": {
+    "bulma": {
+      "LICENSE": "bulma.LICENSE"
+    },
     "turndown": {
       "dist/turndown.js": "turndown.js",
       "LICENSE": "turndown.LICENSE"
@@ -44,6 +53,9 @@
     "turndown-plugin-gfm": {
       "dist/turndown-plugin-gfm.js": "turndown-plugin-gfm.js",
       "LICENSE": "turndown-plugin-gfm.LICENSE"
+    },
+    "vue": {
+      "LICENSE": "vue.LICENSE"
     }
   }
 }
