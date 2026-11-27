@@ -23,3 +23,4 @@ solved gets its case here, so the next one is recognised faster.
 - [webdriver-moz-extension](cataclistics/webdriver-moz-extension.md): WebDriver may not open the extension's own pages
 - [vite-glob-before-imports](cataclistics/vite-glob-before-imports.md): a glob's imports run before the imports written above it
 - [ignored-site-dir](cataclistics/ignored-site-dir.md): the public site's folder was ignored as MkDocs' output
+- [shims-with-eval](cataclistics/shims-with-eval.md): a dependency's shims brought eval into the build
