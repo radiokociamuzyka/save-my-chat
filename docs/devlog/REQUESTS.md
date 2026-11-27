@@ -14,27 +14,24 @@ labelled `request` (`task github:devlog`), closed when it leaves this file.
 
 ---
 
-## RR7. Gathering, and the new readers, tried on the live webapps
+## RR8. The second try: gathering in its own window, Claude's rows, what the readers see in front of you
 
-*Why:* phase 5's gathering and the readers of ChatGPT, Claude and Gemini
-are tested on made-up pages and with Firefox's APIs played by the tests;
-none has met a live webapp, and agents have no account there. The five
-other planned webapps (Microsoft Copilot, Perplexity, Mistral Le Chat,
-DeepSeek, HuggingChat) wait for their pages' structure, as Copilot's
-reader waited for your snippet.
+*Why:* RR7 found lists seen and chats not read on Claude, ChatGPT and
+Gemini, and AI Mode listing nothing. Gathering now opens its chats in a
+window of its own, where the tab is shown (a background tab may never
+draw a chat), and scrolls lists and chats until they are whole; Claude
+reads your `[data-perf-row]` rows. Whether ChatGPT's and Gemini's
+selectors were the trouble too can only be seen on a chat in front of
+you.
 
 *How:*
-1. With this release: on GitHub Copilot, open the toolbar button on a
-   page with the sidebar of your chats. Does it say *This page lists N
-   chats*? **Gather them into the library...**, gather two or three:
-   does each line end *gathered*, and the Library show them? Then
-   **Back up all as .zip**: does the zip open, with `library.json`?
-2. In the options' **Readers** tab, **Allow** the ones you use of
-   ChatGPT, Claude and Gemini. On a chat there, open the toolbar button:
-   if it sees no messages or the wrong ones, **Copy report** under
-   *What the reader saw* and paste it here (it holds selectors and
-   counts, no text of the chat).
-3. For any of the five others you use: in a chat of yours, the
-   developer tools (F12), right-click one of your messages and one
-   answer, **Copy → Outer HTML**, replace the text with anything, and
-   paste them here or into `src/readers/drafted-snippets/`.
+1. With this release, gather a few chats on Claude, ChatGPT or Gemini.
+   Does each line end *gathered*? On a list of 40 or more, does the
+   popup find them all after its scrolling?
+2. On one chat of ChatGPT, Gemini and Claude each, in front of you: open
+   the toolbar button. If it sees no messages, **Copy report** under
+   *What the reader saw* and paste it here (selectors and counts, no
+   text of the chat). For Claude: what value does `data-perf-row` hold
+   on your messages and on Claude's (F12, any row)?
+3. AI Mode: where are your past AI Mode chats listed, and are they
+   links? An item's **Copy → Outer HTML**, text replaced, is enough.

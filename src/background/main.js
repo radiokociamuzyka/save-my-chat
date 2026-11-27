@@ -135,7 +135,9 @@
 				prototype: true,
 				error: error.message,
 			}));
-		if (proto) return askPrototype(tabId, type, 5000, extra);
+		// loading a whole list or chat scrolls and waits: minutes, not seconds
+		const long = type === "save-my-chat:load" || extra.load;
+		if (proto) return askPrototype(tabId, type, long ? 600_000 : 5000, extra);
 		try {
 			return await browser.tabs.sendMessage(tabId, { ...extra, type });
 		} catch {
@@ -180,11 +182,12 @@
 		return SMC.defaults.find((r) => r.matches.some((m) => SMC.matches(m, url))) ?? null;
 	}
 
-	// The chats a tab lists, each with when it was saved, if it was: { reader, name, chats }
-	async function list({ tabId }) {
+	// The chats a tab lists, each with when it was saved, if it was: { reader, name, chats };
+	// load: the page's list scrolled to its end first, until no more chats come (RR7)
+	async function list({ tabId, load = false }) {
 		const reader = await defaultOf(tabId);
 		if (!reader) return null;
-		const chats = (await ask(tabId, "save-my-chat:list", { patterns: reader.chats ?? [] })) ?? [];
+		const chats = (await ask(tabId, "save-my-chat:list", { patterns: reader.chats ?? [], load })) ?? [];
 		const index = await library.entries();
 		return {
 			reader: reader.id,
@@ -255,6 +258,7 @@
 		if (msg?.type === "save-my-chat:since") return library.since(msg.reader, msg.url, msg.turns);
 		if (msg?.type === "save-my-chat:list") return list(msg).catch(() => null);
 		if (msg?.type === "save-my-chat:collect") return collect(msg);
+		if (msg?.type === "save-my-chat:load") return ask(msg.tabId, msg.type);
 	});
 
 	SMC.background = { register, ask, enabledReaders, prototypeOf, list, collect }; // for tests

@@ -1,0 +1,1 @@
+Array.from(document.querySelectorAll("[data-perf-row]")).map((x)=>[(x.getAttribute("data-perf-row")),x.innerText])
