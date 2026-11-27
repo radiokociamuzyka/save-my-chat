@@ -20,6 +20,7 @@ import sys
 import time
 from pathlib import Path
 
+sys.dont_write_bytecode = True  # importing devlog.py leaves no __pycache__ behind
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import devlog  # noqa: E402  the same reading of the devlog, and gh()
 
