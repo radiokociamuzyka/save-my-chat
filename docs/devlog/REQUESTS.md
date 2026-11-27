@@ -12,23 +12,26 @@ Once reported, the owner's words move word for word into
 file. Numbers are given once and never reused. Each RR is also an issue,
 labelled `request` (`task github:devlog`), closed when it leaves this file.
 
-## RR4. The library tried in Firefox
+## RR5. The next AMO upload with its source; the Vue popup tried
 
-*Why:* the library (PP1) keeps a copy of each saved chat in Firefox's
-storage and shows it in the popup and the options; tested with storage
-stubbed only. Its form waits for Q12, but what it keeps and says can be
-checked now.
+*Why:* from this release on, the popup is built by Vite (Q12), so AMO
+asks every new version for its source code. v0.4.6, already waiting, was
+plain and needs none. And the popup is rebuilt in Vue and Bulma: tested
+mounted in jsdom and seen in Chromium with Firefox's APIs stubbed, never
+in Firefox.
 
-*How:* on the release of this pull request:
-1. Save a Copilot or AI Mode chat. In the options, **Library**: is it
-   there, with its title, messages and date?
-2. Ask one more question in that chat, open the popup: does it say
-   "Saved on … with N messages: 2 new since."? Save again: is it still one
-   entry, "(2 times)"?
-3. In the library, **Markdown** and **JSON**: do the files land in your
-   downloads? Search a word from the chat: is it found?
-4. **Forget** it: is it gone, and does the popup no longer say "Saved on"?
+*How:*
+1. In Firefox, with this release: open the popup on a Copilot or AI Mode
+   chat. Does it look right (light and dark), name the reader, save both
+   formats, show "What the reader saw" and copy it? Right-click the
+   toolbar button: does **Library and settings** open the options?
+2. When you upload this version to AMO: to "Do you need to submit source
+   code?" answer **Yes**, and upload `save-my-chat-<version>-source.zip`
+   from the release's assets; in the notes to the reviewer you can point
+   to the README's "Building from source". (If AMO later signs the listed
+   versions through its API, `release.sh` could do this by itself: say
+   so, and Cleo asks how in a Q.)
 
-Report what you saw.
+Report what you saw, and whether AMO took the source.
 
 ---

@@ -22,8 +22,11 @@ same whichever service it came from.
    know yet.
 4. **One unified format.** Markdown for people, JSON for tools, both carrying
    the same conversation: source, title, time, and turns with their roles.
-5. **Plain code AMO can read.** No bundler, no remote code, no `eval`; user
-   prototypes run through Firefox's own `userScripts` API.
+5. **Code AMO can read.** No remote code, no `eval`; user prototypes run
+   through Firefox's own `userScripts` API. The pages are built from Vue
+   files by Vite (Q12), not minified, and every version goes to AMO with
+   its source and how to build it; content scripts and the background stay
+   plain JavaScript, run as written.
 
 ## The idea of each phase
 
@@ -46,7 +49,8 @@ same whichever service it came from.
   real Firefox. A build step comes with it, if needed (Q6). The saved
   chats become a library (PP1): an index of what was saved, and an
   explorer of the stored files on ZenFS with git in it (isomorphic-git,
-  Q8), and a button making a chat a gist (Octokit, Q9).
+  Q8), and a button making a chat a gist (Octokit, Q9). A richer viewer may later hand a
+  saved chat to Obsidian through its `obsidian://` links (Q13).
 - **Phase 5, more webapps.** New default readers (PP2), each with a fixture,
   declared first in `resources/data/chats.yaml` with their domains and
   conversation addresses (Q10).

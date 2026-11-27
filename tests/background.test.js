@@ -19,7 +19,7 @@ const event = () => {
 function background({ granted = true, stored = {}, url = "https://github.com/copilot/c/1", tabWorld, page } = {}) {
 	const w = load(["core/kit.js", "core/markdown.js", "core/readers.js", "core/library.js"]);
 	const data = structuredClone(stored);
-	const calls = { contentScripts: [], userScripts: [], world: null, executed: [], downloads: [] };
+	const calls = { contentScripts: [], userScripts: [], world: null, executed: [], downloads: [], menus: [], opened: 0 };
 	w.URL.createObjectURL = () => "blob:x";
 	w.URL.revokeObjectURL = () => {};
 	const onUserScriptMessage = event();
@@ -32,7 +32,14 @@ function background({ granted = true, stored = {}, url = "https://github.com/cop
 			},
 			onChanged: event(),
 		},
-		runtime: { onInstalled: event(), onStartup: event(), onMessage: event(), onUserScriptMessage },
+		runtime: {
+			onInstalled: event(),
+			onStartup: event(),
+			onMessage: event(),
+			onUserScriptMessage,
+			openOptionsPage: async () => calls.opened++,
+		},
+		menus: { create: (item) => calls.menus.push(item), onClicked: event() },
 		permissions: { contains: async () => granted, onAdded: event(), onRemoved: event() },
 		tabs: {
 			get: async () => ({ url }),
@@ -168,5 +175,15 @@ describe("background: the library", () => {
 		await send({ type: "save-my-chat:library-forget", key: entry.key });
 		expect(await send({ type: "save-my-chat:library" })).toEqual([]);
 		await expect(send({ type: "save-my-chat:library-save", key: entry.key })).rejects.toThrow(/not in the library/);
+	});
+});
+
+describe("background: the toolbar button's menu", () => {
+	it("offers the library and settings, and opens them", async () => {
+		const { w, calls } = background();
+		for (const f of w.browser.runtime.onInstalled.listeners) f({ reason: "install" });
+		expect(calls.menus).toEqual([{ id: "smc-options", title: "Library and settings", contexts: ["action"] }]);
+		w.browser.menus.onClicked.listeners[0]({ menuItemId: "smc-options" });
+		expect(calls.opened).toBe(1);
 	});
 });

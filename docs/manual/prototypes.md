@@ -11,8 +11,8 @@ allow once. Nothing about them leaves your machine.
 
 ## Making one
 
-1. Open the extension's options (`about:addons`, save-my-chat,
-   **Preferences**) and find **Prototypes**.
+1. Open the extension's options (right-click the toolbar button,
+   **Library and settings**) and find **Prototypes**.
 2. Click **Allow user scripts** and accept Firefox's question. Until you
    do, the defaults run and your prototypes wait.
 3. Click **Make a prototype of …** under the reader you want to change. Its

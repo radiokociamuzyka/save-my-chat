@@ -175,6 +175,19 @@
 		return { title: c.title, turns: c.turns.length };
 	}
 
+	// The toolbar button's context menu: the options page (the library, readers,
+	// prototypes), otherwise three clicks away in about:addons (Sett, RR4).
+	const MENU = "smc-options";
+	function menu() {
+		browser.menus.create({ id: MENU, title: "Library and settings", contexts: ["action"] }, () => {
+			void browser.runtime.lastError; // made already: an event page keeps its menus
+		});
+	}
+	browser.menus.onClicked.addListener((info) => {
+		if (info.menuItemId === MENU) browser.runtime.openOptionsPage();
+	});
+
+	browser.runtime.onInstalled.addListener(menu);
 	browser.runtime.onInstalled.addListener(register);
 	browser.runtime.onStartup.addListener(register);
 	browser.storage.onChanged.addListener((changes) => {
