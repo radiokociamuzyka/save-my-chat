@@ -10,7 +10,7 @@ import { defineConfig } from "vite";
 
 const SRC = new URL("src/", import.meta.url).pathname;
 const OUT = new URL("dist/extension/", import.meta.url).pathname;
-export const PAGES = ["popup"];
+export const PAGES = ["popup", "options"];
 // not part of the extension: Sett's snippets (Q5)
 const LEFT_OUT = ["readers/drafted-snippets"];
 
@@ -60,6 +60,11 @@ export default defineConfig({
 			output: {
 				entryFileNames: "[name]/[name].js",
 				chunkFileNames: "chunks/[name].js",
+				// what the pages share in chunks of their own, under names that stay: Vue, Bulma's CSS
+				manualChunks: (id) => {
+					if (/\/node_modules\/(@vue|vue)\/|plugin-vue:export-helper/.test(id)) return "vue";
+					if (id.includes("/node_modules/bulma/")) return "bulma";
+				},
 				assetFileNames: "assets/[name][extname]",
 			},
 		},

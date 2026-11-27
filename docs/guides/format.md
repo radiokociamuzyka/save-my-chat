@@ -45,4 +45,8 @@ The same conversation as a `.md` file: YAML front matter with the fields
 above, the title as `#`, then one `## User` / `## Assistant` section per
 turn (`## Assistant (GPT-5)` when the author is known).
 
+Read back (the viewer, `src/viewer/conversation.js`), a section starts at
+such a line after a blank line: a message whose own text holds `## User`
+after a blank line reads as two. The JSON has no such limit.
+
 Files go to `Downloads/save-my-chat/<reader>/<YYYY-MM-DD>-<title>.<md|json>`.

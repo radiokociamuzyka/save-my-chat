@@ -36,15 +36,24 @@ role in a row. The file is saved anyway; see
 ## Readers on and off
 
 The extension's options (right-click the toolbar button → **Library and
-settings**, or **about:addons** → save-my-chat → *Preferences*) list every reader with the addresses it works on. Turn off the ones you do
-not want injected into those pages.
+settings**, or **about:addons** → save-my-chat → *Preferences*) open on
+the library; the **Readers** tab lists every reader with the addresses it
+works on. Turn off the ones you do not want injected into those pages.
 
 ## The library
 
-Every chat you save is also kept in the extension's library: open the
-extension's options, **Library**. There you can search titles and
-messages, save a chat again as Markdown or JSON (the copy from when you
-last saved it), or **Forget** it.
+Every chat you save is also kept in the extension's library, the first
+tab of the extension's options. There you can search titles and
+messages, **Read** a chat in the viewer, save it again as Markdown or JSON
+(the copy from when you last saved it), or **Forget** it.
+
+## The viewer
+
+The **Viewer** tab shows a chat of the library, or a file you saved
+before (**Open a saved file**, a `.md` or `.json` of save-my-chat): each
+message with its code, tables and links. Images in a chat are named, not
+loaded, since the extension makes no requests of its own. The file is
+read by the page; nothing of it is kept.
 
 When you open the popup on a chat you saved before, it says when, and how
 many messages it gained since, so you know when to save it again.
