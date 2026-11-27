@@ -27,6 +27,7 @@ machine. That is all it does.
 | `scripting` | to put a reader into such a page |
 | `storage` | its settings, your prototypes, the library |
 | `downloads` | to write the file you save |
+| `menus` | the toolbar button's own menu entry, **Library and settings** |
 | `userScripts` (optional, asked only when you allow it) | your own readers, [prototypes](prototypes.md) |
 
 A planned button will make a saved chat a GitHub gist; it will act only

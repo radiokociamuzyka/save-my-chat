@@ -13,4 +13,9 @@ are unsigned and installed as a temporary add-on (Sett, 2026-11-27). The idea of
 | M3: Your own readers | 3 | 0.3.x |
 | M4: A face of its own | 4 | 0.4.x |
 | M5: More webapps | 5 | 0.5.x |
-| M6: Listed on AMO | 6 | 1.0.0 |
+| M6: Ready for everyone on AMO | 6 | 1.0.0 |
+
+Listed on addons.mozilla.org earlier than planned: Sett uploaded v0.4.6
+on 2026-11-27, for review (https://addons.mozilla.org/firefox/addon/save-my-chat/).
+Versions before 1.0.0 are uploaded by Sett by hand, each with its source
+archive (Q12's build step); 1.0.0 stays the version meant for everyone.

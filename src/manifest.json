@@ -1,7 +1,7 @@
 {
 	"manifest_version": 3,
 	"name": "save-my-chat",
-	"version": "0.4.6",
+	"version": "0.4.14",
 	"description": "Saves a conversation from an AI chat webapp on your machine, in one clear unified format.",
 	"background": {
 		"scripts": ["core/kit.js", "core/markdown.js", "core/readers.js", "core/library.js", "background/main.js"]
@@ -14,7 +14,7 @@
 		"page": "options/options.html",
 		"open_in_tab": true
 	},
-	"permissions": ["scripting", "storage", "downloads"],
+	"permissions": ["scripting", "storage", "downloads", "menus"],
 	"optional_permissions": ["userScripts"],
 	"host_permissions": ["https://www.google.com/*", "https://github.com/*"],
 	"browser_specific_settings": {

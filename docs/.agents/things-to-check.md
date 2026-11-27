@@ -66,3 +66,13 @@ point was added.
   only. The pages, wiki and feed workflows check out `master`, so after
   such a hotfix they show the version before the bump until the next
   release.
+- **2026-11-27. AMO and the release's unlisted signing.** `release.sh`
+  signs unlisted when `AMO_JWT_ISSUER` and `AMO_JWT_SECRET` are set. Now
+  that Sett uploads listed versions by hand, a version number would then
+  exist twice on AMO, which AMO refuses: the secrets must stay unset (they
+  are), or the release sign listed instead (a question for Sett first).
+- **2026-11-27. The Vue popup in Firefox (RR5).** Built by Vite, mounted in
+  jsdom and screenshot in Chromium with the APIs stubbed. Not seen: Firefox
+  under the extension's CSP (no inline script was emitted, the module
+  preload polyfill is off), Bulma's dark scheme in Firefox's popup panel,
+  the clipboard write.

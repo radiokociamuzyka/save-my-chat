@@ -35,8 +35,8 @@ role in a row. The file is saved anyway; see
 
 ## Readers on and off
 
-The extension's options (**about:addons** → save-my-chat → *Preferences*)
-list every reader with the addresses it works on. Turn off the ones you do
+The extension's options (right-click the toolbar button → **Library and
+settings**, or **about:addons** → save-my-chat → *Preferences*) list every reader with the addresses it works on. Turn off the ones you do
 not want injected into those pages.
 
 ## The library
