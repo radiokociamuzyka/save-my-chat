@@ -2,47 +2,10 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>save-my-chat: readers</title>
-		<link rel="stylesheet" href="options.css" />
+		<title>save-my-chat: library and settings</title>
 	</head>
 	<body>
-		<h1>Readers</h1>
-		<p>Each chat webapp has its own reader. Turn off the ones you do not want injected.</p>
-		<p>
-			Webapps rename their classes with their builds. When a reader stops seeing messages (the popup's
-			"What the reader saw" tells which part), put a CSS selector that finds them under that part, one per line:
-			yours are tried before the built-in ones and take effect on the next save, no update needed.
-		</p>
-		<ul id="readers"></ul>
-
-		<h2>Library</h2>
-		<p>
-			A copy of each chat you save is kept here, in Firefox's storage for this extension, so you can find it, save it
-			again, and see in the popup when it grew since. It never leaves your machine; Forget removes it.
-		</p>
-		<p><input type="search" id="library-search" placeholder="search titles and messages" /> <span id="library-status" role="status"></span></p>
-		<ul id="library"></ul>
-
-		<h2>Prototypes</h2>
-		<p>
-			A prototype is your own copy of a reader: change its code, and it runs in place of the default on the pages
-			you name, until you turn it off or delete it. Nothing leaves your machine; export them to keep or share.
-		</p>
-		<p>
-			<button type="button" id="allow" hidden>Allow user scripts</button>
-			<span id="allowed"></span>
-		</p>
-		<ul id="prototypes"></ul>
-		<p>
-			<button type="button" id="export">Export prototypes</button>
-			<label class="file">Import prototypes <input type="file" id="import" accept=".json,application/json" /></label>
-			<span id="prototypes-status" role="status"></span>
-		</p>
-		<!-- the kit and the default readers, for their built-in selectors only -->
-		<script src="../core/kit.js"></script>
-		<script src="../core/readers.js"></script>
-		<script src="options.js"></script>
-		<script src="prototypes.js"></script>
-		<script src="library.js"></script>
+		<div id="app"></div>
+		<script type="module" src="./main.js"></script>
 	</body>
 </html>

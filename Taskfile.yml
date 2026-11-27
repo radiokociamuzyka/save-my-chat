@@ -44,6 +44,11 @@ tasks:
     cmds:
       - npx vitest run {{.CLI_ARGS}}
 
+  test:firefox:
+    desc: the built extension in a real Firefox, Selenium and geckodriver (Q14); screenshots in dist/shots/
+    cmds:
+      - npm run test:firefox -- {{.CLI_ARGS}}
+
   verify:
     desc: check, lint:ext, test - run before a step is reported done
     cmds:

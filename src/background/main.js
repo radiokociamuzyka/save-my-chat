@@ -208,6 +208,7 @@
 		if (msg?.type === "save-my-chat:defaults") return Promise.resolve(SMC.defaults);
 		if (msg?.type === "save-my-chat:library") return library.list(msg.query);
 		if (msg?.type === "save-my-chat:library-save") return saveAgain(msg);
+		if (msg?.type === "save-my-chat:library-chat") return library.chat(msg.key);
 		if (msg?.type === "save-my-chat:library-forget") return library.forget(msg.key);
 		if (msg?.type === "save-my-chat:since") return library.since(msg.reader, msg.url, msg.turns);
 	});
