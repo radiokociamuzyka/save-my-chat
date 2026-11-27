@@ -104,8 +104,11 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 - [x] The conversations a webapp lists found on its page: links matching the chat's addresses in `chats.yaml`, or the reader's own `list()`
 - [x] Gathering them one by one into the library, at the user's click: each opened in a background tab, read, closed; progress, a stop, then the zip
 - [x] Optional readers: a reader shipped with its hosts an optional permission, granted from the Readers tab (`status: optional`)
-- [x] Readers of ChatGPT, Claude and Gemini, optional, from their known page structure (unverified)
+- [x] Readers of ChatGPT, Claude and Gemini, optional, from their known page structure (unverified); Claude refitted to Sett's rows (RR7)
 - [ ] A reader for each other `planned` chat of `resources/data/chats.yaml` (PP2): Microsoft Copilot, Perplexity, Mistral Le Chat, DeepSeek, HuggingChat, from their pages' structure (RR7)
+- [x] Lists and chats loaded whole before they are read: scrolled to their end, load and wait, until no more come (RR7)
+- [x] Gathering in a window of its own, where the chat is shown (RR7)
+- [ ] Readers of the webapps of Sett's drafts: Google AI Studio, Grok (grok.com, x.com), NotebookLM, and Open WebUI and a Gradio space after Q15
 - [ ] Each one's patterns checked on the live webapp, `verified: true`
 
 ## Phase 6: release

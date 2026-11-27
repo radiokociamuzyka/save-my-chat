@@ -169,7 +169,26 @@ describe("readers", () => {
 		]);
 	});
 
-	it("claude reads the user's messages and Claude's answers, older answers too", async () => {
+	it("claude reads Sett's [data-perf-row] rows, a row's role by its value or the user's message in it", async () => {
+		const c = await read(
+			"claude",
+			"https://claude.ai/chat/1",
+			`<title>Rows - Claude</title><body>
+			<div data-perf-row="user"><p>Named?</p></div>
+			<div data-perf-row="assistant"><p>Yes.</p><div data-perf-row="inner">part</div></div>
+			<div data-perf-row="7"><div data-testid="user-message"><p>Not named?</p></div><button>Edit</button></div>
+			<div data-perf-row="8"><p>Then by what is <strong>inside</strong>.</p></div></body>`,
+		);
+		expect(c.title).toBe("Rows");
+		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual([
+			"user: Named?",
+			"assistant: Yes.\n\npart",
+			"user: Not named?",
+			"assistant: Then by what is **inside**.",
+		]);
+	});
+
+	it("claude reads the older layout without rows: the user's messages and Claude's answers", async () => {
 		const c = await read(
 			"claude",
 			"https://claude.ai/chat/1",

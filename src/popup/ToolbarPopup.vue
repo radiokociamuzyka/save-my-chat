@@ -65,9 +65,14 @@ const listLine = computed(() => {
 	return `This page lists ${chats.length} ${chats.length === 1 ? "chat" : "chats"}${saved ? `, ${saved} saved already` : ""}.`;
 });
 
-// the list handed to the options' Gather tab, which opens and reads each chat (gather.js);
-// the raw object, as storage's structured clone refuses Vue's proxy
+// The whole list (the page's list scrolled to its end until no more chats come, RR7)
+// handed to the options' Gather tab, which opens and reads each chat (gather.js); the
+// raw object, as storage's structured clone refuses Vue's proxy.
+const loading = ref(false);
 async function gatherAll() {
+	loading.value = true;
+	const whole = await ask({ type: "save-my-chat:list", tabId: tab.id, load: true });
+	if (whole?.chats.length) listed.value = whole;
 	await browser.storage.local.set({ gathering: { ...structuredClone(toRaw(listed.value)), from: tab.url } });
 	await browser.tabs.create({ url: browser.runtime.getURL("options/options.html#gather") });
 	window.close();
@@ -97,9 +102,17 @@ const COLOR = { warning: "has-text-warning-dark", note: "has-text-grey", grew: "
 		</p>
 		<div v-if="listLine" class="listed mt-2">
 			<p class="is-size-7 mb-1">{{ listLine }}</p>
-			<button type="button" class="button is-small is-fullwidth gather" @click="gatherAll">
+			<button
+				type="button"
+				class="button is-small is-fullwidth gather"
+				:class="{ 'is-loading': loading }"
+				@click="gatherAll"
+			>
 				Gather them into the library...
 			</button>
+			<p v-if="loading" class="is-size-7 has-text-grey mt-1 loading">
+				Scrolling the page's list to its end, so all of it is found...
+			</p>
 		</div>
 		<details v-if="seen" class="mt-2">
 			<summary class="is-size-7">What the reader saw</summary>

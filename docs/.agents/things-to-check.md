@@ -96,6 +96,13 @@ point was added.
   (`THIRD-PARTY.md`, `licenses/GPL-3.0.txt`). Not checked: how AMO's
   reviewers read an LGPL library in a listed add-on; none has said a
   word on it so far.
+- **2026-11-27. Gathering, after RR7: lists seen, chats not read.** Now
+  in a window of its own, and lists and chats scrolled until whole
+  (load and wait, 1.2 s a round, two quiet rounds). Not known: whether
+  the window was the trouble or the selectors were; whether a webapp
+  that keeps only the visible messages in its page (a virtual list)
+  loses the ones scrolled past; whether a window opened unfocused stays
+  behind on every desktop. RR8 asks.
 - **2026-11-27. Gathering, never run on a live webapp.** Tested with
   Firefox's APIs stubbed and on the site's demo only. Not known yet:
   whether GitHub Copilot's sidebar holds plain links to

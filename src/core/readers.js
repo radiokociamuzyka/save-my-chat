@@ -10,7 +10,7 @@
 			id: "google-ai-mode",
 			name: "Google Search, AI Mode",
 			matches: ["https://www.google.com/search*"],
-			chats: ["https://www.google.com/search?q=*&udm=50*"],
+			chats: ["https://www.google.com/search?*udm=50*"],
 			file: "readers/google-ai-mode.js",
 		},
 		{

@@ -62,10 +62,19 @@ const LISTED = [
 	{ url: "https://github.com/copilot/c/demo-2", title: "Name this variable" },
 	{ url: "https://github.com/copilot/c/demo-3", title: "A regex for a date" },
 ];
-// the background tabs gathering opens: here only a number and the chat it shows
+// the tab gathering opens in its window: here only a number and the chat it shows
 const opened = new Map();
 const updated = new Set();
 let nextTab = 2;
+
+// a gathering tab "loads" a chat of the list
+function show(id, url) {
+	opened.set(id, LISTED.find((c) => c.url === url) ?? { url, title: "A chat" });
+	setTimeout(() => {
+		for (const heard of updated) heard(id, { status: "complete" });
+	}, 300);
+	return { id, url };
+}
 
 function gathered(tabId) {
 	const { url, title } = opened.get(tabId);
@@ -125,6 +134,8 @@ function answer(msg) {
 			};
 		case "save-my-chat:collect":
 			return gathered(msg.tabId);
+		case "save-my-chat:load":
+			return 2; // the made-up chat has no older messages to bring in
 		case "save-my-chat:library-chat":
 			return data[`chat:${msg.key}`] ?? null;
 		case "save-my-chat:library-forget":
@@ -143,21 +154,18 @@ globalThis.browser = {
 	},
 	tabs: {
 		query: async () => [{ id: 1, url: CHATS[0].source.url }],
-		// the popup's Gather opens the options' tab of it; gathering opens a chat's page
+		// the popup's Gather opens the options' tab of it
 		create: async ({ url }) => {
-			if (url.endsWith("#gather")) {
-				location.hash = "#gather";
-				return { id: 0 };
-			}
-			const id = nextTab++;
-			opened.set(id, LISTED.find((c) => c.url === url) ?? { url, title: "A chat" });
-			setTimeout(() => {
-				for (const heard of updated) heard(id, { status: "complete" });
-			}, 300);
-			return { id, url };
+			if (url.endsWith("#gather")) location.hash = "#gather";
+			return { id: 0 };
 		},
+		// gathering sends the one tab of its window to the next chat
+		update: async (id, { url }) => show(id, url),
 		onUpdated: { addListener: (f) => updated.add(f), removeListener: (f) => updated.delete(f) },
-		remove: async (id) => opened.delete(id),
+	},
+	windows: {
+		create: async ({ url }) => ({ id: 1, tabs: [show(nextTab++, url)] }),
+		remove: async () => opened.clear(),
 	},
 	storage: {
 		local: {

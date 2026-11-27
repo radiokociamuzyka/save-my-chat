@@ -10,6 +10,7 @@
 # matches:  match patterns of the pages a reader is injected into
 #           (https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/Match_patterns)
 # chats:    the address of one conversation; `*` is any id
+# snippet:  Sett's snippet in src/readers/drafted-snippets/ the reader is fitted from
 # verified: false until someone checked the patterns on the live webapp
 #
 # How this file reaches the extension, which runs plain JavaScript and reads no
@@ -23,7 +24,7 @@ chats:
     reader: readers/google-ai-mode.js
     domains: [www.google.com]
     matches: ["https://www.google.com/search*"]
-    chats: ["https://www.google.com/search?q=*&udm=50*"]
+    chats: ["https://www.google.com/search?*udm=50*"]
     note: a follow-up keeps the address of the first question; only udm=50 tells AI Mode apart
     verified: true
 
@@ -94,6 +95,7 @@ chats:
   - id: deepseek
     name: DeepSeek
     status: planned
+    snippet: drafted-snippets/deepseek-online.js
     domains: [chat.deepseek.com]
     matches: ["https://chat.deepseek.com/*"]
     chats: ["https://chat.deepseek.com/a/chat/s/*"]
@@ -105,4 +107,42 @@ chats:
     domains: [huggingface.co]
     matches: ["https://huggingface.co/chat/*"]
     chats: ["https://huggingface.co/chat/conversation/*"]
+    verified: false
+
+  # named by Sett's drafts (RR7, 2026-11-27), each waiting for its snippet
+  - id: google-ai-studio
+    name: Google AI Studio
+    status: planned
+    snippet: drafted-snippets/google-aistudio-chat.js
+    domains: [aistudio.google.com]
+    matches: ["https://aistudio.google.com/*"]
+    chats: ["https://aistudio.google.com/prompts/*"]
+    verified: false
+
+  - id: grok
+    name: Grok
+    status: planned
+    snippet: drafted-snippets/grok-com-grok.js
+    domains: [grok.com]
+    matches: ["https://grok.com/*"]
+    chats: ["https://grok.com/c/*"]
+    verified: false
+
+  - id: x-grok
+    name: Grok on X
+    status: planned
+    snippet: drafted-snippets/x-com-grok.js
+    domains: [x.com]
+    matches: ["https://x.com/i/grok*"]
+    chats: ["https://x.com/i/grok?conversation=*"]
+    verified: false
+
+  - id: notebooklm
+    name: NotebookLM
+    status: planned
+    snippet: drafted-snippets/notebook-lm-grabbing.js
+    domains: [notebooklm.google.com]
+    matches: ["https://notebooklm.google.com/*"]
+    chats: ["https://notebooklm.google.com/notebook/*"]
+    note: a notebook's chat beside its sources
     verified: false
