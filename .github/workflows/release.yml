@@ -3,6 +3,8 @@
 #   2. tag v<version> and the GitHub release with the packed extension, marked the latest
 #      (scripts/release/release.sh; a version released already gets a hotfix bump first)
 #   3. the release's tag (master, or its hotfix bump) merged back into development, so the version goes on from there
+#   4. the released zip submitted to AMO's listed channel with its source (scripts/release/amo.sh), the
+#      AMO_JWT_* secrets of the "releasing" environment; its failure leaves the release and the merge back as they are
 name: "release › master: tag, packed extension, back into development"
 
 on:
@@ -39,8 +41,6 @@ jobs:
         id: release
         env:
           GH_TOKEN: ${{ github.token }}
-          AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
-          AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
         run: scripts/release/release.sh
 
   back:
@@ -61,3 +61,23 @@ jobs:
           # the release's tag: master itself, or a hotfix bump on top of it that master never got
           git merge --no-ff "refs/tags/${{ needs.release.outputs.tag }}" -m "merge(master): ${{ needs.release.outputs.tag }} back into development"
           git push origin development
+
+  amo:
+    needs: release
+    runs-on: ubuntu-latest
+    environment: releasing
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with: { ref: "refs/tags/${{ needs.release.outputs.tag }}" }
+      - uses: actions/setup-node@v7
+        with: { node-version: 24, cache: npm }
+      - run: npm ci
+        env: { HUSKY: "0" }
+      - name: The released zip to AMO, listed, with its source
+        env:
+          GH_TOKEN: ${{ github.token }}
+          AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
+          AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+        run: scripts/release/amo.sh "${{ needs.release.outputs.tag }}"

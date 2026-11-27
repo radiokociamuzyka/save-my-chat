@@ -66,11 +66,15 @@ point was added.
   only. The pages, wiki and feed workflows check out `master`, so after
   such a hotfix they show the version before the bump until the next
   release.
-- **2026-11-27. AMO and the release's unlisted signing.** `release.sh`
-  signs unlisted when `AMO_JWT_ISSUER` and `AMO_JWT_SECRET` are set. Now
-  that Sett uploads listed versions by hand, a version number would then
-  exist twice on AMO, which AMO refuses: the secrets must stay unset (they
-  are), or the release sign listed instead (a question for Sett first).
+- **2026-11-27. The release to AMO (`amo.sh`).** The `amo` job of
+  `release.yml` sends the released zip, unpacked, to `web-ext sign
+  --channel listed` with the source archive and notes, not waiting for the
+  review. Checked here: the download of the assets, the unpacking, the
+  notes' JSON, the skip without secrets. Not run against AMO until the
+  first release after it (v0.4.15's own merge comes before it, uploaded
+  by hand or not at all). Not known: whether AMO takes `release_notes` as
+  a translated field this way, and how it treats a new version sent while
+  the one before still waits for review.
 - **2026-11-27. The Vue popup in Firefox (RR5).** Built by Vite, mounted in
   jsdom and screenshot in Chromium with the APIs stubbed. Not seen: Firefox
   under the extension's CSP (no inline script was emitted, the module
