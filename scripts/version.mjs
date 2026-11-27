@@ -37,12 +37,22 @@ export function next(version, kind) {
 	return `${x}.${y}.${z + 1}`;
 }
 
-// package.json, or package-lock.json (its root package too)
+// package.json, src/manifest.json or package-lock.json (its root package too).
+// Only the version's text is replaced: the merge driver must not reformat a
+// file (src/manifest.json is indented with tabs, its short arrays on one line).
+const VERSION = /("version":\s*")[^"]*(")/;
+export function withVersion(text, version) {
+	const json = JSON.parse(text);
+	let out = json.version === undefined ? text : text.replace(VERSION, `$1${version}$2`);
+	const root = out.indexOf('"": {');
+	if (json.packages?.[""] && root >= 0) out = out.slice(0, root) + out.slice(root).replace(VERSION, `$1${version}$2`);
+	const back = JSON.parse(out);
+	if (json.version !== undefined && back.version !== version) throw new Error("the version was not where expected");
+	return out;
+}
+
 function setVersion(path, version) {
-	const json = readJson(path);
-	json.version = version;
-	if (json.packages?.[""]) json.packages[""].version = version;
-	writeJson(path, json);
+	writeFileSync(path, withVersion(readFileSync(path, "utf8"), version));
 }
 
 function sync() {
