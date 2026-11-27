@@ -67,7 +67,9 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 - [ ] Read the Docs: the documentation of the project, without what the wiki holds
 - [ ] A static page of the project on the `github-pages` branch
 - [x] Workflow `devlog.yml`: the devlog synced on each push of it to `development`
-- [ ] Workflows: the gate of a pull request into `master`, the release
+- [x] Workflows: the release (`release.yml`) and the checks on every pull request into `master`
+- [ ] The checks required before a merge into `master` (branch protection, a repository setting: Sett)
+- [x] `task github:discussions` and `feed.yml`: the feed of #17 and the almanac's Q&A, written after each release
 
 ## Phase 3: prototypes
 
