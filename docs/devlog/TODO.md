@@ -68,19 +68,20 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 - [x] Read the Docs: the documentation of the project, without what the wiki holds - the manual and the guides (`mkdocs.yml`, `.readthedocs.yaml`, `task docs`)
 - [x] The documentation seen built on Read the Docs
 - [x] A static page of the project on the `github-pages` branch (`resources/pages/`, `task pages`, `pages.yml` after each release)
-- [ ] The page served by GitHub Pages (Pages set to deploy the `github-pages` branch: a repository setting, Sett)
+- [x] The page served by GitHub Pages (Pages set to deploy the `github-pages` branch: a repository setting, Sett)
 - [x] Workflow `devlog.yml`: the devlog synced on each push of it to `development`
 - [x] Workflows: the release (`release.yml`) and the checks on every pull request into `master`
-- [ ] The checks required before a merge into `master` (branch protection, a repository setting: Sett)
+- [ ] The checks required before a merge into `master` (branch protection, a repository setting: RR1)
 - [x] `task github:discussions` and `feed.yml`: the feed of #17 and the almanac's Q&A, written after each release
 
 ## Phase 3: prototypes
 
-- [ ] Options page: copy a default reader into an editor, save as a prototype in `storage.local`
-- [ ] `userScripts` permission asked from the options page (optional permission in Firefox)
-- [ ] Prototypes registered with `userScripts.register` in the `USER_SCRIPT` world, messaging on (`configureWorld`), re-registered on update
-- [ ] A prototype replaces its default for the same matches; turning it off brings the default back
-- [ ] Export and import of prototypes as files
+- [x] Options page: copy a default reader into an editor, save as a prototype in `storage.local`
+- [x] `userScripts` permission asked from the options page (optional permission in Firefox)
+- [x] Prototypes registered with `userScripts.register` in the `USER_SCRIPT` world, messaging on (`configureWorld`), re-registered on update
+- [x] A prototype replaces its default for the same matches; turning it off brings the default back
+- [x] Export and import of prototypes as files
+- [ ] Prototypes checked in a real Firefox: the permission, a change seen in the saved file, the default back when off (RR2)
 
 ## Phase 4: the frontend
 

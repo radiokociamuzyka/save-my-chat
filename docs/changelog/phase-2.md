@@ -45,3 +45,18 @@ in English and Polish, and the feed's third run posted the two missing
 release notes and the three missing almanac cases, with nothing refused.
 The address goes into the README, the wiki's Home and `mkdocs.yml`; next
 is the static page on `github-pages`.
+
+## 2026-11-27, the owner on RRs and phase 3 (the chat, word for word)
+
+> done... i think so at least. if nothing left more here then continue. any stuff that i should do as RRs (each RR is "requirement request" like that is on my side to be done, placed in separed file inside devlog) that reflects mechanics when instead of my inquiries makes you bring them as directives, RR is inquiry toward me that you need me to do that particular task for our work. this makes us equal toward planning and leading across project. begin phase 3 with that RR usage from now on.
+
+**Decision:** seen live: GitHub Pages serves the static page at
+https://radiokociamuzyka.github.io/save-my-chat/ and it is the
+repository's homepage. A new devlog file, `docs/devlog/REQUESTS.md`,
+holds requirement requests `RR<n>`: work on the owner's side that the
+agents need done, the mirror of INQUIRIES. The owner reports back in the
+chat or below its `---`; the report moves word for word into the
+changelog as `### RR<n>`, and the RR leaves the file. Like Q and PP, each
+RR becomes an issue (`task github:devlog`). The one item of phase 2 left,
+the checks required before merging into `master`, is a repository
+setting and becomes RR1. Phase 3 (prototypes) begins at `0.3.x`.

@@ -76,6 +76,19 @@ see [when a reader misses something](../manual/troubleshooting.md).
 ## Prototypes (phase 3)
 
 A prototype is the user's own copy of a reader, edited in the options page
-and stored in `storage.local`. It runs through Firefox's `userScripts` API
-in its own world, with the same kit loaded before it, and replaces the
-default reader with the same matches while it is on.
+(`src/options/prototypes.js`) and stored in `storage.local` (`prototypes`:
+`{ <id>: { id, name, from, matches, code, enabled } }`). With the optional
+`userScripts` permission granted, the background registers it in the
+`USER_SCRIPT` world: turndown, the kit, the user's code, then
+`core/bridge.js`. The default it came from (`from`) is not registered
+while it is on.
+
+That world can send messages but not be sent them. The background asks a
+question by a DOM event, `save-my-chat:ask` with `{ id, type }` as a JSON
+string, dispatched from the tab's isolated world; the bridge answers with
+`runtime.sendMessage`, heard as `runtime.onUserScriptMessage`. An answer
+whose id the background did not ask with is dropped. A user script starts
+with the page, so a tab open from before is told to reload.
+
+Selector overrides do not apply to prototypes: their selectors are in
+their code. User manual: [prototypes](../manual/prototypes.md).
