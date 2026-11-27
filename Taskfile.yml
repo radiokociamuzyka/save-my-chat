@@ -77,6 +77,11 @@ tasks:
     cmds:
       - node scripts/chats.mjs {{.CLI_ARGS}}
 
+  github:discussions:
+    desc: the devlog's news in GitHub Discussions - Announcements, Ideas per PP, almanac Q&A (-- --dry shows what it would write)
+    cmds:
+      - python3 scripts/github/discussions.py {{.CLI_ARGS}}
+
   github:devlog:
     desc: 'the devlog on GitHub - milestones of ROADMAP, an issue per phase, Q<n> and PP<n>, the board (-- --dry prints, -- --no-board skips the board)'
     cmds:
