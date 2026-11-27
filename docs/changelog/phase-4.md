@@ -61,3 +61,29 @@ address); Playwright tests the Astro site.
 reach (`about:addons`, the extension, Preferences): the toolbar button's
 context menu gets "Library and settings", opening it, through the
 `menus` API (a permission of its own, no host, nothing sent).
+
+### RR5 (issue #101, word for word)
+
+> okidoki
+>
+> #### DONE
+>
+> awaits for approval from mozilla now
+
+**Decision:** v0.4.14 is uploaded to AMO with its source archive and
+waits for Mozilla's review; the Vue popup is taken as working in Firefox.
+
+## 2026-11-27, the owner asks for AMO in CI/CD (chat, word for word)
+
+> done. check all around the repo and continue. also can we bring into CI/CD that procedures wit AMO? is there needed some kind of API token or ssh key? we need to automatize processes related with updates delivery in near future
+
+**Decision:** yes. AMO's signing API needs an API key and its secret
+(a JWT issuer and secret, made on AMO's "Manage API Keys" page), no SSH
+key. After each release, a job of `release.yml` (`scripts/release/amo.sh`)
+submits the version to AMO's listed channel: the very zip of the GitHub
+release, with its source archive, and the release notes. It does not wait
+for Mozilla's review, and while the secrets are unset it does nothing.
+The owner's merge of the pull request into `master` is the ask of rule 2
+for that upload. Setting the secrets is the owner's move: RR6. Once they
+are set, versions are no longer uploaded by hand (AMO takes a version
+number only once).
