@@ -1,8 +1,11 @@
 # The chat webapps save-my-chat knows: their domains and the address patterns
 # of their conversations (PP2, approved by Sett on 2026-11-27, issue #16).
 #
-# status:   default  - a reader ships with the extension (src/core/readers.js
-#                      lists exactly these, in this order: tests/chats.test.js)
+# status:   default  - a reader ships with the extension, its hosts asked at install
+#                      (src/core/readers.js lists these and the optional ones, in this
+#                      order: tests/chats.test.js)
+#           optional - a reader ships, its hosts an optional permission the user grants
+#                      in the Readers tab (phase 5)
 #           planned  - wanted (PP2), no reader yet
 # matches:  match patterns of the pages a reader is injected into
 #           (https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/Match_patterns)
@@ -36,26 +39,32 @@ chats:
 
   - id: chatgpt
     name: ChatGPT
-    status: planned
+    status: optional
+    reader: readers/chatgpt.js
     domains: [chatgpt.com]
     matches: ["https://chatgpt.com/*"]
     chats: ["https://chatgpt.com/c/*", "https://chatgpt.com/g/*/c/*"]
+    note: messages carry data-message-author-role, user or assistant (unverified)
     verified: false
 
   - id: claude
     name: Claude
-    status: planned
+    status: optional
+    reader: readers/claude.js
     domains: [claude.ai]
     matches: ["https://claude.ai/*"]
     chats: ["https://claude.ai/chat/*"]
+    note: user messages are [data-testid=user-message], answers .font-claude-response (unverified)
     verified: false
 
   - id: gemini
     name: Gemini
-    status: planned
+    status: optional
+    reader: readers/gemini.js
     domains: [gemini.google.com]
     matches: ["https://gemini.google.com/*"]
     chats: ["https://gemini.google.com/app/*"]
+    note: custom elements user-query (.query-text) and model-response (message-content) (unverified)
     verified: false
 
   - id: microsoft-copilot

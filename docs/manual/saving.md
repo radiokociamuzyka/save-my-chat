@@ -39,6 +39,11 @@ The extension's options (right-click the toolbar button → **Library and
 settings**, or **about:addons** → save-my-chat → *Preferences*) open on
 the library; the **Readers** tab lists every reader with the addresses it
 works on. Turn off the ones you do not want injected into those pages.
+The readers of ChatGPT, Claude and Gemini ask first: **Allow on
+chatgpt.com** (and so on) lets save-my-chat read that webapp's pages,
+after Firefox asks you; **Take back** removes it. They are new and not
+yet checked on the live webapps: if one misses something, see
+[when a reader misses something](troubleshooting.md).
 
 ## The library
 

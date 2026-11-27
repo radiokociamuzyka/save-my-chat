@@ -5,6 +5,7 @@ import { chats, planned, shipped, version } from "../site/src/chats.js";
 const LIST = [
 	{ name: "A & B", status: "default", chats: ["https://a.example/c/*"], verified: true },
 	{ name: "C", status: "default", chats: ["https://c.example/*"], verified: false },
+	{ name: "F", status: "optional", chats: ["https://f.example/c/*"], verified: false },
 	{ name: "D", status: "planned" },
 	{ name: "E", status: "planned" },
 ];
@@ -14,6 +15,11 @@ describe("the site: the webapps", () => {
 		expect(shipped(LIST)).toEqual([
 			{ name: "A & B", addresses: ["https://a.example/c/…"], state: "checked on live chats" },
 			{ name: "C", addresses: ["https://c.example/…"], state: "not yet checked on a live chat" },
+			{
+				name: "F",
+				addresses: ["https://f.example/c/…"],
+				state: "not yet checked on a live chat; allowed by you in the Readers tab",
+			},
 		]);
 		expect(planned(LIST)).toBe("D, E");
 	});

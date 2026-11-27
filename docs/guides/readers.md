@@ -56,12 +56,20 @@ see [when a reader misses something](../manual/troubleshooting.md).
 
 ## Listing it
 
-1. Declare it in `resources/data/chats.yaml` with `status: default`, its
-   `reader` file, `domains`, `matches` and conversation addresses.
+1. Declare it in `resources/data/chats.yaml` with its `reader` file,
+   `domains`, `matches` and conversation addresses (`chats`, which also
+   find the chats a page lists, for gathering), and a `status`:
+   `default` asks its hosts at install, `optional` only when the user
+   allows it in the Readers tab (every new webapp is `optional`: an
+   update that asks for more hosts is held back by Firefox until the
+   user accepts it).
 2. `task chats`: `src/core/readers.js` and the manifest's
-   `host_permissions` are written from the YAML (never by hand; a test
-   says when they are stale).
-3. `task run`, open a conversation, click the toolbar button.
+   `host_permissions` and `optional_host_permissions` are written from
+   the YAML (never by hand; a test says when they are stale).
+3. A reader may have its own `list(doc, url)` returning
+   `[{ url, title }]`, when a webapp's sidebar links are not plain links
+   to its chats.
+4. `task run`, open a conversation, click the toolbar button.
 
 ## Testing it
 
