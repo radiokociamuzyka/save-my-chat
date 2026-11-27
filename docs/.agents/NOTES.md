@@ -100,3 +100,17 @@ What waits for a decision or was not verified is kept in
 - One commit message of this batch (`2ae2ab4`) refers to Sett as "him";
   a pronoun was guessed where none was given. It cannot be amended on
   `dev/*`; the files carry none.
+
+## 2026-11-27, Q8-Q11
+
+- Joker's AUTHORS address is the GitHub noreply of the Codex app's bot
+  account (`chatgpt-codex-connector[bot]`, id 199175422, looked up through
+  the API); P_JOL_ROLL had no Joker line to copy. "gpt6.2" is written as
+  Sett named it. Check it against the address Codex's commits really carry.
+- `38dbfc3` (build(chats)) holds more than its subject: the removal of
+  `src/vendor/` from git and package.json's vendor scripts. Cause: an
+  earlier `git rm --cached` left staged, and the hook's `git add` of
+  package.json. Fixed in the hook; the commit cannot be amended on `dev/*`.
+- With `src/vendor/` out of git a fresh clone runs nothing until
+  `npm run vendor` (the test, verify, start and build scripts do it).
+  Loading `src/` as a temporary add-on straight from a clone needs it too.

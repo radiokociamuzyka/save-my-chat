@@ -1,20 +1,22 @@
-// src/vendor/ holds copies of npm packages, unchanged (task vendor), so AMO can
-// compare them with the originals. A dependabot bump of package.json alone would
-// leave the extension running the old copy: this fails until `task vendor` runs.
+// src/vendor/ is gathered from node_modules by scripts/vendor.mjs (Q10): every
+// dependency of package.json, its files named in package.json "vendor", unchanged.
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { plan } from "../scripts/vendor.mjs";
 
-const COPIES = {
-	"src/vendor/turndown.js": "node_modules/turndown/dist/turndown.js",
-	"src/vendor/turndown.LICENSE": "node_modules/turndown/LICENSE",
-	"src/vendor/turndown-plugin-gfm.js": "node_modules/turndown-plugin-gfm/dist/turndown-plugin-gfm.js",
-	"src/vendor/turndown-plugin-gfm.LICENSE": "node_modules/turndown-plugin-gfm/LICENSE",
-};
+const pkg = JSON.parse(readFileSync("package.json", "utf8"));
 
 describe("vendored libraries", () => {
-	for (const [copy, original] of Object.entries(COPIES)) {
-		it(`${copy} is ${original} unchanged`, () => {
-			expect(readFileSync(copy, "utf8") === readFileSync(original, "utf8")).toBe(true);
+	it("every dependency is packed, nothing else", () => {
+		expect(() => plan({ dependencies: { a: "1" }, vendor: {} })).toThrow(/a: a dependency with no "vendor" entry/);
+		expect(() => plan({ dependencies: {}, vendor: { b: { x: "x" } } })).toThrow(/b: a "vendor" entry/);
+		const packed = new Set(plan(pkg).map((c) => c.from.split("/")[1]));
+		expect([...packed].sort()).toEqual(Object.keys(pkg.dependencies).sort());
+	});
+
+	for (const { from, to } of plan(pkg)) {
+		it(`${to} is ${from} unchanged`, () => {
+			expect(readFileSync(to, "utf8") === readFileSync(from, "utf8")).toBe(true);
 		});
 	}
 });

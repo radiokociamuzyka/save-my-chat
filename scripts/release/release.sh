@@ -25,6 +25,9 @@ if git rev-parse -q --verify "refs/tags/v$(version)" > /dev/null; then
 fi
 tag="v$(version)"
 
+# the batch of `task build` (Q10): dependencies into src/vendor, chats.yaml already written in
+npm run vendor
+node scripts/chats.mjs --check
 npx web-ext build --filename "save-my-chat-$(version).zip"
 cp "dist/save-my-chat-$(version).zip" dist/save-my-chat.zip
 assets=("dist/save-my-chat-$(version).zip" dist/save-my-chat.zip)
