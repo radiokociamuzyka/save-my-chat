@@ -28,3 +28,23 @@ jobs:
           # a pull request builds the packed extension too (Q7); master releases it
           name: save-my-chat-zip
           path: dist/*.zip
+
+  firefox:
+    # the built extension in a real Firefox, driven by Selenium (Q14); the runner has
+    # Firefox and geckodriver ($GECKOWEBDRIVER)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+        env: { HUSKY: "0" }
+      # the runner's own variable, not of the workflow's env context
+      - run: GECKODRIVER="$GECKOWEBDRIVER/geckodriver" npm run test:firefox
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: firefox-screenshots
+          path: dist/shots/

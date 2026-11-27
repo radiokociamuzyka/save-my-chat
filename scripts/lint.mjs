@@ -18,10 +18,10 @@ export const KNOWN = [
 	},
 	{
 		code: "UNSAFE_VAR_ASSIGNMENT",
-		file: "popup/popup.js",
+		file: "chunks/vue.js",
 		message: "Unsafe assignment to innerHTML",
 		why:
-			"Vue's runtime (runtime-dom insertStaticContent), bundled by Vite (Q12): it is given only" +
+			"Vue's runtime (runtime-dom insertStaticContent), in the chunk Vite shares between the pages (Q12): it is given only" +
 			" HTML that Vue's compiler wrote at build time from our own templates; no v-html in src/.",
 	},
 ];
