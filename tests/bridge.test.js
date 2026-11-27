@@ -31,10 +31,12 @@ describe("a prototype's bridge", () => {
 		const sent = [];
 		// the USER_SCRIPT world with messaging on: runtime.sendMessage, no onMessage
 		w.browser = { runtime: { sendMessage: async (msg) => sent.push(msg) } };
+		const logged = [];
+		w.console.info = (line) => logged.push(line);
 		w.eval(load.source("core/bridge.js"));
 		const ask = (detail) => w.document.dispatchEvent(new w.CustomEvent("save-my-chat:ask", { detail }));
 		const settle = () => new Promise((done) => setTimeout(done, 20));
-		return { w, sent, ask, settle };
+		return { w, sent, ask, settle, logged };
 	}
 
 	it("answers a question by sending the answer to the extension, marked a prototype", async () => {
@@ -51,6 +53,10 @@ describe("a prototype's bridge", () => {
 			["user", "Hi?"],
 			["assistant", "Hello."],
 		]);
+	});
+
+	it("says in the page's console which reader the prototype registered", () => {
+		expect(world().logged).toEqual(["save-my-chat: prototype loaded, reader github-copilot"]);
 	});
 
 	it("ignores what is not a question, and says an error instead of throwing", async () => {
