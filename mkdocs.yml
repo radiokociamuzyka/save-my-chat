@@ -2,6 +2,7 @@
 # developer need. How the project is made - the devlog, the changelog, the almanac - is
 # in the wiki, generated in more than one language (task wiki), and left out here.
 site_name: save-my-chat
+site_url: https://save-my-chat.readthedocs.io/
 site_description: Save AI chat conversations from webapps on your own machine, in one clear format.
 repo_url: https://github.com/radiokociamuzyka/save-my-chat
 edit_uri: edit/development/docs/

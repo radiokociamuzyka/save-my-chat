@@ -55,7 +55,7 @@ Without Task: `npm start`, `npm run verify`, `npm run build`.
 
 - The manual: [install](docs/manual/install.md), [saving](docs/manual/saving.md),
   [when a reader misses something](docs/manual/troubleshooting.md), [privacy](docs/manual/privacy.md)
-  (built on Read the Docs from `mkdocs.yml`)
+  ([on Read the Docs](https://save-my-chat.readthedocs.io), built from `mkdocs.yml`)
 - [How a reader is written](docs/guides/readers.md)
 - [The unified format](docs/guides/format.md)
 - [Vision](docs/devlog/VISION.md) and [roadmap](docs/devlog/ROADMAP.md); the devlog, changelog and almanac in the [wiki](https://github.com/radiokociamuzyka/save-my-chat/wiki)
