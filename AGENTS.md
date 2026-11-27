@@ -134,7 +134,7 @@ src/                     the extension's source: built into dist/extension/ (web
   options/               the options (Vue, Q12): OptionsPage.vue, a tab each - LibraryPanel, ViewerPanel, ReadersPanel (on/off, SelectorEditor),
                          PrototypesPanel (PrototypeEditor; prototypes.js: their checks and file); the kit and readers loaded first (main.js)
 resources/data/          declarations: chats.yaml, the chat webapps, their domains and conversation addresses (PP2)
-tests/                   vitest + jsdom; fixtures/ are saved HTML of real chats, anonymised
+tests/                   vitest + jsdom; fixtures/ are saved HTML of real chats, anonymised; firefox/: Selenium in a real Firefox (Q14)
 docs/devlog/             the BOS devlog: VISION, ROADMAP, TODO, BRAINSTORM, PROPOSALS, ORDERS, INQUIRIES;
                          shown on GitHub as milestones, issues and a board (scripts/github/devlog.py) -
                          an issue changed by hand is overwritten: answer in ORDERS.md, ask in INQUIRIES.md
@@ -182,6 +182,7 @@ stamps the format, source and time. The format is described in
 | `task format` | Biome with safe fixes |
 | `task lint:ext` | `web-ext lint` (AMO's validator), warnings as errors, but the false positives named one by one in `scripts/lint.mjs` |
 | `task test` | vitest |
+| `task test:firefox` | the built extension in a real Firefox (Q14): Selenium, geckodriver, a temporary add-on (`tests/firefox/`); screenshots into `dist/shots/`; `FIREFOX_BIN`, `GECKODRIVER` when not found |
 | `task verify` | check, lint:ext, test — run before a step is reported done |
 | `task build` | the batch (Q10, Q12): dependencies into `src/vendor/`, `readers.js` and host permissions from `chats.yaml`, the extension built, the `.zip` into `dist/` |
 | `task devlog:scrapnote` | a new scrapnote in `docs/devlog/` |

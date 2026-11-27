@@ -91,7 +91,7 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 - [x] Each release submitted to AMO's listed channel by `release.yml` (`amo.sh`), with its source and notes, the secrets of the `releasing` environment
 - [x] Vue components, Bulma styles for options and popup
 - [x] A viewer of saved conversations (Markdown and JSON of the unified format)
-- [ ] Tests driving the extension in a real Firefox: Selenium with geckodriver, a temporary add-on, its pages by `moz-extension://` address (Q14)
+- [x] Tests driving the extension in a real Firefox: Selenium with geckodriver, a temporary add-on, its pages by `moz-extension://` address (Q14)
 - [ ] The public site on `github-pages` built by Astro: the project page, popup and options shown with Firefox's APIs stubbed, a viewer of saved chats needing no extension; Playwright tests it (Q13)
 - [x] The library (PP1): an index of saved chats in `storage.local`, search, re-export, a chat that grew since it was saved
 - [ ] An explorer of the stored files on ZenFS (IndexedDB) with isomorphic-git, both dependencies gathered by `task build` (Q8)
