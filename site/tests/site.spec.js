@@ -48,8 +48,12 @@ test("the viewer reads a saved file, its HTML as text and its images not loaded"
 	await expect(page.locator(".chat-view")).toContainText("<img src=x onerror=alert(1)>");
 	await expect(page.locator(".chat-view img")).toHaveCount(0);
 	await expect(page.locator(".chat-view")).toContainText("[image: a cat]");
-	await page.locator("input.open-file").setInputFiles({ name: "notes.md", mimeType: "text/markdown", buffer: Buffer.from("# notes") });
-	await expect(page.locator(".viewer-status")).toHaveText("notes.md: Not a file saved by save-my-chat: no front matter.");
+	await page
+		.locator("input.open-file")
+		.setInputFiles({ name: "notes.md", mimeType: "text/markdown", buffer: Buffer.from("# notes") });
+	await expect(page.locator(".viewer-status")).toHaveText(
+		"notes.md: Not a file saved by save-my-chat: no front matter.",
+	);
 });
 
 test("the popup runs on the site, sees the made-up chat and saves it", async ({ page }) => {

@@ -24,7 +24,11 @@ const CHATS = [
 	},
 	{
 		format: "save-my-chat/0",
-		source: { reader: "google-ai-mode", service: "google.com/search", url: "https://www.google.com/search?q=turtles&udm=50" },
+		source: {
+			reader: "google-ai-mode",
+			service: "google.com/search",
+			url: "https://www.google.com/search?q=turtles&udm=50",
+		},
 		title: "How long do turtles live?",
 		savedAt: day(25),
 		turns: [

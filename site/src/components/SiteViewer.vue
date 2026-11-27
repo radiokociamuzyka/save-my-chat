@@ -29,8 +29,9 @@ function dropped(event) {
 
 <template>
 	<div class="site-viewer">
-		<div
+		<section
 			class="drop box has-text-centered mb-4"
+			aria-label="Drop a saved file here"
 			:class="{ over }"
 			@dragover.prevent="over = true"
 			@dragleave="over = false"
@@ -42,7 +43,7 @@ function dropped(event) {
 				<input type="file" class="is-hidden open-file" accept=".md,.json,text/markdown,application/json" @change="picked" />
 			</label>
 			<p class="is-size-7 has-text-grey mt-2">Read by this page in your browser: the file is not sent anywhere.</p>
-		</div>
+		</section>
 		<p v-if="said" role="status" class="has-text-danger viewer-status">{{ said }}</p>
 		<ChatView v-if="chat" :chat="chat" />
 	</div>
