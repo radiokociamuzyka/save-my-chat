@@ -1,0 +1,15 @@
+---
+// The viewer, needing no extension (Q13).
+import SiteViewer from "../components/SiteViewer.vue";
+import Page from "../layouts/Page.astro";
+---
+
+<Page wide title="save-my-chat: the viewer" description="Read a chat saved by save-my-chat, as Markdown or JSON, in your browser.">
+	<main>
+		<div class="site">
+			<h1>Read a saved chat</h1>
+			<p>A chat saved by save-my-chat, as Markdown or JSON, shown as the extension's viewer shows it.</p>
+		</div>
+		<div class="island"><SiteViewer client:only="vue" /></div>
+	</main>
+</Page>

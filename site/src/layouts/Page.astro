@@ -1,0 +1,41 @@
+---
+// Every page of the site: its head, the menu, the footer. The site's own text goes in
+// .site; the extension's components (Bulma) in .island, outside it (style.css).
+import "../style.css";
+import { REPO, version } from "../chats.js";
+
+const { title, description, wide = false } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const here = Astro.url.pathname.replace(/\/?$/, "/");
+const MENU = [
+	{ href: base, name: "save-my-chat" },
+	{ href: `${base}viewer/`, name: "Viewer" },
+	{ href: `${base}demo/`, name: "Try the pages" },
+];
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{title}</title>
+		<meta name="description" content={description} />
+	</head>
+	<body>
+		<div class:list={["page", { wide }]}>
+			<nav class="site menu">
+				{MENU.map((m) => <a href={m.href} aria-current={m.href === here ? "page" : undefined}>{m.name}</a>)}
+			</nav>
+			<slot />
+			<div class="site">
+				<footer>
+					<p>
+						save-my-chat v{version()} · part of radiokociamuzyka · generated from <a href={REPO}>the repository</a>,
+						edit <code>site/</code> there
+					</p>
+				</footer>
+			</div>
+		</div>
+	</body>
+</html>
