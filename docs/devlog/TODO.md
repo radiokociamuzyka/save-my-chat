@@ -40,7 +40,7 @@ names its `Q<n>`.
 - [x] Selector overrides from `storage.local`, so a changed class name is fixed without a release (set from the console for now)
 - [ ] The options page edits the selector overrides of each reader
 - [x] GitHub Copilot reader from Sett's snippet (`.message-container`, `user__` / `ai__`)
-- [ ] A saved, anonymised page of each as `tests/fixtures/`, and tests reading them
+- ~~[ ] A saved, anonymised page of each as `tests/fixtures/`, and tests reading them~~ - for now we do not need other's people input, so if issues will come then we will make that anonymised raporting of page tests
 - [ ] Each reader checked by hand in Firefox on a live conversation, the result in `docs/.agents/NOTES.md`
 - [x] The add-on id corrected to `save-my-chat@radiokociamuzyka.pl` (Sett's inquiry)
 - [x] `dev/dependabot` caught up with `development`, every workflow on the same actions; the almanac case
