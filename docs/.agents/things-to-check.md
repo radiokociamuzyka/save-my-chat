@@ -90,8 +90,9 @@ point was added.
   library of many chats (each sync reads every copy), or after an update
   of the extension (the repository should stay, its IndexedDB being the
   extension's).
-- **2026-11-27. ZenFS's license.** `@zenfs/core` and `@zenfs/dom` are
-  LGPL-3.0-or-later, built into the options page (MPL-2.0 allows the
-  combination); the build is not minified, their licenses are vendored
-  and the source archive goes to AMO. A question for Sett if he wants it
-  otherwise.
+- **2026-11-27. ZenFS's license.** Looked into in phase 5 (almanac:
+  licenses-met): the combination is allowed. What was missing, the
+  notice of LGPL 4(a) and the GPL text of 4(b), the build now writes
+  (`THIRD-PARTY.md`, `licenses/GPL-3.0.txt`). Not checked: how AMO's
+  reviewers read an LGPL library in a listed add-on; none has said a
+  word on it so far.
