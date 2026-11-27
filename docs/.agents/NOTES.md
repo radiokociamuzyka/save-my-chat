@@ -76,3 +76,27 @@ What waits for a decision or was not verified is kept in
   the background injects the kit and readers into such a tab on demand.
 - Toolchain here: Node 24.21, npm 11.19, Task 3.54, Firefox installed.
   Pinned: Biome 2.6.9, web-ext 10.8.0, vitest 5.1.2, jsdom 31.0.1.
+
+## 2026-11-27, PP1, PP2, signing, dependabot, the id
+
+- PR #18 was merged by Sett at 18:27; `release.yml` ran green: tag
+  `v0.1.3`, the release marked latest, `master` merged back into
+  `development`. The release flow is now seen working end to end.
+- Sett wrote of commenting out what the dependabot collision touched.
+  No such lines were found: not on `origin/dev/dependabot`, not on any
+  local branch, not in a stash or worktree. The drift was resolved from
+  what was pushed.
+- The "collision" was no git conflict: `development` merged into
+  `dev/dependabot` cleanly. It was the drift (two workflows left on v5),
+  which a merge does not show. Worth remembering when "it merges" is
+  taken for "it is consistent".
+- Found while doing it, not asked: the version hook bumped a concluded
+  merge, and its merge driver reformatted `src/manifest.json`; the
+  vendored turndown could be left behind by a dependabot bump. All three
+  fixed with tests and in the almanac.
+- `actionlint` is not installed here; `dependabot.yml` was checked as
+  YAML only. Its first real run is the push of this batch to
+  `development` (the `follow` job).
+- One commit message of this batch (`2ae2ab4`) refers to Sett as "him";
+  a pronoun was guessed where none was given. It cannot be amended on
+  `dev/*`; the files carry none.
