@@ -1,7 +1,10 @@
 """The devlog's news in GitHub Discussions (phase 2, the owner's discussion #17): short notes
 with links in Announcements, a dedicated discussion per proposal in Ideas, and every almanac
 case as a Q&A whose answer is its solution. The markdown stays the source; each discussion
-carries a marker <!-- feed:<key> -->, so a run finds its own and only changes what differs.
+carries a marker <!-- feed:<key> -->, so a run finds its own. Nothing posted is ever edited:
+GitHub refuses the workflow's token every edit of a discussion or a comment (almanac:
+feed-edit-refused), so a changed source gets a comment saying what it says now, and a changed
+solution a new answer, marked; each written once, found again by its text.
 
   Announcements  changelog posts (a section of docs/changelog/phase-<n>.md each, its
                  decisions in short), phases begun and done (TODO.md), proposals (with their
@@ -206,11 +209,14 @@ def sync(post: dict, repo_id: str, categories: dict, have: dict) -> dict | None:
         print(f"{post['key']}: {'changed' if old else 'new'} - {post['category']}: {post['title']}")
         return old
     elif old:
-        found = graphql("mutation($id:ID!,$t:String!,$b:String!){updateDiscussion(input:{discussionId:$id,"
-                        "title:$t,body:$b}){discussion{id number url title body comments(first:20)"
-                        "{nodes{id body isAnswer}}}}}", id=old["id"], t=post["title"], b=body
-                        )["updateDiscussion"]["discussion"]
-        print(f"{post['key']}: updated, #{found['number']}")
+        # changed at its source: said once in a comment, the discussion itself left as posted
+        found = old
+        news = f"**Changed at the source** - it says now:\n\n## {post['title']}\n\n{post['body']}"
+        if said_already(old, news):
+            print(f"{post['key']}: changed, said already in a comment, #{old['number']}")
+        else:
+            comment(old, news, "change")
+            print(f"{post['key']}: changed, a comment added, #{old['number']}")
     else:
         found = graphql("mutation($r:ID!,$c:ID!,$t:String!,$b:String!){createDiscussion(input:{repositoryId:$r,"
                         "categoryId:$c,title:$t,body:$b}){discussion{id number url title body comments(first:20)"
@@ -222,18 +228,31 @@ def sync(post: dict, repo_id: str, categories: dict, have: dict) -> dict | None:
     return found
 
 
+def said(body: str) -> str:
+    """a comment's text without the feed's marker"""
+    return re.sub(r"\s*<!-- feed:\S+ -->\s*$", "", body or "").strip()
+
+
+def said_already(discussion: dict, text: str) -> dict | None:
+    return next((c for c in discussion["comments"]["nodes"] if said(c["body"]) == text.strip()), None)
+
+
+def comment(discussion: dict, text: str, kind: str) -> dict:
+    found = graphql("mutation($d:ID!,$b:String!){addDiscussionComment(input:{discussionId:$d,body:$b})"
+                    "{comment{id body isAnswer}}}", d=discussion["id"], b=f"{text}\n\n{marker(kind)}")
+    made = found["addDiscussionComment"]["comment"]
+    discussion["comments"]["nodes"].append(made)
+    return made
+
+
 def answer_of(discussion: dict, text: str):
-    """the solution as a comment of the discussion, marked as its answer"""
-    body = f"{text}\n\n{marker('answer')}"
-    mine = next((c for c in discussion["comments"]["nodes"] if marker("answer") in c["body"]), None)
+    """the solution as a comment of the discussion, marked as its answer; a changed solution
+    is a new comment, marked in its turn (the old one stays: GitHub refuses the edit)"""
     if DRY:
+        if discussion and not said_already(discussion, text):
+            print(f"  #{discussion['number']}: a new answer would be added and marked")
         return
-    if not mine:
-        mine = graphql("mutation($d:ID!,$b:String!){addDiscussionComment(input:{discussionId:$d,body:$b})"
-                       "{comment{id body isAnswer}}}", d=discussion["id"], b=body)["addDiscussionComment"]["comment"]
-    elif mine["body"].strip() != body.strip():
-        graphql("mutation($c:ID!,$b:String!){updateDiscussionComment(input:{commentId:$c,body:$b}){comment{id}}}",
-                c=mine["id"], b=body)
+    mine = said_already(discussion, text) or comment(discussion, text, "answer")
     if not mine.get("isAnswer"):
         graphql("mutation($c:ID!){markDiscussionCommentAsAnswer(input:{id:$c}){discussion{id}}}", c=mine["id"])
 
