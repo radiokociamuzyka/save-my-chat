@@ -81,6 +81,7 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 - [x] Prototypes registered with `userScripts.register` in the `USER_SCRIPT` world, messaging on (`configureWorld`), re-registered on update
 - [x] A prototype replaces its default for the same matches; turning it off brings the default back
 - [x] Export and import of prototypes as files
+- [ ] Prototypes checked in a real Firefox: the permission, a change seen in the saved file, the default back when off (RR2)
 
 ## Phase 4: the frontend
 

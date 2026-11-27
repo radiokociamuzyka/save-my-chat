@@ -35,7 +35,7 @@ which no test here has: jsdom stood in for it, and MDN does not say
 everything (whether a user script's message carries its tab). The last
 step of phase 3 waits for this check.
 
-*How:* in the release after v0.3.6 (its pull request says so), open the
+*How:* in the first release of 0.3.x (its pull request says so), open the
 extension's options, **Prototypes**:
 1. **Allow user scripts**: did Firefox ask, and did the button go away?
 2. **Make a prototype of GitHub Copilot**, then in its code find
