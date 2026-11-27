@@ -56,5 +56,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # the merge driver of .gitattributes: the higher version, the formatting kept
+          git config merge.version.driver 'node scripts/version.mjs merge %O %A %B'
           git merge --no-ff origin/master -m "merge(master): ${{ needs.release.outputs.tag || 'master' }} back into development"
           git push origin development

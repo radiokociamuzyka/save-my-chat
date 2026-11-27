@@ -29,3 +29,11 @@ point was added.
   listing will want 48 and 96 px icons.
 - **2026-11-26. `task devlog:state`** calls the BOS core from npm
   (`blacksmith-organization-system@next`), copied from P_JOL_ROLL; not run here.
+- **2026-11-27. `dependabot.yml`'s first runs.** `follow` on the push of
+  this batch to `development`; `land` after dependabot's next pull request
+  is merged into `dev/dependabot`. `land` may warn until Q11's setting is on.
+- **2026-11-27. The new id in Firefox.** `save-my-chat@radiokociamuzyka.pl`
+  passed `web-ext lint`; not yet loaded as a temporary add-on by anyone.
+- **2026-11-27. The planned chats' patterns** in `resources/data/chats.yaml`
+  are from memory of those sites, `verified: false`; each is checked when
+  its reader is written (phase 5).
