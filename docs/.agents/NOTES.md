@@ -123,6 +123,8 @@ What waits for a decision or was not verified is kept in
 | 2026-11-27 | github-copilot | v0.1.3 | no messages found at `https://github.com/copilot/c/*` | rebuilt from Sett's snippet (0.1.31); waits for the next release to be checked |
 | 2026-11-27 | github-copilot | v0.1.53 | works fine | confirmed |
 | 2026-11-27 | google-ai-mode | v0.1.53 | pairs swapped, 1,0,3,2,5,4 | messages ordered by where their own text starts (0.1.54); nesting in the popup's report |
+| 2026-11-27 | github-copilot | v0.1.58 | report: user 4, assistant 4; `user__` finds 4, only the `' ai__'` form of the assistant set finds anything (4) | as expected |
+| 2026-11-27 | google-ai-mode | v0.1.58 | report: user 4, assistant 4; `.ilZyRc` finds 5, `.L4dlbc` 0, `.CKgc1d` 4; `nested: 4 user in assistant` | the nesting confirmed live; the 5th `.ilZyRc` is most likely held in another one and skipped as a duplicate; `.L4dlbc` is a class from an older build. Order not yet confirmed by Sett |
 
 From the next release on, the popup's "Copy report" (under "What the
 reader saw") is the easiest thing to paste into an issue or the chat: it
