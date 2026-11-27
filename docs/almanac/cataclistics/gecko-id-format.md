@@ -16,7 +16,7 @@ The first fix kept the owner's string whole and put `@` in front of it:
 `@save-my-chat.radiokociamuzyka.pl`. It passes the check, but it is not
 what an id of this form means: the part after `@` is a domain the author
 holds, the part before it names the add-on in that domain. Looking at the
-ids of other extensions in his browser, the owner saw that and corrected
+ids of other extensions in the browser, the owner saw that and corrected
 it.
 
 ## Solution
