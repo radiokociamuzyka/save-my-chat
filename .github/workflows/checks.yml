@@ -41,9 +41,8 @@ jobs:
           cache: npm
       - run: npm ci
         env: { HUSKY: "0" }
-      - run: npm run test:firefox
-        env:
-          GECKODRIVER: ${{ env.GECKOWEBDRIVER }}/geckodriver
+      # the runner's own variable, not of the workflow's env context
+      - run: GECKODRIVER="$GECKOWEBDRIVER/geckodriver" npm run test:firefox
       - uses: actions/upload-artifact@v7
         if: always()
         with:
