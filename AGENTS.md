@@ -75,6 +75,7 @@ repository: `forge/sarverott/github-repos/Sarverott/AGENTS.md` and its
 | the owner's words | `docs/devlog/INQUIRIES.md` / `ORDERS.md` (or the chat), then `docs/changelog/phase-<n>.md`, word for word |
 | a plan | `docs/devlog/VISION.md`, `ROADMAP.md`, `TODO.md` |
 | a question for the owner | `docs/devlog/BRAINSTORM.md` as `## Q<n>. <title>` with a *Lean:*; never settled in code before the answer |
+| work only the owner can do (a setting, a live check, an account) | `docs/devlog/REQUESTS.md` as `## RR<n>. <title>` with *Why:* and *How:*; the report goes word for word to the changelog as `### RR<n>` |
 | an idea for debate | `docs/devlog/PROPOSALS.md` as `PP<n>` |
 | an agent's findings and what was not verified | `docs/.agents/` (`NOTES.md`, `things-to-check.md`); humans read it and do not write there |
 | a problem met and solved | `docs/almanac/`: its case in `cataclistics/`, a line in its topic in `solutions/` |

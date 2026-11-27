@@ -6,7 +6,8 @@ whenever it changed. Adapted from P_JOL_ROLL's scripts/devops/github/devlog.py (
   issues       one per phase (TODO.md, and the phases ahead in VISION.md), its items as a task
                list, closed when every item is ticked; one per Q<n> and PP<n> - the question or
                the proposal as it stood, the owner's answer word for word from the changelog -
-               closed once answered or decided. Each carries a marker <!-- devlog:<key> -->, so
+               closed once answered or decided; one per RR<n>, a requirement request to the
+               owner (REQUESTS.md), closed once reported. Each carries a marker <!-- devlog:<key> -->, so
                a run finds its own issues again and only changes what differs.
   the board    a project of the owner (the organization radiokociamuzyka) holding every one of them: Done when closed, In
                Progress when a phase has ticked items, Todo else. Projects need the gh scope
@@ -36,6 +37,7 @@ LABELS = {
     "phase": ("0e8a16", "a phase of TODO.md"),
     "question": ("d876e3", "a question for the owner, Q<n> of BRAINSTORM.md"),
     "proposal": ("fbca04", "an idea in debate, PP<n> of PROPOSALS.md"),
+    "request": ("c2410c", "work on the owner's side, RR<n> of REQUESTS.md"),
 }
 
 
@@ -107,14 +109,14 @@ def sections(text: str, level: str) -> dict[str, str]:
     found: dict[str, str] = {}
     parts = re.split(rf"^(?={level} )", text, flags=re.M)
     for part in parts:
-        head = re.match(rf"{level} ((?:Q|PP)\d+)\b", part)
+        head = re.match(rf"{level} ((?:Q|PP|RR)\d+)\b", part)
         if head:
             found.setdefault(head[1], part.strip())
     return found
 
 
 def as_they_stood(path: str) -> dict[str, str]:
-    """every Q<n>/PP<n> as its file last held it, from the history of that file"""
+    """every Q<n>/PP<n>/RR<n> as its file last held it, from the history of that file"""
     commits = subprocess.run(
         ["git", "log", "--reverse", "--format=%H", "--", path], cwd=ROOT, capture_output=True, text=True
     ).stdout.split()
@@ -128,7 +130,7 @@ def as_they_stood(path: str) -> dict[str, str]:
 
 
 def answers() -> dict[str, tuple[int, str]]:
-    """Q<n>/PP<n> -> (the phase whose changelog holds the answer, the answer's section)"""
+    """Q<n>/PP<n>/RR<n> -> (the phase whose changelog holds the answer, the answer's section)"""
     found: dict[str, tuple[int, str]] = {}
     for page in sorted(CHANGELOG.glob("phase-*.md"), key=lambda one: int(one.stem.split("-")[1])):
         phase = int(page.stem.split("-")[1])
@@ -291,6 +293,7 @@ def wanted() -> tuple[list[dict], set[int], list[dict]]:
     for kind, path, label, where in (
         ("Q", "docs/devlog/BRAINSTORM.md", "question", "BRAINSTORM"),
         ("PP", "docs/devlog/PROPOSALS.md", "proposal", "PROPOSALS"),
+        ("RR", "docs/devlog/REQUESTS.md", "request", "REQUESTS"),
     ):
         stood = as_they_stood(path)
         still_open = sections((ROOT / path).read_text(), "##")
@@ -301,7 +304,7 @@ def wanted() -> tuple[list[dict], set[int], list[dict]]:
             is_open = key in still_open
             lines = [f"**{key}** of [{where}]({BLOB}docs/devlog/{where}.md) - as it stood there:", "", *text.splitlines()[1:]]
             if answer and not is_open:
-                lines += ["", "---", "", f"**The owner's answer**, word for word ({changelog_link(phase)}):", "", answer]
+                lines += ["", "---", "", f"**The owner's {'report' if kind == 'RR' else 'answer'}**, word for word ({changelog_link(phase)}):", "", answer]
             issues.append(
                 {"key": key, "title": title, "body": "\n".join(lines).strip(), "labels": ["devlog", label],
                  "milestone": milestone_of.get(phase) if phase is not None else None,

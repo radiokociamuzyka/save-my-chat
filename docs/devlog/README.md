@@ -13,6 +13,7 @@ Amoorion and P_JOL_ROLL.
 | `PROPOSALS.md` | ideas for debate `PP<n>` | anyone proposes, the owner decides in ORDERS.md |
 | `ORDERS.md` | the owner's decisions: answers to `Q<n>` and to `PP<n>`, below its `---` | **owner**; agents empty it |
 | `INQUIRIES.md` | the owner's requests in their own words, below its `---` | **owner**; agents empty it |
+| `REQUESTS.md` | requirement requests `RR<n>`: work on the owner's side the agents need, each with *Why:* and *How:*; the owner reports below its `---` | agents ask, the owner reports; agents empty it |
 | `STATE.md` | where the project stands; made by `task devlog:state` (the `bos` command of the core), not kept in git | the core |
 | `Taskfile.yml` | `scrapnote`, `state` | agents |
 | `scrapnote-<UNIXUSAT>.md` | notes of a working round, not sorted yet | anyone |
@@ -27,6 +28,8 @@ flowchart LR
   I[INQUIRIES.md<br/>owner asks] --> P[VISION / ROADMAP / TODO<br/>the plan]
   O --> C[docs/changelog/phase-&lt;n&gt;.md<br/>word for word + Decision]
   I --> C
+  RR[REQUESTS.md<br/>RR&lt;n&gt; to the owner] --> D[owner does it, reports]
+  D --> C
   P --> W[work: one step = one commit]
   W --> T[TODO.md ticked]
 ```
@@ -42,7 +45,12 @@ flowchart LR
    PROPOSALS.md.
 4. Then the work, one step per commit on the agent's `dev/<name>`, each
    ticking its TODO item.
+5. What only the owner can do (a repository setting, a check in a real
+   browser, an account, a decision outside the code) is asked as a
+   requirement request `RR<n>` in REQUESTS.md, never left in a report
+   alone. The owner's report on it moves word for word into the changelog
+   as `### RR<n>`, and the request leaves the file.
 
-Numbers `Q<n>` and `PP<n>` are given once and never reused. A question never
+Numbers `Q<n>`, `PP<n>` and `RR<n>` are given once and never reused. A question never
 gets settled in code before the owner answers it. Agents' own findings go to
 `docs/.agents/`, not here.
