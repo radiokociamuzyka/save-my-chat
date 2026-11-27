@@ -27,7 +27,11 @@
 		}
 		if (type === "save-my-chat:read") return SMC.readPage(undefined, undefined, {});
 		if (type === "save-my-chat:inspect") return SMC.inspect(undefined, undefined, {});
-		if (type === "save-my-chat:list") return SMC.listed(undefined, undefined, [].concat(ask.patterns || []));
+		if (type === "save-my-chat:list")
+			return ask.load
+				? SMC.loadList(undefined, undefined, [].concat(ask.patterns || []))
+				: SMC.listed(undefined, undefined, [].concat(ask.patterns || []));
+		if (type === "save-my-chat:load") return SMC.loadChat(undefined, undefined, {});
 		return null;
 	}
 

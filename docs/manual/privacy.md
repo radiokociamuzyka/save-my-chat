@@ -18,8 +18,8 @@ machine. That is all it does.
   files in a git repository in the extension's own storage (IndexedDB),
   so each copy you saved stays in its history.
 - **Gathering** opens, at your click, the chats a webapp's page lists,
-  one at a time in a background tab of that same webapp, so its reader
-  can read each into the library, then closes it: the pages load as
+  one at a time in a window of its own, so the webapp's reader can read
+  each into the library, then closes the window: the pages load as
   when you open them yourself, signed in as you are. Nothing read is
   sent anywhere. The **backup** zip is made on your machine and written
   to your downloads.

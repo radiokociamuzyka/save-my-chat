@@ -63,8 +63,9 @@ async function pack() {
 	<section>
 		<p class="content">
 			A page of a chat webapp lists your conversations, in its sidebar for example. From the toolbar button on such a
-			page, <strong>Gather</strong> brings that list here: each chat is opened in a background tab, read into the
-			library and closed, one at a time. Nothing is sent anywhere; the webapp's pages are loaded as when you open them.
+			page, <strong>Gather</strong> brings that list here: each chat is opened in a window of its own, scrolled up
+			until its older messages are in, and read into the library, one at a time; the window closes at the end.
+			Nothing is sent anywhere; the webapp's pages are loaded as when you open them.
 		</p>
 		<p v-if="list === null" class="gather-status">
 			Nothing to gather yet: open a chat webapp, click the toolbar button, then <strong>Gather</strong>.
