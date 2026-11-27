@@ -15,6 +15,7 @@ function classic(src) {
 }
 
 await classic("/core/kit.js");
+await classic("/core/markdown.js"); // the files explorer writes the Markdown as a save does
 await classic("/core/readers.js");
 await Promise.all(globalThis.SaveMyChat.defaults.map((r) => classic(`/${r.file}`)));
 createApp(OptionsPage).mount("#app");

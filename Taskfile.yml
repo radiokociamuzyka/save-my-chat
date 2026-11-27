@@ -61,12 +61,13 @@ tasks:
     cmds:
       - npm run build
 
-  # NOTE: signing is Sett's move (AMO API key and secret in .env); never run by an agent.
-  sign:unlisted:
-    desc: sign for self-distribution through AMO (unlisted channel)
+  # NOTE: an upload to AMO by hand is Sett's move (the AMO key and secret in .env); never run by an agent.
+  # The release's amo job does it for every release; this only for one whose job failed.
+  amo:
+    desc: 'a released version to AMO, listed, with its source, as release.yml does it (-- v<version>)'
     dotenv: [".env"]
     cmds:
-      - npx web-ext sign --channel unlisted --api-key "$AMO_JWT_ISSUER" --api-secret "$AMO_JWT_SECRET"
+      - scripts/release/amo.sh {{.CLI_ARGS}}
 
   version:
     desc: 'the version of package.json written into every copy (-- bump patch|minor|major to raise it)'
@@ -99,9 +100,19 @@ tasks:
       - node scripts/wiki/build.mjs {{.CLI_ARGS}}
 
   pages:
-    desc: the project's static page into dist/pages - resources/pages filled from package.json and chats.yaml; pages.yml puts it on the github-pages branch
+    desc: the public site (Q13) built by Astro from site/ into dist/pages; pages.yml puts it on the github-pages branch
     cmds:
-      - node scripts/pages/build.mjs {{.CLI_ARGS}}
+      - npm run site
+
+  pages:dev:
+    desc: the public site served with live reload, http://localhost:4321/save-my-chat/
+    cmds:
+      - npx astro dev
+
+  test:site:
+    desc: the public site built and tested by Playwright in Chromium and Firefox (npx playwright install chromium firefox, once)
+    cmds:
+      - npm run test:site -- {{.CLI_ARGS}}
 
   translate:server:
     desc: LibreTranslate in a container on 127.0.0.1:5000 with the wiki's languages, for task wiki (or set LIBRETRANSLATE_URL to a server)
@@ -109,7 +120,7 @@ tasks:
       - docker run -d --name smc-libretranslate -p 127.0.0.1:5000:5000 libretranslate/libretranslate --load-only en,pl
 
   docs:
-    desc: the Read the Docs site into site/, strictly, with the mkdocs-material container (-- serve -a 0.0.0.0:8000 to preview)
+    desc: the Read the Docs site into dist/docs, strictly, with the mkdocs-material container (-- serve -a 0.0.0.0:8000 to preview)
     cmds:
       - docker run --rm -u "$(id -u):$(id -g)" -p 127.0.0.1:8000:8000 -v "$PWD":/docs squidfunk/mkdocs-material {{.CLI_ARGS | default "build --strict"}}
 

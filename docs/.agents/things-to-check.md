@@ -80,3 +80,18 @@ point was added.
   under the extension's CSP (no inline script was emitted, the module
   preload polyfill is off), Bulma's dark scheme in Firefox's popup panel,
   the clipboard write.
+- **2026-11-27. The gist, against GitHub (Q9).** Tested with Octokit
+  stubbed and the permission refused; never sent to GitHub for real (no
+  token here). Not known: whether Firefox shows the optional data
+  collection (`websiteContent`, `personalCommunications`) in the same
+  prompt as `api.github.com`, and how the gist's files look on GitHub.
+- **2026-11-27. The files explorer (Q8).** Run in a real Firefox
+  (Selenium): IndexedDB, a commit, a file's history, Read. Not seen: a
+  library of many chats (each sync reads every copy), or after an update
+  of the extension (the repository should stay, its IndexedDB being the
+  extension's).
+- **2026-11-27. ZenFS's license.** `@zenfs/core` and `@zenfs/dom` are
+  LGPL-3.0-or-later, built into the options page (MPL-2.0 allows the
+  combination); the build is not minified, their licenses are vendored
+  and the source archive goes to AMO. A question for Sett if he wants it
+  otherwise.
