@@ -50,8 +50,9 @@ The user's own candidates go in front of a reader's sets from
 browser.storage.local.set({ selectors: { "google-ai-mode": { user: [".newClass"] } } });
 ```
 
-The options page will edit them (phase 1); until then the line above works
-in the extension's console (`about:debugging` → Inspect).
+The options page edits them (*Selectors* under each reader), and the
+popup's *What the reader saw* shows how many elements each candidate finds;
+see [when a reader misses something](../manual/troubleshooting.md).
 
 ## Listing it
 
@@ -64,14 +65,15 @@ in the extension's console (`about:debugging` → Inspect).
 
 ## Testing it
 
-- Save a real conversation page (Firefox: *Save Page As…*, "Web Page, HTML
-  only"), strip personal content, and put it in `tests/fixtures/<id>.html`.
-- Add a case to `tests/readers.test.js` loading it with
-  `load([...KIT, "readers/<id>.js"], { html: fixture("<id>.html"), url })`.
+- Add a case to `tests/readers.test.js` with a small page built on the
+  webapp's real classes: `load([...KIT, "readers/<id>.js"], { html, url })`.
+- A saved, anonymised page goes to `tests/fixtures/<id>.html` when an issue
+  needs one (`fixture("<id>.html")`).
 - A reader not yet checked against the live webapp starts with
-  `// NOTE: unverified` and is listed in `docs/.agents/things-to-check.md`.
+  `// NOTE: unverified`. It is checked by running a release on live chats
+  and reading the popup's report: `order: U A U A …`, no warnings.
 
-## Prototypes (phase 2)
+## Prototypes (phase 3)
 
 A prototype is the user's own copy of a reader, edited in the options page
 and stored in `storage.local`. It runs through Firefox's `userScripts` API

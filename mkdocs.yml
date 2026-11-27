@@ -1,0 +1,49 @@
+# The project's documentation on Read the Docs (.readthedocs.yaml): what a user and a
+# developer need. How the project is made - the devlog, the changelog, the almanac - is
+# in the wiki, generated in more than one language (task wiki), and left out here.
+site_name: save-my-chat
+site_description: Save AI chat conversations from webapps on your own machine, in one clear format.
+repo_url: https://github.com/radiokociamuzyka/save-my-chat
+edit_uri: edit/development/docs/
+docs_dir: docs
+strict: true
+
+exclude_docs: |
+  README.md
+  devlog/
+  changelog/
+  almanac/
+  .agents/
+
+nav:
+  - Home: index.md
+  - Manual:
+      - Install: manual/install.md
+      - Save a conversation: manual/saving.md
+      - When a reader misses something: manual/troubleshooting.md
+      - Privacy: manual/privacy.md
+  - For developers:
+      - How a reader is written: guides/readers.md
+      - The unified format: guides/format.md
+  - The wiki (devlog, changelog, almanac): https://github.com/radiokociamuzyka/save-my-chat/wiki
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - content.code.copy
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle: { icon: material/brightness-7, name: Dark }
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle: { icon: material/brightness-4, name: Light }
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+  - pymdownx.highlight

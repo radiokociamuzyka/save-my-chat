@@ -92,6 +92,11 @@ tasks:
     cmds:
       - docker run -d --name smc-libretranslate -p 127.0.0.1:5000:5000 libretranslate/libretranslate --load-only en,pl
 
+  docs:
+    desc: the Read the Docs site into site/, strictly, with the mkdocs-material container (-- serve -a 0.0.0.0:8000 to preview)
+    cmds:
+      - docker run --rm -u "$(id -u):$(id -g)" -p 127.0.0.1:8000:8000 -v "$PWD":/docs squidfunk/mkdocs-material {{.CLI_ARGS | default "build --strict"}}
+
   github:devlog:
     desc: 'the devlog on GitHub - milestones of ROADMAP, an issue per phase, Q<n> and PP<n>, the board (-- --dry prints, -- --no-board skips the board)'
     cmds:

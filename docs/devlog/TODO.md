@@ -65,7 +65,8 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 - [ ] Almanac cases as Q&A discussions, their solution the answer
 - [x] The wiki (`save-my-chat.wiki.git`) for developers and contributors: the almanac and the devlog generated into it, English and Polish, translated by LibreTranslate or Argos (`task wiki`, `wiki.yml` after each release)
 - [ ] The wiki seen published by `wiki.yml`
-- [ ] Read the Docs: the documentation of the project, without what the wiki holds
+- [x] Read the Docs: the documentation of the project, without what the wiki holds - the manual and the guides (`mkdocs.yml`, `.readthedocs.yaml`, `task docs`)
+- [ ] The documentation seen built on Read the Docs
 - [ ] A static page of the project on the `github-pages` branch
 - [x] Workflow `devlog.yml`: the devlog synced on each push of it to `development`
 - [x] Workflows: the release (`release.yml`) and the checks on every pull request into `master`
