@@ -4,3 +4,4 @@ web-ext-artifacts/
 .env
 docs/devlog/STATE.md
 *.log
+src/vendor/

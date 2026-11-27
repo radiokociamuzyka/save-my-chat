@@ -20,6 +20,7 @@ tasks:
   run:
     desc: Firefox with the extension loaded, reloads on save
     cmds:
+      - npm run vendor
       - npx web-ext run {{.CLI_ARGS}}
 
   check:
@@ -50,9 +51,9 @@ tasks:
       - task: test
 
   build:
-    desc: the .zip for AMO into dist/
+    desc: "the batch (Q10): every dependency into src/vendor, readers.js and host permissions from chats.yaml, the .zip into dist/"
     cmds:
-      - npx web-ext build
+      - npm run build
 
   # NOTE: signing is Sett's move (AMO API key and secret in .env); never run by an agent.
   sign:unlisted:
@@ -67,12 +68,14 @@ tasks:
       - node scripts/version.mjs {{.CLI_ARGS | default "sync"}}
 
   vendor:
-    desc: copy third-party libraries unchanged from node_modules into src/vendor (committed; AMO compares them with the originals)
+    desc: every dependency of package.json copied unchanged into src/vendor (gitignored; the files of each in package.json "vendor")
     cmds:
-      - cp node_modules/turndown/dist/turndown.js src/vendor/turndown.js
-      - cp node_modules/turndown/LICENSE src/vendor/turndown.LICENSE
-      - cp node_modules/turndown-plugin-gfm/dist/turndown-plugin-gfm.js src/vendor/turndown-plugin-gfm.js
-      - cp node_modules/turndown-plugin-gfm/LICENSE src/vendor/turndown-plugin-gfm.LICENSE
+      - npm run vendor
+
+  chats:
+    desc: src/core/readers.js and the manifest's host_permissions written from resources/data/chats.yaml (-- --check only checks)
+    cmds:
+      - node scripts/chats.mjs {{.CLI_ARGS}}
 
   github:devlog:
     desc: 'the devlog on GitHub - milestones of ROADMAP, an issue per phase, Q<n> and PP<n>, the board (-- --dry prints, -- --no-board skips the board)'

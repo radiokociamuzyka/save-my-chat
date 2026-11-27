@@ -93,6 +93,22 @@ const merging = () => {
 	}
 };
 
+function stageVersion(file, version) {
+	let staged;
+	try {
+		staged = git("show", `:${file}`);
+	} catch {
+		return; // not in the index: nothing to commit of it
+	}
+	const text = withVersion(`${staged}\n`, version);
+	const sha = execFileSync("git", ["hash-object", "-w", "--stdin", "--path", file], {
+		cwd: ROOT,
+		input: text,
+		encoding: "utf8",
+	}).trim();
+	git("update-index", "--cacheinfo", `100644,${sha},${file}`);
+}
+
 function bumpCommit() {
 	if (merging()) {
 		console.log("version: a merge does not bump");
@@ -106,7 +122,9 @@ function bumpCommit() {
 	}
 	const kind = commits.bump ?? "patch";
 	const { version, files } = bump(kind);
-	git("add", "--", ...files);
+	// only the version goes into the commit: each file's staged text gets the
+	// new version, other unstaged edits of package.json and the rest stay unstaged
+	for (const file of files) stageVersion(file, version);
 	console.log(`version: ${version} (${kind} of ${branch})`);
 }
 

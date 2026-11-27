@@ -1,6 +1,6 @@
 {
   "name": "save-my-chat",
-  "version": "0.1.35",
+  "version": "0.1.44",
   "private": true,
   "description": "Firefox extension to export your AI chat history out of webapps and save it on your local machine in clear unified formatting",
   "repository": "github:radiokociamuzyka/save-my-chat",
@@ -14,11 +14,13 @@
     "check": "biome check .",
     "format": "biome check --write .",
     "lint:ext": "web-ext lint",
-    "test": "vitest run",
-    "verify": "npm run check && npm run lint:ext && npm run test",
-    "start": "web-ext run",
-    "build": "web-ext build --overwrite-dest",
-    "prepare": "husky"
+    "test": "npm run vendor && vitest run",
+    "verify": "npm run vendor && npm run check && npm run lint:ext && vitest run",
+    "start": "npm run vendor && web-ext run",
+    "build": "npm run vendor && npm run chats && web-ext build --overwrite-dest",
+    "prepare": "husky",
+    "vendor": "node scripts/vendor.mjs",
+    "chats": "node scripts/chats.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.9",
@@ -33,5 +35,15 @@
   "dependencies": {
     "turndown": "7.2.5",
     "turndown-plugin-gfm": "1.0.2"
+  },
+  "vendor": {
+    "turndown": {
+      "dist/turndown.js": "turndown.js",
+      "LICENSE": "turndown.LICENSE"
+    },
+    "turndown-plugin-gfm": {
+      "dist/turndown-plugin-gfm.js": "turndown-plugin-gfm.js",
+      "LICENSE": "turndown-plugin-gfm.LICENSE"
+    }
   }
 }

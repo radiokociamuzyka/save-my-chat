@@ -126,3 +126,55 @@ manifest and wherever it is named. Firefox treats the new id as another
 add-on: the temporary add-on is loaded again and its `storage.local`
 (disabled readers, selector overrides) starts empty. AMO has not seen the
 id yet, so nothing else changes.
+
+## 2026-11-27, the owner's answers to Q8-Q11 (issues #22-#25, then ORDERS.md, word for word)
+
+### Q8
+
+From issue #22, Sett, 2026-11-27:
+
+> read that issue's commentary about `src/vendor` and dependencies: https://github.com/radiokociamuzyka/save-my-chat/issues/24
+>
+> these things should be placed in gitignored vendor dir at building before packing an release archive file.
+
+**Decision:** ZenFS (with its IndexedDB backend) and isomorphic-git for
+PP1's explorer, as leaned. Like turndown they are not committed: every
+dependency of `package.json` is gathered into a gitignored `src/vendor/`
+at build time, before the archive is packed (Q10).
+
+### Q9
+
+From issue #23, Sett, 2026-11-27:
+
+> sure, add that button
+
+**Decision:** the gist button is approved as leaned: in the viewer, the
+user's own act, with the user's token in `storage.local`, `api.github.com`
+as an optional host permission asked on first use, the transfer declared
+in `data_collection_permissions.optional`, secret gists by default. Rule 4
+of AGENTS.md names it as its one exception. Built in phase 4.
+
+### Q10
+
+From issue #24, Sett, 2026-11-27:
+
+> your `Lean:` way is good but add also that all to be done by batched `task build` that also gathers that codes in `src/vendor` right now (we want it to be gitignored in the repo, like `node_modules`, so all that we will have as dependencies of `package.json` will become packed and added inside `src/vendor` for our released packed addon of browser)
+
+**Decision:** `scripts/chats.mjs` writes `src/core/readers.js` and the
+manifest's host permissions from `resources/data/chats.yaml`; both stay
+committed, a test checks they are what the script writes. `task build`
+is the batch: `scripts/vendor.mjs` copies every dependency of
+`package.json` into `src/vendor/` (gitignored, like `node_modules`; each
+package's files named in `package.json` `vendor`, unchanged, with its
+license), then the chats, then `web-ext build`. Checks, `task run` and
+the release run the vendor step first.
+
+### Q11
+
+From issue #25, Sett, 2026-11-27:
+
+> settings was been changes and these autor entries just fill like here they was been made: https://github.com/Sarverott/P-jol-roll/blob/master/.github/AUTHORS
+
+**Decision:** `.github/AUTHORS` gets Jarvis's line as P_JOL_ROLL has it and
+Joker's in the same form (the Codex app's GitHub noreply address). Actions
+may open pull requests now, so `dependabot.yml`'s `land` job can work.

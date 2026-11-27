@@ -16,7 +16,8 @@ repository: `forge/sarverott/github-repos/Sarverott/AGENTS.md` and its
 1. **Who may commit.** An agent commits once a confirmed member has written
    it into `.github/AUTHORS`; until then it leaves its edits uncommitted
    and says what it changed and why. Cleo (Claude Code) was confirmed by
-   Sett on 2026-11-26 (Q4). A confirmed AI signs every commit with its name
+   Sett on 2026-11-26 (Q4), Jarvis (GitHub Copilot) and Joker (Codex) on
+   2026-11-27 (Q11). A confirmed AI signs every commit with its name
    and lineage, the same as its line in `AUTHORS`:
    `Co-Authored-By: Cleo (Claude Opus 5.5) <noreply@anthropic.com>`.
 2. **Where edits go: the BOS craft loop.** `master` (canon) →
@@ -50,7 +51,10 @@ repository: `forge/sarverott/github-repos/Sarverott/AGENTS.md` and its
    has open and writes files through the downloads API. No telemetry, no
    remote code, no network requests of its own
    (`data_collection_permissions: none`). A change that would send anything
-   anywhere is a question for Sett first.
+   anywhere is a question for Sett first. The one exception (Q9): a saved
+   chat made a gist by the user's own click, with the user's token, an
+   optional host permission and the transfer declared in
+   `data_collection_permissions.optional`.
 5. **No remote or evaluated code.** AMO rejects it. Default readers ship as
    files of the extension; the user's own prototypes run only through the
    `userScripts` API (an optional permission the user grants), never through
@@ -101,10 +105,10 @@ src/                     the extension itself, loaded by Firefox as written (web
   core/                  shared by every context, classic scripts on globalThis.SaveMyChat
     kit.js               the unified format, DOM-to-markdown, reader registration
     markdown.js          conversation -> .md file
-    readers.js           the list of default readers: id, name, matches, file
+    readers.js           the list of default readers, written from resources/data/chats.yaml (task chats)
   readers/               one default reader per chat webapp, each calls SaveMyChat.reader({...})
     drafted-snippets/    Sett's snippets as written, the sources readers are fitted from; not packaged
-  vendor/                third-party libraries copied unchanged from npm (task vendor), for AMO to compare
+  vendor/                not in git: every dependency of package.json copied unchanged at build (scripts/vendor.mjs, Q10)
   background/main.js     event page: registers enabled readers, answers "save" from the popup, downloads
   popup/                 the toolbar button: which reader sees this tab, save as md / json
   options/               readers on/off; later the prototypes editor (userScripts)
@@ -153,10 +157,11 @@ stamps the format, source and time. The format is described in
 | `task lint:ext` | `web-ext lint` (AMO's validator) |
 | `task test` | vitest |
 | `task verify` | check, lint:ext, test — run before a step is reported done |
-| `task build` | the `.zip` for AMO into `dist/` |
+| `task build` | the batch (Q10): dependencies into `src/vendor/`, `readers.js` and host permissions from `chats.yaml`, the `.zip` into `dist/` |
 | `task devlog:scrapnote` | a new scrapnote in `docs/devlog/` |
 | `task version` (`-- bump minor`) | the version of `package.json` written into every copy, or raised by hand (the hook does it per commit) |
-| `task vendor` | turndown and its GFM plugin copied unchanged into `src/vendor/` |
+| `task vendor` | every dependency of `package.json` copied unchanged into the gitignored `src/vendor/` (its files named in `package.json` `vendor`) |
+| `task chats` (`-- --check`) | `src/core/readers.js` and the manifest's host permissions written from `resources/data/chats.yaml` |
 | `task github:devlog` (`-- --dry`) | the devlog on GitHub: milestones, an issue per phase, `Q<n>`, `PP<n>`, the board; `devlog.yml` does it on each push of the devlog to `development`, but the board |
 
 ## Conventions

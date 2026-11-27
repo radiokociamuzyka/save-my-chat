@@ -50,14 +50,11 @@ pass is not done.
   every place it is used (`grep -rn "actions/checkout@" .github/workflows`)
   and bump all of them. A workflow added to `development` after the
   branch was cut is the classic miss.
-- **Vendored copies.** `turndown` and `turndown-plugin-gfm` are also copied
-  into `src/vendor/`. A bump of either needs the copies renewed exactly as
-  `task vendor` does:
-  `cp node_modules/turndown/dist/turndown.js src/vendor/turndown.js`,
-  `cp node_modules/turndown/LICENSE src/vendor/turndown.LICENSE`,
-  `cp node_modules/turndown-plugin-gfm/dist/turndown-plugin-gfm.js src/vendor/turndown-plugin-gfm.js`,
-  `cp node_modules/turndown-plugin-gfm/LICENSE src/vendor/turndown-plugin-gfm.LICENSE`.
-  `tests/vendor.test.js` fails until they match.
+- **Vendored copies.** `src/vendor/` is not in git: `npm run vendor`
+  copies every dependency of `package.json` into it at build (Q10), the
+  files of each named in `package.json` `vendor`. A new runtime dependency
+  needs its entry there, or the script stops; a bumped one may move its
+  files (check the paths). `tests/vendor.test.js` holds both.
 - **Read the release notes** of a major bump. List the breaking changes and
   say for each whether this repository is affected and where.
 - Biome, web-ext, vitest, jsdom: a new version may change formatting or
