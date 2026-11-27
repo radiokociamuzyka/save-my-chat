@@ -62,9 +62,14 @@ repository: `forge/sarverott/github-repos/Sarverott/AGENTS.md` and its
    files of the extension; the user's own prototypes run only through the
    `userScripts` API (an optional permission the user grants), never through
    `eval`, `new Function` or `<script>` injected into the page.
-6. **No bundler unless decided.** The extension is plain JavaScript that
-   Firefox runs as written, so AMO review needs no source-code submission.
-   Adding a build step is a question (see `docs/devlog/BRAINSTORM.md`).
+6. **One build step, for the pages only (Q12).** Vite builds the
+   extension's pages from `.vue` files (`vite.config.mjs` `PAGES`) into
+   `dist/extension/`, not minified, and copies the rest of `src/` as it
+   is: the background, the kit and the readers stay plain JavaScript that
+   Firefox runs as written. Every version uploaded to AMO goes with its
+   source archive (a release asset) and the README's "Building from
+   source". Another build step, minifying, or bundling the content
+   scripts is a question first.
 
 ## Questions and plans
 
@@ -107,7 +112,7 @@ review. Flag as P1 anything that breaks a rule above.
 ## Layout
 
 ```
-src/                     the extension itself, loaded by Firefox as written (web-ext sourceDir)
+src/                     the extension's source: built into dist/extension/ (web-ext sourceDir), pages by Vite, the rest as it is
   manifest.json          Manifest V3, gecko id, data_collection_permissions
   core/                  shared by every context, classic scripts on globalThis.SaveMyChat
     kit.js               the unified format, DOM-to-markdown, reader registration
@@ -119,7 +124,7 @@ src/                     the extension itself, loaded by Firefox as written (web
     drafted-snippets/    Sett's snippets as written, the sources readers are fitted from; not packaged
   vendor/                not in git: every dependency of package.json copied unchanged at build (scripts/vendor.mjs, Q10)
   background/main.js     event page: registers enabled readers, answers "save" from the popup, downloads
-  popup/                 the toolbar button: which reader sees this tab, save as md / json
+  popup/                 the toolbar button (Vue, Q12): ToolbarPopup.vue, report.js; which reader sees this tab, save as md / json
   options/               readers on/off, selector overrides; library.js: the saved chats; prototypes.js: the user's own readers (userScripts)
 resources/data/          declarations: chats.yaml, the chat webapps, their domains and conversation addresses (PP2)
 tests/                   vitest + jsdom; fixtures/ are saved HTML of real chats, anonymised
@@ -129,6 +134,7 @@ docs/devlog/             the BOS devlog: VISION, ROADMAP, TODO, BRAINSTORM, PROP
 scripts/wiki/            build.mjs, translate.mjs: the wiki generated and translated (wiki.yaml)
 scripts/pages/           build.mjs: the static page on github-pages, from resources/pages/ (pages.yml)
 scripts/github/          devlog.py, adapted from P_JOL_ROLL; discussions.py, the feed in Discussions (feed.yml)
+vite.config.mjs          the build step (Q12): PAGES built by Vite, src/ copied, into dist/extension/
 scripts/version.mjs      the one version: sync, bump, bump-commit (pre-commit hook), merge driver (.gitattributes)
 scripts/release/         release.sh: what release.yml does on master, runnable by hand
 docs/changelog/          what happened per phase, the owner's words word for word, append-only
@@ -163,13 +169,14 @@ stamps the format, source and time. The format is described in
 | Command | What it does |
 | --- | --- |
 | `task install` | `npm ci` |
-| `task run` | Firefox with the extension loaded, reloads on save (`web-ext run`) |
+| `task run` | Firefox with the built extension loaded; Vite rebuilds and web-ext reloads on every change (`scripts/run.mjs`) |
+| `task extension` | the extension built into `dist/extension/` (Q12): the Vue pages by Vite, the rest of `src/` as it is |
 | `task check` | Biome, changes nothing |
 | `task format` | Biome with safe fixes |
 | `task lint:ext` | `web-ext lint` (AMO's validator), warnings as errors, but the false positives named one by one in `scripts/lint.mjs` |
 | `task test` | vitest |
 | `task verify` | check, lint:ext, test — run before a step is reported done |
-| `task build` | the batch (Q10): dependencies into `src/vendor/`, `readers.js` and host permissions from `chats.yaml`, the `.zip` into `dist/` |
+| `task build` | the batch (Q10, Q12): dependencies into `src/vendor/`, `readers.js` and host permissions from `chats.yaml`, the extension built, the `.zip` into `dist/` |
 | `task devlog:scrapnote` | a new scrapnote in `docs/devlog/` |
 | `task version` (`-- bump minor`) | the version of `package.json` written into every copy, or raised by hand (the hook does it per commit) |
 | `task vendor` | every dependency of `package.json` copied unchanged into the gitignored `src/vendor/` (its files named in `package.json` `vendor`) |
