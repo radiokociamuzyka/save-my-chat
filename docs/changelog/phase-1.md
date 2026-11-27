@@ -203,3 +203,14 @@ check is Sett's, by the released build; Sett's reports are written down
 by Cleo in `docs/.agents/NOTES.md`, so the step leaves phase 1 as a
 standing practice. To make that testing easier, phase 1 gets the
 selector editor in the options page and a report of what a reader saw.
+
+## 2026-11-27, the owner's live check of v0.1.53 (the chat, word for word)
+
+> great, so then you can also consider to fix that funny swap in google-ai-mode where instead of true order each question message from user and answer from agent are switched in order. result is hilarious, example of 6 message history order is `1,0,3,2,5,4` instead of right one `0,1,2,3,4,5,6`. you made them ignore own chronology, but don't worry, just make it detect all messages and then recognize one of 2 categories of messages: user's and agent's. let's try that. as for copilot all looks like it's working fine. good job
+
+**Decision:** the Copilot reader is confirmed in the wild. AI Mode's swap
+came from each answer's block holding its question: the kit now finds
+all messages with one query, tells user from agent by the set each one
+matches, and orders them by where each one's own text starts. The
+popup's report counts messages nested in the other role's, to confirm
+the shape on the live page.

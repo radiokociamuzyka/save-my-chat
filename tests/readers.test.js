@@ -114,4 +114,28 @@ describe("readers", () => {
 		]);
 		expect(JSON.stringify(seen)).not.toMatch(/secret/);
 	});
+
+	it("google-ai-mode keeps the chronology when each question sits inside its answer's block", async () => {
+		// querySelectorAll lists an ancestor before what it holds: an answer block
+		// holding its question came out first, 1,0,3,2,5,4 (Sett, 2026-11-27)
+		const block = (n) => `<div class="CKgc1d"><div class="L4dlbc">Question ${n}</div><p>Answer ${n}.</p></div>`;
+		const html = `<body>${block(1)}${block(2)}${block(3)}</body>`;
+		const w = load([...KIT, "readers/google-ai-mode.js"], {
+			html,
+			url: "https://www.google.com/search?q=Question+1&udm=50",
+		});
+		const c = await w.SaveMyChat.readPage();
+		expect(c.turns.map((t) => t.text)).toEqual([
+			"Question 1",
+			"Answer 1.",
+			"Question 2",
+			"Answer 2.",
+			"Question 3",
+			"Answer 3.",
+		]);
+		expect(c.turns.map((t) => t.role)).toEqual(["user", "assistant", "user", "assistant", "user", "assistant"]);
+		expect(c.warnings).toBeUndefined();
+		const seen = await w.SaveMyChat.inspect();
+		expect(seen.nested).toEqual({ "user in assistant": 3 });
+	});
 });
