@@ -47,6 +47,11 @@ tab of the extension's options. There you can search titles and
 messages, **Read** a chat in the viewer, save it again as Markdown or JSON
 (the copy from when you last saved it), or **Forget** it.
 
+**Back up all as .zip** packs the whole library into one file in your
+downloads, `save-my-chat/backup-<date>.zip`: every chat as Markdown and
+JSON, and an index of them ([the backup's layout](../guides/format.md#a-backup-save-my-chatlibrary0)).
+It is made on your machine and goes only to your downloads folder.
+
 ## The viewer
 
 The **Viewer** tab shows a chat of the library, or a file you saved
