@@ -54,3 +54,36 @@ reader files. RR2 waits for the next release.
 
 **Decision:** Cleo files the issue on mozilla/addons-linter with `gh`,
 after looking for one already open, and links it from the almanac case.
+
+## 2026-11-27, the owner after v0.3.18 (the chat, word for word)
+
+> yay! all done there, proceede next moves amigo
+
+**Decision:** both RRs left are reported done (below): phase 2 and
+phase 3 are closed, and phase 4 (the frontend) begins at `0.4.x`. The
+feed's run after v0.3.18 failed on the edit of an answer: the feed no
+longer edits anything it posted (almanac: feed-edit-refused, its second
+time).
+
+### RR1, done (issue #79, word for word)
+
+> understood, ruleset was reactivated then
+
+**Decision:** checked through the API: the ruleset `master` is active,
+with no bypass, requiring a pull request and the check `verify`, and
+refusing deletion and force pushes. Phase 2's last item is ticked.
+
+### RR2, done (issue #80, word for word)
+
+> all went well, no errors, without problems
+>
+> > console output of devlog inspect (f12):
+> ```log
+> save-my-chat: prototype loaded, reader github-copilot
+> ```
+>
+> we can mark it as done
+
+**Decision:** prototypes work in a real Firefox: the permission, the
+copy saved, the prototype loaded in the chat's page. Phase 3's last
+item is ticked.

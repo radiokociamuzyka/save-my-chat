@@ -71,7 +71,7 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 - [x] The page served by GitHub Pages (Pages set to deploy the `github-pages` branch: a repository setting, Sett)
 - [x] Workflow `devlog.yml`: the devlog synced on each push of it to `development`
 - [x] Workflows: the release (`release.yml`) and the checks on every pull request into `master`
-- [ ] The checks required before a merge into `master` (branch protection, a repository setting: RR1)
+- [x] The checks required before a merge into `master` (branch protection, a repository setting: RR1)
 - [x] `task github:discussions` and `feed.yml`: the feed of #17 and the almanac's Q&A, written after each release
 
 ## Phase 3: prototypes
@@ -81,7 +81,7 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 - [x] Prototypes registered with `userScripts.register` in the `USER_SCRIPT` world, messaging on (`configureWorld`), re-registered on update
 - [x] A prototype replaces its default for the same matches; turning it off brings the default back
 - [x] Export and import of prototypes as files
-- [ ] Prototypes checked in a real Firefox: the permission, a change seen in the saved file, the default back when off (RR2)
+- [x] Prototypes checked in a real Firefox: the permission, a change seen in the saved file, the default back when off (RR2)
 
 ## Phase 4: the frontend
 
