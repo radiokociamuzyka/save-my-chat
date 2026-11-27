@@ -214,3 +214,11 @@ all messages with one query, tells user from agent by the set each one
 matches, and orders them by where each one's own text starts. The
 popup's report counts messages nested in the other role's, to confirm
 the shape on the live page.
+
+## 2026-11-27, the owner's live check of v0.1.59 (the chat, word for word)
+
+> yes, now order in both is correct: [the reports of google-ai-mode and github-copilot, 4 user and 4 assistant each] does not show you how ordered are messages? in right order both of chatting stories always start with user and end with agent (6 messages is `user,agent,user,agent,user,agent` - consider to add that notice for our debug raport)
+
+**Decision:** the order of both readers is confirmed in the wild. The
+report gets an `order:` line of roles, and the kit warns when a chat does
+not start with the user, end with the agent and alternate.
