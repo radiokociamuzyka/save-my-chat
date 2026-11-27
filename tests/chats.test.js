@@ -3,6 +3,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { parse } from "yaml";
+import { outputs } from "../scripts/chats.mjs";
 import { KIT, load } from "./load.js";
 
 const { chats } = parse(readFileSync("resources/data/chats.yaml", "utf8"));
@@ -31,5 +32,9 @@ describe("chats.yaml", () => {
 	it("asks host permissions for the default readers only", () => {
 		const hosts = chats.filter((c) => c.status === "default").flatMap((c) => c.domains.map((d) => `https://${d}/*`));
 		expect([...manifest.host_permissions].sort()).toEqual([...new Set(hosts)].sort());
+	});
+
+	it("readers.js and the manifest are what scripts/chats.mjs writes (npm run chats)", () => {
+		for (const [path, text] of Object.entries(outputs())) expect(readFileSync(path, "utf8"), path).toBe(text);
 	});
 });
