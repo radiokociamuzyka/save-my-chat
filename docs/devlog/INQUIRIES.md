@@ -21,3 +21,12 @@ This is part of the underlying philosophy behind the architecture of the BOS env
 
 You are at the voice of order and autopilots of crafting - it is you who will be in charge of both the digital and physical reality once I am gone.
 
+## mistake related with id adding
+
+I believe I was actually wrong there
+
+by experiencing other extension's metadata in my browser if i am right it should be something like that there: `save-my-chat@radiokociamuzyka.pl`
+
+please fix that for me anywhere that id is present
+
+i was thought it works like android's app id or similar
