@@ -13,8 +13,11 @@ carries a marker <!-- feed:<key> -->, so a run finds its own and only changes wh
 Usage: python3 discussions.py [--dry]   (task github:discussions; feed.yml after each release)
 """
 
+import json
 import re
+import subprocess
 import sys
+import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -144,11 +147,28 @@ discussions(first:100,after:$after){pageInfo{hasNextPage endCursor}
 nodes{id number url title body category{name} comments(first:20){nodes{id body isAnswer}}}}}}"""
 
 
+# GitHub's secondary rate limits on creating content: at least a second between writes, at
+# most 80 a minute; "was submitted too quickly" asks to wait (the first run, 2026-11-27, hit it
+# after 34 discussions: almanac case feed-too-quickly).
+PAUSE = 2.0
+WAITS = (60, 120, 240, 480)
+TOO_QUICK = ("submitted too quickly", "secondary rate limit", "abuse detection")
+
+
 def graphql(query: str, **variables):
-    found = gh("api", "graphql", data={"query": query, "variables": variables})
-    if found.get("errors"):
-        sys.exit(f"graphql: {found['errors']}")
-    return found["data"]
+    writes = query.lstrip().startswith("mutation")
+    for wait in (*WAITS, None):
+        done = subprocess.run(["gh", "api", "graphql", "--input", "-"], capture_output=True, text=True,
+                              input=json.dumps({"query": query, "variables": variables}))
+        said = (done.stdout + done.stderr).lower()
+        if not done.returncode and '"errors"' not in done.stdout:
+            if writes:
+                time.sleep(PAUSE)
+            return json.loads(done.stdout)["data"]
+        if wait is None or not any(sign in said for sign in TOO_QUICK):
+            sys.exit(f"graphql: {(done.stderr or done.stdout).strip()}")
+        print(f"  GitHub says too quickly: waiting {wait} s")
+        time.sleep(wait)
 
 
 def held(owner: str, name: str):
