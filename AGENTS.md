@@ -73,6 +73,26 @@ repository: `forge/sarverott/github-repos/Sarverott/AGENTS.md` and its
 | a problem met and solved | `docs/almanac/`: its case in `cataclistics/`, a line in its topic in `solutions/` |
 | work for another repository | `~/__WORKSHOP/forge/NOTES-for-repositories.md`, never the other repository itself |
 
+## Review guidelines
+
+For Joker (Codex) reviewing a pull request, and for any agent asked to
+review. Flag as P1 anything that breaks a rule above.
+
+- **Diligence over passing.** A conflict resolved by commenting out,
+  deleting or taking one side whole; a rule silenced; a test weakened: P1.
+- **Dependency updates** (`dev/dependabot` → `development`): every use of
+  a bumped tool is bumped (all workflows, not only the one dependabot saw);
+  `src/vendor/` equals its npm packages (`tests/vendor.test.js`); breaking
+  changes of a major bump are checked against how this code uses it; no
+  new dependency, permission, host or network request rides along.
+- **Versions** change only by the hook or the merge driver; a merge that
+  bumps or reformats a JSON file is a bug (almanac: version-hook-merges).
+- **The owner's words** stay word for word in `docs/changelog/`; nothing
+  of `docs/.agents/` was written by a human; no non-public conversation in
+  `tests/fixtures/`.
+- Jarvis's prompts: `.github/copilot-instructions.md`,
+  `.github/prompts/`.
+
 ## Layout
 
 ```
@@ -99,7 +119,7 @@ docs/changelog/          what happened per phase, the owner's words word for wor
 docs/guides/             how to write a reader, the unified format
 docs/almanac/            what was learnt the hard way: cataclistics/ (a case per page), solutions/ (a topic each)
 docs/.agents/            agents' own domain
-.github/                 AUTHORS, bos.json, community files, workflows
+.github/                 AUTHORS, bos.json, community files, workflows; Jarvis: copilot-instructions.md, prompts/
 ```
 
 ## The reader contract
