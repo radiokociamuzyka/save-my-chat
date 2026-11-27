@@ -20,3 +20,9 @@ From issue #22, Sett, 2026-11-27:
 From issue #23, Sett, 2026-11-27:
 
 > sure, add that button
+
+### Q10
+
+From issue #24, Sett, 2026-11-27:
+
+> your `Lean:` way is good but add also that all to be done by batched `task build` that also gathers that codes in `src/vendor` right now (we want it to be gitignored in the repo, like `node_modules`, so all that we will have as dependencies of `package.json` will become packed and added inside `src/vendor` for our released packed addon of browser)
