@@ -55,3 +55,16 @@ textarea.code {
 .file input {
 	margin-left: 0.25rem;
 }
+
+#library {
+	list-style: none;
+	padding: 0;
+}
+
+#library > li {
+	margin-bottom: 0.5rem;
+}
+
+#library-search {
+	width: 60%;
+}
