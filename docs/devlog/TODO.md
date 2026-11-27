@@ -87,7 +87,7 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 
 - [ ] The build step (Q12): Vite builds the pages from `.vue` files into `dist/extension/` with the rest of `src/` as it is; `web-ext` runs and packs that; `task run` rebuilds on change
 - [ ] Each release attaches its source archive for AMO, and the README says how to build it
-- [ ] The toolbar button's context menu opens the library and settings (RR4)
+- [x] The toolbar button's context menu opens the library and settings (RR4)
 - [ ] Vue components, Bulma styles for options and popup
 - [ ] A viewer of saved conversations (Markdown and JSON of the unified format)
 - [ ] Tests driving the extension in a real Firefox: Selenium with geckodriver, a temporary add-on, its pages by `moz-extension://` address (Q14)
