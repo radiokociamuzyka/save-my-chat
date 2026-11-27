@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "save-my-chat",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "Saves a conversation from an AI chat webapp on your machine, in one clear unified format.",
   "background": {
     "scripts": [
@@ -33,7 +33,7 @@
   ],
   "browser_specific_settings": {
     "gecko": {
-      "id": "@save-my-chat.radiokociamuzyka.pl",
+      "id": "save-my-chat@radiokociamuzyka.pl",
       "strict_min_version": "142.0",
       "data_collection_permissions": {
         "required": [
