@@ -76,3 +76,53 @@ What waits for a decision or was not verified is kept in
   the background injects the kit and readers into such a tab on demand.
 - Toolchain here: Node 24.21, npm 11.19, Task 3.54, Firefox installed.
   Pinned: Biome 2.6.9, web-ext 10.8.0, vitest 5.1.2, jsdom 31.0.1.
+
+## 2026-11-27, PP1, PP2, signing, dependabot, the id
+
+- PR #18 was merged by Sett at 18:27; `release.yml` ran green: tag
+  `v0.1.3`, the release marked latest, `master` merged back into
+  `development`. The release flow is now seen working end to end.
+- Sett wrote of commenting out what the dependabot collision touched.
+  No such lines were found: not on `origin/dev/dependabot`, not on any
+  local branch, not in a stash or worktree. The drift was resolved from
+  what was pushed.
+- The "collision" was no git conflict: `development` merged into
+  `dev/dependabot` cleanly. It was the drift (two workflows left on v5),
+  which a merge does not show. Worth remembering when "it merges" is
+  taken for "it is consistent".
+- Found while doing it, not asked: the version hook bumped a concluded
+  merge, and its merge driver reformatted `src/manifest.json`; the
+  vendored turndown could be left behind by a dependabot bump. All three
+  fixed with tests and in the almanac.
+- `actionlint` is not installed here; `dependabot.yml` was checked as
+  YAML only. Its first real run is the push of this batch to
+  `development` (the `follow` job).
+- One commit message of this batch (`2ae2ab4`) refers to Sett as "him";
+  a pronoun was guessed where none was given. It cannot be amended on
+  `dev/*`; the files carry none.
+
+## 2026-11-27, Q8-Q11
+
+- Joker's AUTHORS address is the GitHub noreply of the Codex app's bot
+  account (`chatgpt-codex-connector[bot]`, id 199175422, looked up through
+  the API); P_JOL_ROLL had no Joker line to copy. "gpt6.2" is written as
+  Sett named it. Check it against the address Codex's commits really carry.
+- `38dbfc3` (build(chats)) holds more than its subject: the removal of
+  `src/vendor/` from git and package.json's vendor scripts. Cause: an
+  earlier `git rm --cached` left staged, and the hook's `git add` of
+  package.json. Fixed in the hook; the commit cannot be amended on `dev/*`.
+- With `src/vendor/` out of git a fresh clone runs nothing until
+  `npm run vendor` (the test, verify, start and build scripts do it).
+  Loading `src/` as a temporary add-on straight from a clone needs it too.
+
+## Live checks reported by Sett (written down by Cleo, as Sett asked on 2026-11-27)
+
+| Date | Reader | Build | What Sett saw | Answer |
+| --- | --- | --- | --- | --- |
+| 2026-11-26 | google-ai-mode | v0.0.1 | user messages missing from the saved file | selector sets, page order, the address fallback (0.1.0) |
+| 2026-11-27 | github-copilot | v0.1.3 | no messages found at `https://github.com/copilot/c/*` | rebuilt from Sett's snippet (0.1.31); waits for the next release to be checked |
+
+From the next release on, the popup's "Copy report" (under "What the
+reader saw") is the easiest thing to paste into an issue or the chat: it
+names the build, the reader, every selector with how many elements it
+found, and no text of the conversation.

@@ -1,8 +1,8 @@
 # ROADMAP
 
 Versions follow the phases: `0.<phase>.<step>` until the first listed
-release on AMO, which is `1.0.0`. Builds are signed unlisted until then
-(Q3). The idea of each phase is in [VISION.md](VISION.md); the items in
+release on AMO, which is `1.0.0`. Until its preparation in phase 6 builds
+are unsigned and installed as a temporary add-on (Sett, 2026-11-27). The idea of each phase is in [VISION.md](VISION.md); the items in
 [TODO.md](TODO.md).
 
 | Milestone | Phases | Version |

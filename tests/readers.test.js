@@ -1,6 +1,6 @@
-// The default readers against small hand-made pages. These pages use the
-// data-smc-* hooks of each reader, so they test the reader's logic only;
-// tests against real saved pages come with phase 1 (tests/fixtures/).
+// The default readers against small hand-made pages built on the classes
+// Sett saw on the live webapps; tests against real saved pages come with
+// phase 1 (tests/fixtures/).
 import { describe, expect, it } from "vitest";
 import { KIT, load } from "./load.js";
 
@@ -70,17 +70,48 @@ describe("readers", () => {
 		expect(w.SaveMyChat.present()).toBeNull();
 	});
 
-	it("github-copilot reads messages by role", async () => {
-		const html = `<body><h1 data-smc-title>Fix the build</h1>
-			<div data-smc-role="user"><div data-smc-body>Why does it fail?</div></div>
-			<div data-smc-role="assistant"><div data-smc-body><p>Missing <code>await</code>.</p></div></div>
+	it("github-copilot reads .message-container by its user__ / ai__ class, like Sett's snippet", async () => {
+		const html = `<head><title>Fix the build · GitHub Copilot</title></head><body>
+			<div class="message-container user__k2Xq9">Why does <code>npm ci</code> fail?</div>
+			<div class="message-container ai__Pz31a"><div class="markdown-body"><p>Missing <code>await</code>.</p>
+				<pre><code>await run();</code></pre></div><button>Copy</button></div>
+			<div class="message-container ChatMessage-module__user__Ab12">And now?</div>
+			<div class="message-container ChatMessage-module__ai__Cd34"><p>Green.</p></div>
+			<div class="detail__x message-container">not a message of either role</div>
 		</body>`;
 		const w = load([...KIT, "readers/github-copilot.js"], { html, url: "https://github.com/copilot/c/abc" });
 		const c = await w.SaveMyChat.readPage();
 		expect(c.title).toBe("Fix the build");
+		expect(c.warnings).toBeUndefined();
 		expect(c.turns).toEqual([
-			{ role: "user", text: "Why does it fail?" },
-			{ role: "assistant", text: "Missing `await`." },
+			{ role: "user", text: "Why does `npm ci` fail?" },
+			{ role: "assistant", text: "Missing `await`.\n\n```\nawait run();\n```" },
+			{ role: "user", text: "And now?" },
+			{ role: "assistant", text: "Green." },
 		]);
+	});
+
+	it("github-copilot finds a renamed container once an override names it", async () => {
+		const html = `<body><div class="chat-msg you">Q</div><div class="message-container ai__a">A</div></body>`;
+		const w = load([...KIT, "readers/github-copilot.js"], { html, url: "https://github.com/copilot/c/abc" });
+		const c = await w.SaveMyChat.readPage(undefined, undefined, { user: [".chat-msg.you"] });
+		expect(c.turns.map((t) => t.role)).toEqual(["user", "assistant"]);
+	});
+
+	it("inspect says what each selector found, without the conversation's text", async () => {
+		const html = `<body><div class="message-container user__a">secret question</div>
+			<div class="message-container ai__b">secret answer</div><div class="message-container ai__c">two</div></body>`;
+		const w = load([...KIT, "readers/github-copilot.js"], { html, url: "https://github.com/copilot/c/abc" });
+		const seen = await w.SaveMyChat.inspect(undefined, undefined, { user: ["div[", ".gone"] });
+		expect(seen.reader).toBe("github-copilot");
+		expect(seen.host).toBe("github.com");
+		expect(seen.turns).toEqual({ user: 1, assistant: 2 });
+		expect(seen.warnings).toEqual(["2 answers but 1 question: a user selector may be out of date."]);
+		expect(seen.parts.user).toEqual([
+			{ css: "div[", found: null, override: true },
+			{ css: ".gone", found: 0, override: true },
+			{ css: ".message-container[class*='user__']", found: 1, override: false },
+		]);
+		expect(JSON.stringify(seen)).not.toMatch(/secret/);
 	});
 });

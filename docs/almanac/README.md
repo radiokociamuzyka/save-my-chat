@@ -13,3 +13,6 @@ solved gets its case here, so the next one is recognised faster.
 - [gecko-id-format](cataclistics/gecko-id-format.md): a domain is not an add-on id
 - [turndown-fences-and-pipes](cataclistics/turndown-fences-and-pipes.md): turndown closes fences early and splits table cells
 - [lost-user-messages](cataclistics/lost-user-messages.md): AI Mode saved without the user's messages
+- [version-hook-merges](cataclistics/version-hook-merges.md): the version hook bumped a merge, reformatted the manifest, staged more than the version
+- [dependabot-branch-drift](cataclistics/dependabot-branch-drift.md): dependabot's branch left behind, half the workflows updated
+- [copilot-reader-blind](cataclistics/copilot-reader-blind.md): the Copilot reader saw no messages on the live page

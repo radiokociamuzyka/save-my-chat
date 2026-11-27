@@ -1,6 +1,6 @@
 {
   "name": "save-my-chat",
-  "version": "0.1.3",
+  "version": "0.1.53",
   "private": true,
   "description": "Firefox extension to export your AI chat history out of webapps and save it on your local machine in clear unified formatting",
   "repository": "github:radiokociamuzyka/save-my-chat",
@@ -15,10 +15,12 @@
     "format": "biome check --write .",
     "lint:ext": "web-ext lint",
     "test": "vitest run",
-    "verify": "npm run check && npm run lint:ext && npm run test",
-    "start": "web-ext run",
-    "build": "web-ext build --overwrite-dest",
-    "prepare": "husky"
+    "verify": "npm run vendor && npm run check && npm run lint:ext && vitest run",
+    "start": "npm run vendor && web-ext run",
+    "build": "npm run vendor && npm run chats && web-ext build --overwrite-dest",
+    "prepare": "husky",
+    "vendor": "node scripts/vendor.mjs",
+    "chats": "node scripts/chats.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.9",
@@ -27,10 +29,21 @@
     "husky": "9.1.7",
     "jsdom": "31.0.1",
     "vitest": "5.1.2",
-    "web-ext": "10.8.0"
+    "web-ext": "10.8.0",
+    "yaml": "2.9.1"
   },
   "dependencies": {
     "turndown": "7.2.5",
     "turndown-plugin-gfm": "1.0.2"
+  },
+  "vendor": {
+    "turndown": {
+      "dist/turndown.js": "turndown.js",
+      "LICENSE": "turndown.LICENSE"
+    },
+    "turndown-plugin-gfm": {
+      "dist/turndown-plugin-gfm.js": "turndown-plugin-gfm.js",
+      "LICENSE": "turndown-plugin-gfm.LICENSE"
+    }
   }
 }

@@ -1,0 +1,99 @@
+# The chat webapps save-my-chat knows: their domains and the address patterns
+# of their conversations (PP2, approved by Sett on 2026-11-27, issue #16).
+#
+# status:   default  - a reader ships with the extension (src/core/readers.js
+#                      lists exactly these, in this order: tests/chats.test.js)
+#           planned  - wanted (PP2), no reader yet
+# matches:  match patterns of the pages a reader is injected into
+#           (https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/Match_patterns)
+# chats:    the address of one conversation; `*` is any id
+# verified: false until someone checked the patterns on the live webapp
+#
+# How this file reaches the extension, which runs plain JavaScript and reads no
+# YAML, is Q10 (docs/devlog/BRAINSTORM.md).
+format: save-my-chat/chats/0
+
+chats:
+  - id: google-ai-mode
+    name: Google Search, AI Mode
+    status: default
+    reader: readers/google-ai-mode.js
+    domains: [www.google.com]
+    matches: ["https://www.google.com/search*"]
+    chats: ["https://www.google.com/search?q=*&udm=50*"]
+    note: a follow-up keeps the address of the first question; only udm=50 tells AI Mode apart
+    verified: true
+
+  - id: github-copilot
+    name: GitHub Copilot
+    status: default
+    reader: readers/github-copilot.js
+    domains: [github.com]
+    matches: ["https://github.com/copilot*"]
+    chats: ["https://github.com/copilot/c/*"]
+    note: messages are .message-container with a class user__… or ai__… (Sett, 2026-11-27)
+    verified: true
+
+  - id: chatgpt
+    name: ChatGPT
+    status: planned
+    domains: [chatgpt.com]
+    matches: ["https://chatgpt.com/*"]
+    chats: ["https://chatgpt.com/c/*", "https://chatgpt.com/g/*/c/*"]
+    verified: false
+
+  - id: claude
+    name: Claude
+    status: planned
+    domains: [claude.ai]
+    matches: ["https://claude.ai/*"]
+    chats: ["https://claude.ai/chat/*"]
+    verified: false
+
+  - id: gemini
+    name: Gemini
+    status: planned
+    domains: [gemini.google.com]
+    matches: ["https://gemini.google.com/*"]
+    chats: ["https://gemini.google.com/app/*"]
+    verified: false
+
+  - id: microsoft-copilot
+    name: Microsoft Copilot
+    status: planned
+    domains: [copilot.microsoft.com]
+    matches: ["https://copilot.microsoft.com/*"]
+    chats: ["https://copilot.microsoft.com/chats/*"]
+    verified: false
+
+  - id: perplexity
+    name: Perplexity
+    status: planned
+    domains: [www.perplexity.ai]
+    matches: ["https://www.perplexity.ai/*"]
+    chats: ["https://www.perplexity.ai/search/*"]
+    verified: false
+
+  - id: mistral-le-chat
+    name: Mistral Le Chat
+    status: planned
+    domains: [chat.mistral.ai]
+    matches: ["https://chat.mistral.ai/*"]
+    chats: ["https://chat.mistral.ai/chat/*"]
+    verified: false
+
+  - id: deepseek
+    name: DeepSeek
+    status: planned
+    domains: [chat.deepseek.com]
+    matches: ["https://chat.deepseek.com/*"]
+    chats: ["https://chat.deepseek.com/a/chat/s/*"]
+    verified: false
+
+  - id: hugging-chat
+    name: HuggingChat
+    status: planned
+    domains: [huggingface.co]
+    matches: ["https://huggingface.co/chat/*"]
+    chats: ["https://huggingface.co/chat/conversation/*"]
+    verified: false

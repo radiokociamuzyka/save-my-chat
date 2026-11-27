@@ -16,7 +16,8 @@ repository: `forge/sarverott/github-repos/Sarverott/AGENTS.md` and its
 1. **Who may commit.** An agent commits once a confirmed member has written
    it into `.github/AUTHORS`; until then it leaves its edits uncommitted
    and says what it changed and why. Cleo (Claude Code) was confirmed by
-   Sett on 2026-11-26 (Q4). A confirmed AI signs every commit with its name
+   Sett on 2026-11-26 (Q4), Jarvis (GitHub Copilot) and Joker (Codex) on
+   2026-11-27 (Q11). A confirmed AI signs every commit with its name
    and lineage, the same as its line in `AUTHORS`:
    `Co-Authored-By: Cleo (Claude Opus 5.5) <noreply@anthropic.com>`.
 2. **Where edits go: the BOS craft loop.** `master` (canon) →
@@ -37,8 +38,11 @@ repository: `forge/sarverott/github-repos/Sarverott/AGENTS.md` and its
    version by hand and never `--amend` on `dev/*` (each amend bumps again).
    A phase ends with the dev branches gathered in `development` and a pull
    request `development` → `master`; its merge releases (`release.yml`:
-   tag, packed extension, the latest). Merging into `master`, AMO uploads
-   and repository settings are always asked for first.
+   tag, packed extension, the latest). **Every stop of work** (each report
+   to Sett) first opens, or updates, that pull request, so its merge
+   releases a build Sett tests in the wild (Sett, 2026-11-27). Merging into
+   `master`, AMO uploads and repository settings are always asked for
+   first.
    **The owner's edits** found in the working tree go first, as they are,
    one commit per change on `dev/Sarverott`, with a message saying how the
    agent understood them; then that branch is merged into `development`.
@@ -50,7 +54,10 @@ repository: `forge/sarverott/github-repos/Sarverott/AGENTS.md` and its
    has open and writes files through the downloads API. No telemetry, no
    remote code, no network requests of its own
    (`data_collection_permissions: none`). A change that would send anything
-   anywhere is a question for Sett first.
+   anywhere is a question for Sett first. The one exception (Q9): a saved
+   chat made a gist by the user's own click, with the user's token, an
+   optional host permission and the transfer declared in
+   `data_collection_permissions.optional`.
 5. **No remote or evaluated code.** AMO rejects it. Default readers ship as
    files of the extension; the user's own prototypes run only through the
    `userScripts` API (an optional permission the user grants), never through
@@ -73,6 +80,26 @@ repository: `forge/sarverott/github-repos/Sarverott/AGENTS.md` and its
 | a problem met and solved | `docs/almanac/`: its case in `cataclistics/`, a line in its topic in `solutions/` |
 | work for another repository | `~/__WORKSHOP/forge/NOTES-for-repositories.md`, never the other repository itself |
 
+## Review guidelines
+
+For Joker (Codex) reviewing a pull request, and for any agent asked to
+review. Flag as P1 anything that breaks a rule above.
+
+- **Diligence over passing.** A conflict resolved by commenting out,
+  deleting or taking one side whole; a rule silenced; a test weakened: P1.
+- **Dependency updates** (`dev/dependabot` → `development`): every use of
+  a bumped tool is bumped (all workflows, not only the one dependabot saw);
+  `src/vendor/` equals its npm packages (`tests/vendor.test.js`); breaking
+  changes of a major bump are checked against how this code uses it; no
+  new dependency, permission, host or network request rides along.
+- **Versions** change only by the hook or the merge driver; a merge that
+  bumps or reformats a JSON file is a bug (almanac: version-hook-merges).
+- **The owner's words** stay word for word in `docs/changelog/`; nothing
+  of `docs/.agents/` was written by a human; no non-public conversation in
+  `tests/fixtures/`.
+- Jarvis's prompts: `.github/copilot-instructions.md`,
+  `.github/prompts/`.
+
 ## Layout
 
 ```
@@ -81,13 +108,14 @@ src/                     the extension itself, loaded by Firefox as written (web
   core/                  shared by every context, classic scripts on globalThis.SaveMyChat
     kit.js               the unified format, DOM-to-markdown, reader registration
     markdown.js          conversation -> .md file
-    readers.js           the list of default readers: id, name, matches, file
+    readers.js           the list of default readers, written from resources/data/chats.yaml (task chats)
   readers/               one default reader per chat webapp, each calls SaveMyChat.reader({...})
     drafted-snippets/    Sett's snippets as written, the sources readers are fitted from; not packaged
-  vendor/                third-party libraries copied unchanged from npm (task vendor), for AMO to compare
+  vendor/                not in git: every dependency of package.json copied unchanged at build (scripts/vendor.mjs, Q10)
   background/main.js     event page: registers enabled readers, answers "save" from the popup, downloads
   popup/                 the toolbar button: which reader sees this tab, save as md / json
   options/               readers on/off; later the prototypes editor (userScripts)
+resources/data/          declarations: chats.yaml, the chat webapps, their domains and conversation addresses (PP2)
 tests/                   vitest + jsdom; fixtures/ are saved HTML of real chats, anonymised
 docs/devlog/             the BOS devlog: VISION, ROADMAP, TODO, BRAINSTORM, PROPOSALS, ORDERS, INQUIRIES;
                          shown on GitHub as milestones, issues and a board (scripts/github/devlog.py) -
@@ -99,7 +127,7 @@ docs/changelog/          what happened per phase, the owner's words word for wor
 docs/guides/             how to write a reader, the unified format
 docs/almanac/            what was learnt the hard way: cataclistics/ (a case per page), solutions/ (a topic each)
 docs/.agents/            agents' own domain
-.github/                 AUTHORS, bos.json, community files, workflows
+.github/                 AUTHORS, bos.json, community files, workflows; Jarvis: copilot-instructions.md, prompts/
 ```
 
 ## The reader contract
@@ -132,10 +160,11 @@ stamps the format, source and time. The format is described in
 | `task lint:ext` | `web-ext lint` (AMO's validator) |
 | `task test` | vitest |
 | `task verify` | check, lint:ext, test — run before a step is reported done |
-| `task build` | the `.zip` for AMO into `dist/` |
+| `task build` | the batch (Q10): dependencies into `src/vendor/`, `readers.js` and host permissions from `chats.yaml`, the `.zip` into `dist/` |
 | `task devlog:scrapnote` | a new scrapnote in `docs/devlog/` |
 | `task version` (`-- bump minor`) | the version of `package.json` written into every copy, or raised by hand (the hook does it per commit) |
-| `task vendor` | turndown and its GFM plugin copied unchanged into `src/vendor/` |
+| `task vendor` | every dependency of `package.json` copied unchanged into the gitignored `src/vendor/` (its files named in `package.json` `vendor`) |
+| `task chats` (`-- --check`) | `src/core/readers.js` and the manifest's host permissions written from `resources/data/chats.yaml` |
 | `task github:devlog` (`-- --dry`) | the devlog on GitHub: milestones, an issue per phase, `Q<n>`, `PP<n>`, the board; `devlog.yml` does it on each push of the devlog to `development`, but the board |
 
 ## Conventions

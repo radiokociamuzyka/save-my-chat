@@ -14,5 +14,14 @@ var head = document.getElementsByTagName('head').item(0);
     window.onload = function() {
         var turndownService = new TurndownService()
 
-Array.from(document.querySelectorAll(".ilZyRc, .L4dlbc, .CKgc1d")).map((x)=>[(x.className!="CKgc1d")?"\n\n\t--- USER ---\n\n":"\n\n\t--- AGENT ---\n\n", turndownService.turndown(x.innerHTML)].join("\n---\n")).forEach((x)=>console.log(x))
+        Array.from(
+            document.querySelectorAll(".ilZyRc, .L4dlbc, .CKgc1d")
+        ).map(
+            (x)=>[
+                (x.className!="CKgc1d")?"\n\n\t--- USER ---\n\n":"\n\n\t--- AGENT ---\n\n", 
+                turndownService.turndown(x.innerHTML)
+            ].join("\n---\n")
+        ).forEach(
+            (x)=>console.log(x)
+        )
     };

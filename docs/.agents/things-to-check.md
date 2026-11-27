@@ -29,3 +29,18 @@ point was added.
   listing will want 48 and 96 px icons.
 - **2026-11-26. `task devlog:state`** calls the BOS core from npm
   (`blacksmith-organization-system@next`), copied from P_JOL_ROLL; not run here.
+- **2026-11-27. `dependabot.yml`'s first runs.** `follow` on the push of
+  this batch to `development`; `land` after dependabot's next pull request
+  is merged into `dev/dependabot`. `land` may warn until Q11's setting is on.
+- **2026-11-27. The new id in Firefox.** `save-my-chat@radiokociamuzyka.pl`
+  passed `web-ext lint`; not yet loaded as a temporary add-on by anyone.
+- **2026-11-27. The planned chats' patterns** in `resources/data/chats.yaml`
+  are from memory of those sites, `verified: false`; each is checked when
+  its reader is written (phase 5).
+- **2026-11-27. The Copilot reader on the live page.** Rebuilt from Sett's
+  snippet; run only on hand-made pages in jsdom. To check: messages found
+  in order, the turndown text has no leftover labels ("You said",
+  avatars, names) that `innerText` hid or showed, the title is the chat's.
+- **2026-11-27. The popup's report and the options' selector editor in a
+  real Firefox.** Both tested in jsdom only; the clipboard write and the
+  options page loading reader files as scripts are Firefox's to confirm.

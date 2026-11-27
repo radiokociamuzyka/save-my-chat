@@ -55,8 +55,11 @@ in the extension's console (`about:debugging` → Inspect).
 
 ## Listing it
 
-1. Add `{ id, name, matches, file }` to `src/core/readers.js`.
-2. Make sure `host_permissions` in `src/manifest.json` covers `matches`.
+1. Declare it in `resources/data/chats.yaml` with `status: default`, its
+   `reader` file, `domains`, `matches` and conversation addresses.
+2. `task chats`: `src/core/readers.js` and the manifest's
+   `host_permissions` are written from the YAML (never by hand; a test
+   says when they are stale).
 3. `task run`, open a conversation, click the toolbar button.
 
 ## Testing it
