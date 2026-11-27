@@ -45,3 +45,12 @@ button {
 #seen button {
 	width: 100%;
 }
+
+.note {
+	color: #555;
+}
+
+.grew {
+	color: #1a6b2f;
+	font-weight: 600;
+}
