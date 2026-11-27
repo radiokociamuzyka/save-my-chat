@@ -7,6 +7,8 @@ site_description: Save AI chat conversations from webapps on your own machine, i
 repo_url: https://github.com/radiokociamuzyka/save-my-chat
 edit_uri: edit/development/docs/
 docs_dir: docs
+# built into dist/ with the rest; site/ is the public site's source (Q13). Read the Docs sets its own.
+site_dir: dist/docs
 strict: true
 
 exclude_docs: |
