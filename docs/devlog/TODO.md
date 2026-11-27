@@ -85,10 +85,10 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 
 ## Phase 4: the frontend
 
-- [ ] Astro site for previewing the settings page and the manuals (Q6: the build step decided here)
-- [ ] Vue components, Bulma styles for options and popup
+- [ ] Astro site for previewing the settings page and the manuals (Q6: the build step decided here; Q13 where Astro goes)
+- [ ] Vue components, Bulma styles for options and popup (Q12: render functions or a build step)
 - [ ] A viewer of saved conversations (Markdown and JSON of the unified format)
-- [ ] Playwright tests driving the extension in Firefox
+- [ ] Tests driving the extension in a real Firefox (Q14: Playwright cannot load it there)
 - [ ] The library (PP1): an index of saved chats in `storage.local`, search, re-export, a chat that grew since it was saved
 - [ ] An explorer of the stored files on ZenFS (IndexedDB) with isomorphic-git, both dependencies gathered by `task build` (Q8)
 - [ ] A "gist" button: a saved chat as a secret gist through Octokit, the user's token, `api.github.com` optional, declared in `data_collection_permissions.optional` (Q9)
