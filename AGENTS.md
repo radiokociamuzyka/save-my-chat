@@ -120,6 +120,7 @@ tests/                   vitest + jsdom; fixtures/ are saved HTML of real chats,
 docs/devlog/             the BOS devlog: VISION, ROADMAP, TODO, BRAINSTORM, PROPOSALS, ORDERS, INQUIRIES;
                          shown on GitHub as milestones, issues and a board (scripts/github/devlog.py) -
                          an issue changed by hand is overwritten: answer in ORDERS.md, ask in INQUIRIES.md
+scripts/wiki/            build.mjs, translate.mjs: the wiki generated and translated (wiki.yaml)
 scripts/github/          devlog.py, adapted from P_JOL_ROLL; discussions.py, the feed in Discussions (feed.yml)
 scripts/version.mjs      the one version: sync, bump, bump-commit (pre-commit hook), merge driver (.gitattributes)
 scripts/release/         release.sh: what release.yml does on master, runnable by hand
@@ -167,6 +168,7 @@ stamps the format, source and time. The format is described in
 | `task chats` (`-- --check`) | `src/core/readers.js` and the manifest's host permissions written from `resources/data/chats.yaml` |
 | `task github:devlog` (`-- --dry`) | the devlog on GitHub: milestones, an issue per phase, `Q<n>`, `PP<n>`, the board; `devlog.yml` does it on each push of the devlog to `development`, but the board |
 | `task github:discussions` (`-- --dry`) | the devlog's news in Discussions (#17): changelog posts, phases, proposals, releases in Announcements, a discussion per `PP<n>` in Ideas, almanac cases in Q&A with their solution as the answer; `feed.yml` runs it after each release |
+| `task wiki` (`-- --translator none`) | the wiki into `dist/wiki/` from `docs/` in the languages of `resources/data/wiki.yaml`; new texts translated by LibreTranslate (`task translate:server`, or `LIBRETRANSLATE_URL`) or Argos, kept in `resources/data/translations/`; `wiki.yml` pushes it after each release |
 
 ## Conventions
 
