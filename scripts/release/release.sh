@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Releases the version of package.json from master (Q7), unless its tag exists already:
-#   1. a version released already that reaches master again gets its patch bumped (a hotfix commit)
+#   1. a version released already that reaches master again gets its patch bumped: a hotfix commit
+#      on top of master, reached only through its tag (master is not pushed: its ruleset, RR1)
 #   2. the packed extension built: dist/save-my-chat-<version>.zip, and dist/save-my-chat.zip
 #      for the fixed address of the latest:
 #      https://github.com/radiokociamuzyka/save-my-chat/releases/latest/download/save-my-chat.zip
@@ -19,9 +20,8 @@ git fetch -q --tags origin
 if git rev-parse -q --verify "refs/tags/v$(version)" > /dev/null; then
   from=$(version)
   node scripts/version.mjs bump patch
-  git commit -qam "chore(release): v$from -> v$(version) (a hotfix on master)"
-  git push -q origin HEAD:master
-  echo "v$from was released already: master is now v$(version)"
+  git commit -qam "chore(release): v$from -> v$(version) (a hotfix, tagged on top of master)"
+  echo "v$from was released already: v$(version) is tagged on top of master, and goes back into development"
 fi
 tag="v$(version)"
 
