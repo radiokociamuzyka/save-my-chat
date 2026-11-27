@@ -1,0 +1,57 @@
+# The wiki (phase 2): the devlog, the changelog and the almanac generated from docs/ in each
+# language of resources/data/wiki.yaml, pushed to save-my-chat.wiki.git after each release.
+# Translations: resources/data/translations/<code>.json first (committed, filled by `task wiki`
+# on a member's machine); what it lacks is translated by a LibreTranslate container started
+# here, loaded with wiki.yaml's languages only.
+name: "wiki › generated from docs after a release"
+
+on:
+  workflow_run:
+    workflows: ["release › master: tag, packed extension, back into development"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: write # the wiki's repository is written with the workflow's token
+
+concurrency:
+  group: wiki
+  cancel-in-progress: false
+
+jobs:
+  wiki:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with: { ref: master }
+      - uses: actions/setup-node@v7
+        with: { node-version: 24, cache: npm }
+      - run: npm ci
+        env: { HUSKY: "0" }
+      - name: LibreTranslate, wiki.yaml's languages only
+        run: |
+          langs=$(node -e 'const y=require("yaml");const c=y.parse(require("fs").readFileSync("resources/data/wiki.yaml","utf8"));console.log(c.languages.map(l=>l.code).join(","))')
+          docker run -d --name libretranslate -p 127.0.0.1:5000:5000 libretranslate/libretranslate --load-only "$langs"
+          for i in $(seq 1 120); do
+            curl -sf http://127.0.0.1:5000/languages > /dev/null && { echo "LibreTranslate ready ($langs)"; exit 0; }
+            sleep 5
+          done
+          docker logs libretranslate | tail -20; exit 1
+      - run: node scripts/wiki/build.mjs
+        env: { LIBRETRANSLATE_URL: "http://127.0.0.1:5000" }
+      - uses: actions/checkout@v7
+        with:
+          repository: ${{ github.repository }}.wiki
+          path: wiki
+      - name: the pages into the wiki
+        run: |
+          cd wiki
+          git rm -q --ignore-unmatch '*.md'
+          cp ../dist/wiki/*.md .
+          git add -A
+          if git diff --cached --quiet; then echo "the wiki is current"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -qm "the wiki generated from ${GITHUB_SHA::7} (docs/, $(ls ../dist/wiki | wc -l) pages)"
+          git push -q

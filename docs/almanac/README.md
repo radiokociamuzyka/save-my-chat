@@ -17,3 +17,4 @@ solved gets its case here, so the next one is recognised faster.
 - [dependabot-branch-drift](cataclistics/dependabot-branch-drift.md): dependabot's branch left behind, half the workflows updated
 - [copilot-reader-blind](cataclistics/copilot-reader-blind.md): the Copilot reader saw no messages on the live page
 - [ai-mode-swapped-pairs](cataclistics/ai-mode-swapped-pairs.md): AI Mode saved every question after its answer, 1,0,3,2,5,4
+- [feed-too-quickly](cataclistics/feed-too-quickly.md): the first feed run refused by GitHub, "submitted too quickly"

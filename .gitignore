@@ -5,3 +5,7 @@ web-ext-artifacts/
 docs/devlog/STATE.md
 *.log
 src/vendor/
+# Python's compiled files (scripts/github, scripts/wiki tooling)
+__pycache__/
+*.py[cod]
+*$py.class

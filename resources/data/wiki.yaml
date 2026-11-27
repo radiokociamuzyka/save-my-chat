@@ -1,0 +1,29 @@
+# The wiki (https://github.com/radiokociamuzyka/save-my-chat/wiki), for developers and
+# contributors: the devlog, the changelog and the almanac, generated from docs/ by
+# scripts/wiki/build.mjs (task wiki) and pushed by .github/workflows/wiki.yml after a release.
+# Edit the sources in docs/, never the wiki: each run writes it again.
+
+source: en
+languages:
+  - code: en
+    name: English
+  - code: pl
+    name: Polski
+
+# Translating (the owner, 2026-11-27): LibreTranslate's API (a server or container,
+# LIBRETRANSLATE_URL, LIBRETRANSLATE_API_KEY if it asks for one) or Argos Translate on this
+# machine (the argos-translate command). What was translated once is kept in
+# resources/data/translations/<code>.json and never asked again. Quoted lines (the owner's
+# words) and code stay as written in every language.
+translator: libretranslate   # libretranslate | argos | none
+
+pages:
+  - { page: Vision, from: docs/devlog/VISION.md, group: Devlog }
+  - { page: Roadmap, from: docs/devlog/ROADMAP.md, group: Devlog }
+  - { page: TODO, from: docs/devlog/TODO.md, group: Devlog }
+  - { page: Brainstorm, from: docs/devlog/BRAINSTORM.md, group: Devlog }
+  - { page: Proposals, from: docs/devlog/PROPOSALS.md, group: Devlog }
+  - { page: Changelog-phase-*, from: "docs/changelog/phase-*.md", group: Changelog }
+  - { page: Almanac, from: docs/almanac/README.md, group: Almanac }
+  - { page: Almanac-*, from: "docs/almanac/cataclistics/*.md", group: Almanac cases }
+  - { page: Almanac-topic-*, from: "docs/almanac/solutions/*.md", group: Almanac topics }

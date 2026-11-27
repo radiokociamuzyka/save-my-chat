@@ -132,3 +132,18 @@ From the next release on, the popup's "Copy report" (under "What the
 reader saw") is the easiest thing to paste into an issue or the chat: it
 names the build, the reader, every selector with how many elements it
 found, and no text of the conversation.
+
+## 2026-11-27, the wiki
+
+- LibreTranslate (container `libretranslate/libretranslate`, en and pl)
+  translated the wiki's 337 texts in under a minute here. About 37 come
+  back as written: table cells like `0.2.x`, and sentences dense with code
+  where the translator loses a mark even alone. Losing code was judged
+  worse than leaving a sentence in English.
+- Quality is machine quality ("passes the check" became "Mija czek",
+  "braces" became "aparaty na zęby"); every translated page says so and
+  links the English one. A wrong entry can be corrected by hand in
+  `resources/data/translations/pl.json`: the memory wins over the
+  translator.
+- Argos Translate is wired (`translator: argos`) but not run here: not
+  installed on this machine.

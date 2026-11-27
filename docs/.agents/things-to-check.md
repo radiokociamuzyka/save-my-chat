@@ -50,3 +50,11 @@ point was added.
   the Q&A answers marked, a second run saying "same" for all. The
   workflow's token may be refused marking answers; then the comment stays
   unmarked and the run fails, saying so.
+- **2026-11-27. The wiki's first push.** `wiki.yml` after the next
+  release: the LibreTranslate container in the runner (model download,
+  up to 10 minutes allowed), the push to `save-my-chat.wiki.git` with the
+  workflow's token (not tried yet; if refused, a token with access to the
+  wiki is needed), Sett's three placeholder pages replaced.
+- **2026-11-27. The feed's second run** should create only the almanac
+  case `version-hook-merges` and the new changelog posts of phase 2,
+  saying "same" for the 34 others.
