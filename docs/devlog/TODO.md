@@ -48,7 +48,7 @@ names its `Q<n>`.
 - [x] `src/vendor/` held to its npm packages by a test, so a dependency bump cannot leave the old copy
 - [x] Workflow `dependabot.yml`: `dev/dependabot` follows `development`, lands by a pull request; a collision becomes an issue for Jarvis
 - [x] Jarvis's instructions and dependabot prompt (`.github/copilot-instructions.md`, `.github/prompts/`); Joker's review guidelines in AGENTS.md
-- [ ] Jarvis and Joker in `.github/AUTHORS` (Q11)
+- [x] Jarvis and Joker in `.github/AUTHORS` (Q11)
 - [x] `resources/data/chats.yaml`: the chat webapps, their domains and conversation addresses, held to `readers.js` by a test (PP2)
 - [ ] `readers.js` from `chats.yaml` (Q10)
 
