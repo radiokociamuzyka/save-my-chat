@@ -49,7 +49,12 @@ describe("the gist", () => {
 					remove: async (k) => delete data[k],
 				},
 			},
-			permissions: { request: async (p) => (requests.push(p), false) },
+			permissions: {
+				request: async (p) => {
+					requests.push(p);
+					return false;
+				},
+			},
 		};
 		const box = mount(GistShare, { props: { chat: CHAT } });
 		await flushPromises();
