@@ -63,7 +63,8 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 - [x] A project board for the devlog (organization project #1, private until Sett opens it)
 - [ ] Announcements (discussion #17): short notes with links - changelog posts, proposals with their issue and a discussion of their own, changes of phases and concepts, releases introduced, other news
 - [ ] Almanac cases as Q&A discussions, their solution the answer
-- [ ] The wiki (`save-my-chat.wiki.git`) for developers and contributors: the almanac and the devlog generated into it, in more than one language
+- [x] The wiki (`save-my-chat.wiki.git`) for developers and contributors: the almanac and the devlog generated into it, English and Polish, translated by LibreTranslate or Argos (`task wiki`, `wiki.yml` after each release)
+- [ ] The wiki seen published by `wiki.yml`
 - [ ] Read the Docs: the documentation of the project, without what the wiki holds
 - [ ] A static page of the project on the `github-pages` branch
 - [x] Workflow `devlog.yml`: the devlog synced on each push of it to `development`

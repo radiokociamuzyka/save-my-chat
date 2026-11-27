@@ -82,6 +82,16 @@ tasks:
     cmds:
       - python3 scripts/github/discussions.py {{.CLI_ARGS}}
 
+  wiki:
+    desc: the wiki into dist/wiki - devlog, changelog, almanac in wiki.yaml's languages; new texts translated and kept in resources/data/translations (-- --translator none uses the memory only)
+    cmds:
+      - node scripts/wiki/build.mjs {{.CLI_ARGS}}
+
+  translate:server:
+    desc: LibreTranslate in a container on 127.0.0.1:5000 with the wiki's languages, for task wiki (or set LIBRETRANSLATE_URL to a server)
+    cmds:
+      - docker run -d --name smc-libretranslate -p 127.0.0.1:5000:5000 libretranslate/libretranslate --load-only en,pl
+
   github:devlog:
     desc: 'the devlog on GitHub - milestones of ROADMAP, an issue per phase, Q<n> and PP<n>, the board (-- --dry prints, -- --no-board skips the board)'
     cmds:
