@@ -38,11 +38,15 @@ repository: `forge/sarverott/github-repos/Sarverott/AGENTS.md` and its
    version by hand and never `--amend` on `dev/*` (each amend bumps again).
    A phase ends with the dev branches gathered in `development` and a pull
    request `development` → `master`; its merge releases (`release.yml`:
-   tag, packed extension, the latest). **Every stop of work** (each report
-   to Sett) first opens, or updates, that pull request, so its merge
-   releases a build Sett tests in the wild (Sett, 2026-11-27). Merging into
-   `master`, AMO uploads and repository settings are always asked for
-   first.
+   tag, packed extension, the latest, and the version submitted to AMO's
+   listed channel with its source, `scripts/release/amo.sh`). **Every stop
+   of work** (each report to Sett) first opens, or updates, that pull
+   request, so its merge releases a build Sett tests in the wild (Sett,
+   2026-11-27). Merging into `master` is asked for first, unless Sett hands
+   it over for a stretch of work (2026-11-27: until phase 4 is done, or
+   until trouble needs Sett); since a merge releases to AMO, that merge is
+   the ask for its upload. Uploads by hand and repository settings are
+   always asked for first.
    **The owner's edits** found in the working tree go first, as they are,
    one commit per change on `dev/Sarverott`, with a message saying how the
    agent understood them; then that branch is merged into `development`.
@@ -136,7 +140,7 @@ scripts/pages/           build.mjs: the static page on github-pages, from resour
 scripts/github/          devlog.py, adapted from P_JOL_ROLL; discussions.py, the feed in Discussions (feed.yml)
 vite.config.mjs          the build step (Q12): PAGES built by Vite, src/ copied, into dist/extension/
 scripts/version.mjs      the one version: sync, bump, bump-commit (pre-commit hook), merge driver (.gitattributes)
-scripts/release/         release.sh: what release.yml does on master, runnable by hand
+scripts/release/         release.sh: what release.yml does on master, runnable by hand; amo.sh: a release to AMO, listed
 docs/changelog/          what happened per phase, the owner's words word for word, append-only
 docs/index.md, manual/   the user's manual, on Read the Docs with the guides (mkdocs.yml, .readthedocs.yaml)
 docs/guides/             how to write a reader, the unified format
