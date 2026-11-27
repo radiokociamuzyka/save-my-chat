@@ -16,7 +16,8 @@ repository: `forge/sarverott/github-repos/Sarverott/AGENTS.md` and its
 1. **Who may commit.** An agent commits once a confirmed member has written
    it into `.github/AUTHORS`; until then it leaves its edits uncommitted
    and says what it changed and why. Cleo (Claude Code) was confirmed by
-   Sett on 2026-11-26 (Q4). A confirmed AI signs every commit with its name
+   Sett on 2026-11-26 (Q4), Jarvis (GitHub Copilot) and Joker (Codex) on
+   2026-11-27 (Q11). A confirmed AI signs every commit with its name
    and lineage, the same as its line in `AUTHORS`:
    `Co-Authored-By: Cleo (Claude Opus 5.5) <noreply@anthropic.com>`.
 2. **Where edits go: the BOS craft loop.** `master` (canon) →
@@ -50,7 +51,10 @@ repository: `forge/sarverott/github-repos/Sarverott/AGENTS.md` and its
    has open and writes files through the downloads API. No telemetry, no
    remote code, no network requests of its own
    (`data_collection_permissions: none`). A change that would send anything
-   anywhere is a question for Sett first.
+   anywhere is a question for Sett first. The one exception (Q9): a saved
+   chat made a gist by the user's own click, with the user's token, an
+   optional host permission and the transfer declared in
+   `data_collection_permissions.optional`.
 5. **No remote or evaluated code.** AMO rejects it. Default readers ship as
    files of the extension; the user's own prototypes run only through the
    `userScripts` API (an optional permission the user grants), never through

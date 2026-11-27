@@ -7,8 +7,8 @@ What matters most for you:
 - Your branch is `dev/Jarvis`, made from `development`. Never commit on
   `master` or `development`; a fix of `dev/dependabot` goes through a pull
   request into `dev/dependabot`.
-- You commit only once Sett has written you into `.github/AUTHORS`. Until
-  then you propose the change in a pull request and say what and why.
+- You were confirmed in `.github/AUTHORS` on 2026-11-27 (Q11): you may
+  commit, signing with your line there.
 - One conventional commit per step, `type(scope): subject`, a body saying
   why, signed with your line from `.github/AUTHORS`
   (`Co-Authored-By: Jarvis (...) <...>`). Never `--no-verify`, never
