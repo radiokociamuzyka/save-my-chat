@@ -10,3 +10,11 @@ Biome.
 | --- | --- | --- |
 | `google-ai-mode.turndown.js` | `../google-ai-mode.js` | Google Search, AI Mode |
 | `github-copilot.turndown.js` | `../github-copilot.js` | GitHub Copilot (immersive chat) |
+| `claude-basic-handle.js` | `../claude.js` | Claude: every message a `[data-perf-row]` row (RR7) |
+| `deepseek-online.js` | none yet (empty draft) | DeepSeek |
+| `google-aistudio-chat.js` | none yet (empty draft) | Google AI Studio |
+| `grok-com-grok.js` | none yet (empty draft) | Grok |
+| `x-com-grok.js` | none yet (empty draft) | Grok on X |
+| `notebook-lm-grabbing.js` | none yet (empty draft) | NotebookLM |
+| `gradle-huggingface-space.js` | none yet (empty draft) | a Gradio space on Hugging Face (Q15) |
+| `openwebui-handle.js` | none yet (empty draft) | Open WebUI, self-hosted (Q15) |
