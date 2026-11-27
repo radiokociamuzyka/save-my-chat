@@ -21,7 +21,7 @@ export function plan(pkg) {
 	];
 	if (problems.length) throw new Error(problems.join("\n"));
 	return deps.flatMap((d) =>
-		Object.entries(vendor[d]).map(([from, to]) => ({ from: `node_modules/${d}/${from}`, to: OUT + to })),
+		Object.entries(vendor[d]).map(([from, to]) => ({ package: d, from: `node_modules/${d}/${from}`, to: OUT + to })),
 	);
 }
 

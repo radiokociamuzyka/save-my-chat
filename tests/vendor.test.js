@@ -10,7 +10,7 @@ describe("vendored libraries", () => {
 	it("every dependency is packed, nothing else", () => {
 		expect(() => plan({ dependencies: { a: "1" }, vendor: {} })).toThrow(/a: a dependency with no "vendor" entry/);
 		expect(() => plan({ dependencies: {}, vendor: { b: { x: "x" } } })).toThrow(/b: a "vendor" entry/);
-		const packed = new Set(plan(pkg).map((c) => c.from.split("/")[1]));
+		const packed = new Set(plan(pkg).map((c) => c.package)); // scoped ones (@zenfs/core) whole
 		expect([...packed].sort()).toEqual(Object.keys(pkg.dependencies).sort());
 	});
 
