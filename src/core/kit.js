@@ -299,6 +299,31 @@
 		return null;
 	}
 
+	// Does a URL fall under a match pattern ("https://github.com/copilot*",
+	// "*://*.example.com/*")? The background picks a tab's prototype by it.
+	// https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/Match_patterns
+	function matches(pattern, url) {
+		if (pattern === "<all_urls>") return /^(https?|wss?|file|ftp|data):/.test(String(url));
+		const m = /^(\*|https?|wss?|file|ftp|data):\/\/([^/]*)(\/.*)$/.exec(pattern);
+		if (!m) return false;
+		let u;
+		try {
+			u = new URL(url);
+		} catch {
+			return false;
+		}
+		const [, scheme, host, path] = m;
+		const protocol = u.protocol.slice(0, -1);
+		if (scheme === "*" ? !["http", "https", "ws", "wss"].includes(protocol) : scheme !== protocol) return false;
+		if (host !== "*") {
+			const bare = host.replace(/^\*\./, "");
+			if (host.startsWith("*.") ? !(u.hostname === bare || u.hostname.endsWith(`.${bare}`)) : u.hostname !== host)
+				return false;
+		}
+		const glob = new RegExp(`^${path.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replaceAll("*", ".*")}$`);
+		return glob.test(u.pathname + u.search);
+	}
+
 	function present(doc = root.document, url = root.location?.href) {
 		for (const r of readers.values()) if (r.detect(doc, url)) return { id: r.id, name: r.name };
 		return null;
@@ -322,6 +347,7 @@
 		readPage,
 		inspect,
 		present,
+		matches,
 	};
 
 	// In a web page (not the background, popup or options, which have a

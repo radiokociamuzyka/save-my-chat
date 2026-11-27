@@ -17,7 +17,12 @@
 		state.textContent = "No supported chat on this page.";
 		return;
 	}
-	state.textContent = `Reader: ${reader.name}`;
+	state.textContent = `Reader: ${reader.name}${reader.prototype ? " (your prototype)" : ""}`;
+	if (reader.error) {
+		result.className = "error";
+		result.textContent = reader.error;
+		return;
+	}
 	actions.hidden = false;
 
 	const seen = await browser.runtime.sendMessage({ type: "save-my-chat:inspect", tabId: tab.id });

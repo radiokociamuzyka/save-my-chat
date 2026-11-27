@@ -1,14 +1,100 @@
 // Event page (Firefox runs background.scripts, not a service worker).
-// Registers the enabled default readers and saves what a tab's reader read.
+// Registers the enabled default readers and the user's prototypes, and saves
+// what a tab's reader read.
 (() => {
 	const SMC = globalThis.SaveMyChat;
 	const PREFIX = "smc-reader-";
+	const PROTO = "smc-proto-";
 	// What a page gets before a reader: turndown, its GFM plugin, the kit.
 	const PAGE_KIT = ["vendor/turndown.js", "vendor/turndown-plugin-gfm.js", "core/kit.js"];
+	const NOT_LOADED = "The prototype did not answer: reload the page, so Firefox injects it.";
+
+	// ---- prototypes (phase 3) ----------------------------------------------
+	// A prototype is the user's copy of a default reader, edited in the options
+	// page and kept in storage.local ("prototypes": { <reader id>: { id, name,
+	// from, matches, code, enabled } }). It runs through the userScripts API (an
+	// optional permission, rule 5), in the USER_SCRIPT world, in place of the
+	// default it was copied from.
+
+	async function prototypes() {
+		const { prototypes: all = {} } = await browser.storage.local.get("prototypes");
+		return Object.values(all).filter((p) => p.enabled && p.code && p.matches?.length);
+	}
+
+	// the user granted the permission (the API may outlive a revoked one)
+	const allowed = async () =>
+		Boolean(browser.userScripts) && browser.permissions.contains({ permissions: ["userScripts"] });
+
+	async function registerPrototypes() {
+		if (!(await allowed())) return;
+		listen();
+		await browser.userScripts.configureWorld({ messaging: true });
+		const old = await browser.userScripts.getScripts();
+		const ours = old.filter((s) => s.id.startsWith(PROTO)).map((s) => s.id);
+		if (ours.length) await browser.userScripts.unregister({ ids: ours });
+		const list = await prototypes();
+		if (!list.length) return;
+		await browser.userScripts.register(
+			list.map((p) => ({
+				id: PROTO + p.id,
+				matches: p.matches,
+				js: [...PAGE_KIT.map((file) => ({ file })), { code: p.code }, { file: "core/bridge.js" }],
+				runAt: "document_idle",
+				world: "USER_SCRIPT",
+			})),
+		);
+	}
+
+	// The questions asked of a prototype, by id, until it answers.
+	const pending = new Map();
+	let listening = false;
+
+	function listen() {
+		if (listening || !browser.runtime.onUserScriptMessage) return;
+		listening = true;
+		browser.runtime.onUserScriptMessage.addListener((msg, sender) => {
+			if (msg?.type !== "save-my-chat:answer") return;
+			const waiting = pending.get(msg.id);
+			if (!waiting) return; // not asked: a forged or a late answer
+			// MDN does not promise sender.tab here: when it is there, it must be the tab asked
+			if (sender?.tab && sender.tab.id !== waiting.tabId) return;
+			pending.delete(msg.id);
+			if (msg.error) waiting.reject(new Error(msg.error));
+			else waiting.resolve(msg.answer);
+		});
+	}
+
+	// The prototype that covers a tab's address, if any is enabled.
+	async function prototypeOf(tabId) {
+		if (!(await allowed())) return null;
+		const { url } = await browser.tabs.get(tabId);
+		return (await prototypes()).find((p) => p.matches.some((m) => SMC.matches(m, url))) ?? null;
+	}
+
+	// The question goes in as a DOM event from a script in the tab's isolated
+	// world; the answer comes back through onUserScriptMessage.
+	async function askPrototype(tabId, type, timeout = 5000) {
+		listen();
+		const id = crypto.randomUUID();
+		const answer = new Promise((resolve, reject) => {
+			pending.set(id, { tabId, resolve, reject });
+			setTimeout(() => pending.delete(id) && reject(new Error(NOT_LOADED)), timeout);
+		});
+		await browser.scripting.executeScript({
+			target: { tabId },
+			func: (detail) => document.dispatchEvent(new CustomEvent("save-my-chat:ask", { detail })),
+			args: [JSON.stringify({ id, type })],
+		});
+		return answer;
+	}
+
+	// ---- default readers ---------------------------------------------------
 
 	async function enabledReaders() {
 		const { disabled = [] } = await browser.storage.local.get("disabled");
-		return SMC.defaults.filter((r) => !disabled.includes(r.id));
+		// a default with a prototype of its own enabled steps aside for it
+		const replaced = (await allowed()) ? (await prototypes()).map((p) => p.from ?? p.id) : [];
+		return SMC.defaults.filter((r) => !disabled.includes(r.id) && !replaced.includes(r.id));
 	}
 
 	async function register() {
@@ -16,22 +102,35 @@
 		const ours = old.filter((s) => s.id.startsWith(PREFIX)).map((s) => s.id);
 		if (ours.length) await browser.scripting.unregisterContentScripts({ ids: ours });
 		const readers = await enabledReaders();
-		if (!readers.length) return;
-		await browser.scripting.registerContentScripts(
-			readers.map((r) => ({
-				id: PREFIX + r.id,
-				matches: r.matches,
-				js: [...PAGE_KIT, r.file],
-				runAt: "document_idle",
-				persistAcrossSessions: false,
-			})),
-		);
+		if (readers.length)
+			await browser.scripting.registerContentScripts(
+				readers.map((r) => ({
+					id: PREFIX + r.id,
+					matches: r.matches,
+					js: [...PAGE_KIT, r.file],
+					runAt: "document_idle",
+					persistAcrossSessions: false,
+				})),
+			);
+		await registerPrototypes();
 	}
 
-	// Ask the tab's reader. A tab opened before the extension was installed
-	// (or before a reader was enabled) has none yet: inject the kit and every
-	// enabled reader once, each reader's detect() decides, then ask again.
+	// Ask the tab's reader: its prototype if one covers the tab, else the
+	// default. A tab opened before the extension was installed (or before a
+	// reader was enabled) has no default yet: inject the kit and every enabled
+	// reader once, each reader's detect() decides, then ask again. A prototype
+	// cannot be injected so: the page is reloaded instead (NOT_LOADED).
 	async function ask(tabId, type) {
+		const proto = await prototypeOf(tabId);
+		if (proto && type === "save-my-chat:present")
+			// the popup asks first: a prototype not loaded yet is named, with what to do
+			return askPrototype(tabId, type, 1500).catch((error) => ({
+				id: proto.id,
+				name: proto.name,
+				prototype: true,
+				error: error.message,
+			}));
+		if (proto) return askPrototype(tabId, type);
 		try {
 			return await browser.tabs.sendMessage(tabId, { type });
 		} catch {
@@ -62,8 +161,15 @@
 	browser.runtime.onInstalled.addListener(register);
 	browser.runtime.onStartup.addListener(register);
 	browser.storage.onChanged.addListener((changes) => {
-		if (changes.disabled) register();
+		if (changes.disabled || changes.prototypes) register();
 	});
+	browser.permissions.onAdded.addListener((p) => {
+		if (p.permissions?.includes("userScripts")) register();
+	});
+	browser.permissions.onRemoved.addListener((p) => {
+		if (p.permissions?.includes("userScripts")) register(); // the defaults come back
+	});
+	listen();
 
 	browser.runtime.onMessage.addListener((msg) => {
 		if (msg?.type === "save-my-chat:save") return save(msg);
@@ -71,4 +177,6 @@
 		if (msg?.type === "save-my-chat:inspect") return ask(msg.tabId, msg.type).catch(() => null);
 		if (msg?.type === "save-my-chat:defaults") return Promise.resolve(SMC.defaults);
 	});
+
+	SMC.background = { register, ask, enabledReaders, prototypeOf }; // for tests
 })();

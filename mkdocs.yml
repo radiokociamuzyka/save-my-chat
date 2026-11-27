@@ -22,6 +22,7 @@ nav:
       - Install: manual/install.md
       - Save a conversation: manual/saving.md
       - When a reader misses something: manual/troubleshooting.md
+      - Your own reader, prototypes: manual/prototypes.md
       - Privacy: manual/privacy.md
   - For developers:
       - How a reader is written: guides/readers.md

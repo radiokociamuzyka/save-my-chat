@@ -162,3 +162,18 @@ found, and no text of the conversation.
   other entry "same" or "posted already", nothing refused. The three
   checks of the feed, the wiki's push and Read the Docs' build left
   `things-to-check.md`.
+
+## 2026-11-27, phase 3: prototypes
+
+- `web-ext lint` warns `UNSUPPORTED_API` on `userScripts.register`
+  ("removed in Manifest Version 3"): its schema still knows the old MV2
+  userScripts API only. MDN documents the MV3 one (register with `js` of
+  `{ code }` / `{ file }`, `world: "USER_SCRIPT"`, `configureWorld`,
+  `runtime.onUserScriptMessage`), optional-only in Firefox. A warning, not
+  an error: AMO's validator may show the same one.
+- The design follows from that world being able to send but not be sent
+  messages: a DOM event in, `runtime.sendMessage` out, an id per question.
+  `userScripts.execute` (MDN lists it, no version found) could replace the
+  isolated-world `executeScript` that dispatches the event, if needed.
+- No `eval`, `new Function` or injected `<script>` anywhere: the user's
+  code reaches Firefox only as a `{ code }` source of a user script.

@@ -34,9 +34,9 @@ tasks:
       - npx biome check --write .
 
   lint:ext:
-    desc: web-ext lint, the validator AMO runs
+    desc: web-ext lint, the validator AMO runs, warnings as errors but the known false positives named in scripts/lint.mjs
     cmds:
-      - npx web-ext lint
+      - node scripts/lint.mjs
 
   test:
     desc: vitest

@@ -75,6 +75,7 @@ repository: `forge/sarverott/github-repos/Sarverott/AGENTS.md` and its
 | the owner's words | `docs/devlog/INQUIRIES.md` / `ORDERS.md` (or the chat), then `docs/changelog/phase-<n>.md`, word for word |
 | a plan | `docs/devlog/VISION.md`, `ROADMAP.md`, `TODO.md` |
 | a question for the owner | `docs/devlog/BRAINSTORM.md` as `## Q<n>. <title>` with a *Lean:*; never settled in code before the answer |
+| work only the owner can do (a setting, a live check, an account) | `docs/devlog/REQUESTS.md` as `## RR<n>. <title>` with *Why:* and *How:*; the report goes word for word to the changelog as `### RR<n>` |
 | an idea for debate | `docs/devlog/PROPOSALS.md` as `PP<n>` |
 | an agent's findings and what was not verified | `docs/.agents/` (`NOTES.md`, `things-to-check.md`); humans read it and do not write there |
 | a problem met and solved | `docs/almanac/`: its case in `cataclistics/`, a line in its topic in `solutions/` |
@@ -92,6 +93,9 @@ review. Flag as P1 anything that breaks a rule above.
   `src/vendor/` equals its npm packages (`tests/vendor.test.js`); breaking
   changes of a major bump are checked against how this code uses it; no
   new dependency, permission, host or network request rides along.
+- **Known lint findings** (`scripts/lint.mjs` `KNOWN`): each one exact
+  (code, file, message), with its reason and almanac case; an entry that
+  excuses a real problem, or a rule turned off instead, is P1.
 - **Versions** change only by the hook or the merge driver; a merge that
   bumps or reformats a JSON file is a bug (almanac: version-hook-merges).
 - **The owner's words** stay word for word in `docs/changelog/`; nothing
@@ -107,6 +111,7 @@ src/                     the extension itself, loaded by Firefox as written (web
   manifest.json          Manifest V3, gecko id, data_collection_permissions
   core/                  shared by every context, classic scripts on globalThis.SaveMyChat
     kit.js               the unified format, DOM-to-markdown, reader registration
+    bridge.js            loaded after a prototype in the USER_SCRIPT world: answers the background by runtime.sendMessage
     markdown.js          conversation -> .md file
     readers.js           the list of default readers, written from resources/data/chats.yaml (task chats)
   readers/               one default reader per chat webapp, each calls SaveMyChat.reader({...})
@@ -114,7 +119,7 @@ src/                     the extension itself, loaded by Firefox as written (web
   vendor/                not in git: every dependency of package.json copied unchanged at build (scripts/vendor.mjs, Q10)
   background/main.js     event page: registers enabled readers, answers "save" from the popup, downloads
   popup/                 the toolbar button: which reader sees this tab, save as md / json
-  options/               readers on/off; later the prototypes editor (userScripts)
+  options/               readers on/off, selector overrides; prototypes.js: the user's own readers (userScripts)
 resources/data/          declarations: chats.yaml, the chat webapps, their domains and conversation addresses (PP2)
 tests/                   vitest + jsdom; fixtures/ are saved HTML of real chats, anonymised
 docs/devlog/             the BOS devlog: VISION, ROADMAP, TODO, BRAINSTORM, PROPOSALS, ORDERS, INQUIRIES;
@@ -160,7 +165,7 @@ stamps the format, source and time. The format is described in
 | `task run` | Firefox with the extension loaded, reloads on save (`web-ext run`) |
 | `task check` | Biome, changes nothing |
 | `task format` | Biome with safe fixes |
-| `task lint:ext` | `web-ext lint` (AMO's validator) |
+| `task lint:ext` | `web-ext lint` (AMO's validator), warnings as errors, but the false positives named one by one in `scripts/lint.mjs` |
 | `task test` | vitest |
 | `task verify` | check, lint:ext, test — run before a step is reported done |
 | `task build` | the batch (Q10): dependencies into `src/vendor/`, `readers.js` and host permissions from `chats.yaml`, the `.zip` into `dist/` |
