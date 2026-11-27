@@ -1,0 +1,23 @@
+---
+// The extension's own popup and options, run here with Firefox's APIs played by the page (Q13).
+import DemoOptions from "../components/DemoOptions.vue";
+import DemoPopup from "../components/DemoPopup.vue";
+import Page from "../layouts/Page.astro";
+---
+
+<Page wide title="save-my-chat: try the pages" description="The popup and the options of save-my-chat, running in your browser with made-up chats.">
+	<main>
+		<div class="site">
+		<h1>Try the pages</h1>
+		<p>
+			These are the extension's own popup and options, running in this page with made-up chats: nothing is read from
+			your tabs, saved or sent. In Firefox, the popup opens from the toolbar button, the options from its right-click
+			menu, <em>Library and settings</em>.
+		</p>
+		</div>
+		<div class="site"><h2>The popup, on a GitHub Copilot chat</h2></div>
+		<div class="island"><DemoPopup client:only="vue" /></div>
+		<div class="site"><h2>The options</h2></div>
+		<div class="island"><DemoOptions client:only="vue" /></div>
+	</main>
+</Page>

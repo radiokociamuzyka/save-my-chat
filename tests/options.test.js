@@ -3,7 +3,9 @@
 // kit, the list of readers and the reader files run as the page's classic scripts.
 import { runInThisContext } from "node:vm";
 import { flushPromises, mount } from "@vue/test-utils";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
+import { open as openFiles } from "../src/explorer/repo.js";
+import ExplorerPanel from "../src/options/ExplorerPanel.vue";
 import LibraryPanel from "../src/options/LibraryPanel.vue";
 import OptionsPage from "../src/options/OptionsPage.vue";
 import PrototypesPanel from "../src/options/PrototypesPanel.vue";
@@ -12,9 +14,16 @@ import { shown } from "../src/options/shown.js";
 import ViewerPanel from "../src/options/ViewerPanel.vue";
 import { load } from "./load.js";
 
-beforeAll(() => {
-	for (const file of ["core/kit.js", "core/readers.js", "readers/google-ai-mode.js", "readers/github-copilot.js"])
+beforeAll(async () => {
+	for (const file of [
+		"core/kit.js",
+		"core/markdown.js",
+		"core/readers.js",
+		"readers/google-ai-mode.js",
+		"readers/github-copilot.js",
+	])
 		runInThisContext(load.source(file));
+	await openFiles({ memory: true }); // the stored files in memory, not IndexedDB
 });
 
 // storage.local, permissions and the background, as the page sees them
@@ -57,7 +66,13 @@ describe("options: the page", () => {
 		location.hash = "";
 		const page = mount(OptionsPage);
 		await flushPromises();
-		expect(page.findAll(".tabs li").map((li) => li.text())).toEqual(["Library", "Viewer", "Readers", "Prototypes"]);
+		expect(page.findAll(".tabs li").map((li) => li.text())).toEqual([
+			"Library",
+			"Viewer",
+			"Files",
+			"Readers",
+			"Prototypes",
+		]);
 		expect(page.find(".tabs li.is-active").text()).toBe("Library");
 		location.hash = "#readers";
 		window.dispatchEvent(new HashChangeEvent("hashchange"));
@@ -328,5 +343,40 @@ describe("options: the viewer", () => {
 		expect(viewer.find("h2").text()).toBe("Fix the build");
 		await open("notes.md", "# just notes");
 		expect(viewer.find(".viewer-status").text()).toBe("notes.md: Not a file saved by save-my-chat: no front matter.");
+	});
+});
+
+describe("options: the stored files", () => {
+	it("brings the library in, lists its files, shows a file's history and reads a version", async () => {
+		const entry = {
+			key: "k",
+			title: CHAT.title,
+			reader: "github-copilot",
+			service: "s",
+			url: "https://x/",
+			turns: 2,
+			firstSavedAt: CHAT.savedAt,
+			savedAt: CHAT.savedAt,
+			saves: 1,
+		};
+		firefox({
+			answer: (msg) =>
+				msg.type === "save-my-chat:library" ? [entry] : msg.type === "save-my-chat:library-chat" ? CHAT : undefined,
+		});
+		shown.chat = null;
+		const panel = mount(ExplorerPanel);
+		await vi.waitFor(() => expect(panel.findAll("a.file")).toHaveLength(2), { timeout: 5000 });
+		expect(panel.find(".folder").text()).toBe("github-copilot/");
+		expect(panel.findAll("a.file").map((a) => a.text())).toEqual([
+			"2026-11-27-fix-the-build.json",
+			"2026-11-27-fix-the-build.md",
+		]);
+		expect(panel.find(".explorer-status").text()).toBe("1 chat brought in from the library.");
+		await panel.findAll("a.file")[1].trigger("click");
+		await vi.waitFor(() => expect(panel.findAll(".version")).toHaveLength(1));
+		expect(panel.find(".version").text()).toContain("Fix the build (2 messages)");
+		await panel.find(".version button.read").trigger("click");
+		await vi.waitFor(() => expect(shown.chat?.title).toBe("Fix the build"));
+		expect(location.hash).toBe("#viewer");
 	});
 });

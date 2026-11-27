@@ -4,6 +4,7 @@
 import { ref } from "vue";
 import ChatView from "../viewer/ChatView.vue";
 import { fromFile } from "../viewer/conversation.js";
+import GistShare from "./GistShare.vue";
 import { shown } from "./shown.js";
 
 const said = ref("");
@@ -31,7 +32,10 @@ async function open(event) {
 			</label>
 		</div>
 		<p v-if="said" role="status" class="has-text-danger is-size-7 mb-3 viewer-status">{{ said }}</p>
-		<ChatView v-if="shown.chat" :chat="shown.chat" />
+		<template v-if="shown.chat">
+			<ChatView :chat="shown.chat" />
+			<GistShare :key="shown.chat.savedAt + shown.chat.title" :chat="shown.chat" />
+		</template>
 		<p v-else-if="!said" class="has-text-grey">Nothing open.</p>
 	</section>
 </template>

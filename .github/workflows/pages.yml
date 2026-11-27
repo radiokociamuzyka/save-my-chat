@@ -1,6 +1,5 @@
-# The project's static page (phase 2): resources/pages/ filled from package.json and
-# resources/data/chats.yaml (scripts/pages/build.mjs), committed on the github-pages branch
-# after each release. The branch holds the built page alone, a commit per change; GitHub
+# The public site (Q13): built by Astro from site/ (astro.config.mjs) into dist/pages,
+# committed on the github-pages branch after each release. The branch holds the built page alone, a commit per change; GitHub
 # Pages serves it once the repository's Pages are set to "deploy from a branch",
 # github-pages, / (root): a repository setting, Sett's.
 name: "pages › the static page after a release"
@@ -29,7 +28,7 @@ jobs:
         with: { node-version: 24, cache: npm }
       - run: npm ci
         env: { HUSKY: "0" }
-      - run: node scripts/pages/build.mjs
+      - run: npm run site
       - name: the page onto github-pages
         env: { GH_TOKEN: "${{ github.token }}" }
         run: |

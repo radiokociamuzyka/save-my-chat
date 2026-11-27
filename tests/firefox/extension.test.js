@@ -29,10 +29,10 @@ afterAll(async () => {
 });
 
 describe("in Firefox: the options", () => {
-	it("open on the library, empty, with the four tabs", async () => {
+	it("open on the library, empty, with the five tabs", async () => {
 		await open(driver, "options/options.html");
 		await find(driver, ".library-status");
-		expect(await texts(driver, ".tabs li")).toEqual(["Library", "Viewer", "Readers", "Prototypes"]);
+		expect(await texts(driver, ".tabs li")).toEqual(["Library", "Viewer", "Files", "Readers", "Prototypes"]);
 		expect(await (await find(driver, ".library-status")).getText()).toMatch(/Nothing saved yet/);
 	});
 
@@ -71,6 +71,18 @@ describe("in Firefox: the options", () => {
 		expect(await (await find(driver, ".turn.assistant pre code")).getText()).toBe("- run: xvfb-run npm test");
 		expect(await all(driver, ".chat-view img")).toHaveLength(0);
 		await shot(driver, "viewer");
+	});
+
+	it("keep the library as files in IndexedDB, with their history", async () => {
+		await open(driver, "options/options.html#files");
+		await driver.wait(async () => (await all(driver, "a.file")).length === 2, 15_000);
+		expect(await texts(driver, "a.file")).toEqual(["2026-11-27-fix-the-build.json", "2026-11-27-fix-the-build.md"]);
+		await (await all(driver, "a.file"))[1].click();
+		await find(driver, ".version");
+		expect(await (await find(driver, ".version")).getText()).toContain("Fix the build (2 messages)");
+		await shot(driver, "files");
+		await (await find(driver, ".version button.read")).click();
+		expect(await (await find(driver, ".chat-view h2")).getText()).toBe("Fix the build");
 		await run(driver, "await browser.storage.local.clear();");
 	});
 

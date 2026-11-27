@@ -48,3 +48,18 @@ jobs:
         with:
           name: firefox-screenshots
           path: dist/shots/
+
+  site:
+    # the public site built by Astro and tested by Playwright in Chromium and Firefox (Q13)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+        env: { HUSKY: "0" }
+      - run: npx playwright install --with-deps chromium firefox
+      - run: npm run test:site
+        env: { CI: "1" }

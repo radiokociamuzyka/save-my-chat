@@ -1,6 +1,6 @@
 {
   "name": "save-my-chat",
-  "version": "0.4.22",
+  "version": "0.4.34",
   "private": true,
   "description": "Firefox extension to export your AI chat history out of webapps and save it on your local machine in clear unified formatting",
   "repository": "github:radiokociamuzyka/save-my-chat",
@@ -16,6 +16,8 @@
     "lint:ext": "npm run extension && node scripts/lint.mjs",
     "test": "vitest run",
     "test:firefox": "npm run vendor && npm run extension && vitest run -c vitest.firefox.config.mjs",
+    "site": "astro build",
+    "test:site": "npm run site && playwright test",
     "verify": "npm run vendor && npm run check && npm run lint:ext && vitest run",
     "start": "npm run vendor && npm run extension && node scripts/run.mjs",
     "build": "npm run vendor && npm run chats && npm run extension && web-ext build --overwrite-dest",
@@ -25,11 +27,14 @@
     "extension": "vite build"
   },
   "devDependencies": {
+    "@astrojs/vue": "7.1.6",
     "@biomejs/biome": "2.6.9",
     "@commitlint/cli": "21.2.4",
     "@commitlint/config-conventional": "21.2.4",
+    "@playwright/test": "1.65.1",
     "@vitejs/plugin-vue": "6.0.11",
     "@vue/test-utils": "2.6.0",
+    "astro": "7.4.13",
     "husky": "9.1.7",
     "jsdom": "31.0.1",
     "selenium-webdriver": "4.54.0",
@@ -39,15 +44,37 @@
     "yaml": "2.9.1"
   },
   "dependencies": {
+    "@octokit/core": "7.0.8",
+    "@zenfs/core": "2.9.0",
+    "@zenfs/dom": "1.2.14",
+    "buffer": "6.0.3",
     "bulma": "1.0.4",
+    "isomorphic-git": "1.44.19",
     "marked": "18.3.0",
     "turndown": "7.2.5",
     "turndown-plugin-gfm": "1.0.2",
     "vue": "3.5.46"
   },
   "vendor": {
+    "@octokit/core": {
+      "LICENSE": "octokit-core.LICENSE"
+    },
+    "@zenfs/core": {
+      "LICENSE.md": "zenfs-core.LICENSE",
+      "COPYING.md": "zenfs-core.COPYING"
+    },
+    "@zenfs/dom": {
+      "LICENSE.md": "zenfs-dom.LICENSE",
+      "COPYING.md": "zenfs-dom.COPYING"
+    },
+    "buffer": {
+      "LICENSE": "buffer.LICENSE"
+    },
     "bulma": {
       "LICENSE": "bulma.LICENSE"
+    },
+    "isomorphic-git": {
+      "LICENSE.md": "isomorphic-git.LICENSE"
     },
     "marked": {
       "LICENSE": "marked.LICENSE"
