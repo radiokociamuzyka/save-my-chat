@@ -213,11 +213,22 @@
 		const of = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
 		const asked = count("user");
 		const answered = count("assistant");
+		const found = [];
 		if (answered > asked)
-			return [`${of(answered, "answer")} but ${of(asked, "question")}: a user selector may be out of date.`];
+			found.push(`${of(answered, "answer")} but ${of(asked, "question")}: a user selector may be out of date.`);
 		if (asked > answered + 1)
-			return [`${of(asked, "question")} but ${of(answered, "answer")}: an assistant selector may be out of date.`];
-		return [];
+			found.push(`${of(asked, "question")} but ${of(answered, "answer")}: an assistant selector may be out of date.`);
+		// a chat goes user, agent, user, agent... and ends with the agent (Sett, 2026-11-27)
+		const talk = turns.filter((t) => t.role === "user" || t.role === "assistant");
+		if (talk.length && talk[0].role !== "user") found.push("It starts with an answer: the order may be wrong.");
+		if (talk.length && talk.at(-1).role !== "assistant")
+			found.push("It ends with a question: its answer is missing or still being written.");
+		const twice = talk.flatMap((t, i) => (i && talk[i - 1].role === t.role ? [i] : []));
+		if (twice.length)
+			found.push(
+				`Two messages of one role in a row at ${twice.map((i) => `${i}-${i + 1}`).join(", ")}: a message of the other role may be missing.`,
+			);
+		return found;
 	}
 
 	async function overridesOf(id) {
@@ -278,6 +289,7 @@
 			try {
 				const c = conversation(r, r.read(doc, url, sets), url);
 				for (const t of c.turns) seen.turns[t.role] = (seen.turns[t.role] || 0) + 1;
+				seen.order = c.turns.map((t) => ({ user: "U", assistant: "A" })[t.role] || t.role).join(" ");
 				seen.warnings = suspicions(c.turns);
 			} catch (error) {
 				seen.error = String(error?.message || error);
