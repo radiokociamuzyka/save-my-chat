@@ -1,7 +1,7 @@
 {
 	"manifest_version": 3,
 	"name": "save-my-chat",
-	"version": "0.5.7",
+	"version": "0.5.8",
 	"description": "Saves a conversation from an AI chat webapp on your machine, in one clear unified format.",
 	"background": {
 		"scripts": ["core/kit.js", "core/markdown.js", "core/readers.js", "core/library.js", "background/main.js"]
