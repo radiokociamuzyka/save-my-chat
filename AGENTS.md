@@ -108,6 +108,7 @@ src/                     the extension itself, loaded by Firefox as written (web
   background/main.js     event page: registers enabled readers, answers "save" from the popup, downloads
   popup/                 the toolbar button: which reader sees this tab, save as md / json
   options/               readers on/off; later the prototypes editor (userScripts)
+resources/data/          declarations: chats.yaml, the chat webapps, their domains and conversation addresses (PP2)
 tests/                   vitest + jsdom; fixtures/ are saved HTML of real chats, anonymised
 docs/devlog/             the BOS devlog: VISION, ROADMAP, TODO, BRAINSTORM, PROPOSALS, ORDERS, INQUIRIES;
                          shown on GitHub as milestones, issues and a board (scripts/github/devlog.py) -
