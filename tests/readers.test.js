@@ -145,4 +145,63 @@ describe("readers", () => {
 		const seen = await w.SaveMyChat.inspect();
 		expect(seen.nested).toEqual({ "user in assistant": 3 });
 	});
+
+	// made-up pages on the structure each webapp is known by: the readers are unverified
+	// until checked on the live page (docs/.agents/things-to-check.md)
+	const read = async (file, url, html) => {
+		const w = load([...KIT, `readers/${file}.js`], { url, html: `<!doctype html>${html}` });
+		return w.SaveMyChat.readPage(w.document, url, {});
+	};
+
+	it("chatgpt reads both roles by their author attribute, the title without ChatGPT's name", async () => {
+		const c = await read(
+			"chatgpt",
+			"https://chatgpt.com/c/1",
+			`<title>Fix the build - ChatGPT</title><body><main>
+			<article><div data-message-author-role="user"><div class="whitespace-pre-wrap">Why does it fail?</div></div></article>
+			<article><div data-message-author-role="assistant" data-message-model-slug="gpt-5"><div class="markdown"><p>A <code>path</code>.</p></div>
+				<button>Copy</button></div></article></main></body>`,
+		);
+		expect(c.title).toBe("Fix the build");
+		expect(c.turns).toEqual([
+			{ role: "user", text: "Why does it fail?" },
+			{ role: "assistant", text: "A `path`." },
+		]);
+	});
+
+	it("claude reads the user's messages and Claude's answers, older answers too", async () => {
+		const c = await read(
+			"claude",
+			"https://claude.ai/chat/1",
+			`<title>Name a variable - Claude</title><body>
+			<div data-testid="user-message"><p>A name?</p></div>
+			<div class="font-claude-response"><div class="font-claude-response-body"><p>Try <strong>count</strong>.</p></div></div>
+			<div data-testid="user-message"><p>Shorter?</p></div>
+			<div class="font-claude-message"><p><em>n</em>.</p></div></body>`,
+		);
+		expect(c.title).toBe("Name a variable");
+		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual([
+			"user: A name?",
+			"assistant: Try **count**.",
+			"user: Shorter?",
+			"assistant: *n*.",
+		]);
+	});
+
+	it("gemini reads its custom elements, named by the sidebar's chat or the first question", async () => {
+		const page = (sidebar) => `<title>Gemini</title><body>${sidebar}
+			<user-query><span class="cdk-visually-hidden">You said</span><div class="query-text"><p class="query-text-line">Turtles?</p></div></user-query>
+			<model-response><message-content><div class="markdown"><p>Slow.</p></div></message-content></model-response></body>`;
+		const named = await read(
+			"gemini",
+			"https://gemini.google.com/app/1",
+			page(`<nav><div class="conversation selected"><div class="conversation-title"> About turtles </div></div></nav>`),
+		);
+		expect(named.title).toBe("About turtles");
+		expect(named.turns).toEqual([
+			{ role: "user", text: "Turtles?" },
+			{ role: "assistant", text: "Slow." },
+		]);
+		expect((await read("gemini", "https://gemini.google.com/app/1", page(""))).title).toBe("Turtles?");
+	});
 });

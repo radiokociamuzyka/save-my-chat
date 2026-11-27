@@ -90,11 +90,16 @@
 
 	// ---- default readers ---------------------------------------------------
 
+	// an optional reader (phase 5) works once the user granted its hosts, in the Readers tab
+	const granted = (r) => !r.optional || browser.permissions.contains({ origins: r.origins });
+
 	async function enabledReaders() {
 		const { disabled = [] } = await browser.storage.local.get("disabled");
 		// a default with a prototype of its own enabled steps aside for it
 		const replaced = (await allowed()) ? (await prototypes()).map((p) => p.from ?? p.id) : [];
-		return SMC.defaults.filter((r) => !disabled.includes(r.id) && !replaced.includes(r.id));
+		const on = SMC.defaults.filter((r) => !disabled.includes(r.id) && !replaced.includes(r.id));
+		const hosts = await Promise.all(on.map(granted));
+		return on.filter((_, i) => hosts[i]);
 	}
 
 	async function register() {
@@ -229,11 +234,12 @@
 	browser.storage.onChanged.addListener((changes) => {
 		if (changes.disabled || changes.prototypes) register();
 	});
+	// userScripts: the prototypes; origins: an optional reader's hosts
 	browser.permissions.onAdded.addListener((p) => {
-		if (p.permissions?.includes("userScripts")) register();
+		if (p.permissions?.includes("userScripts") || p.origins?.length) register();
 	});
 	browser.permissions.onRemoved.addListener((p) => {
-		if (p.permissions?.includes("userScripts")) register(); // the defaults come back
+		if (p.permissions?.includes("userScripts") || p.origins?.length) register(); // the defaults come back
 	});
 	listen();
 

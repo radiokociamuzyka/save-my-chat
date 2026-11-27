@@ -31,7 +31,7 @@ test("the project page lists every reader shipped", async ({ page }) => {
 	await page.goto("./");
 	await expect(page.getByRole("heading", { level: 1 })).toHaveText("Your AI chats, saved on your own machine.");
 	await expect(page.getByRole("link", { name: "Add to Firefox" })).toHaveAttribute("href", /addons\.mozilla\.org/);
-	const shipped = parse(readFileSync("resources/data/chats.yaml", "utf8")).chats.filter((c) => c.status === "default");
+	const shipped = parse(readFileSync("resources/data/chats.yaml", "utf8")).chats.filter((c) => c.status !== "planned");
 	await expect(page.locator("table.readers tbody tr")).toHaveCount(shipped.length);
 	for (const c of shipped) await expect(page.locator("table.readers")).toContainText(c.name);
 });
@@ -87,7 +87,13 @@ test("the options run on the site: the library, its search, the viewer, the read
 	await expect(options.locator(".tabs li.is-active")).toHaveText("Viewer");
 	await expect(options.locator(".chat-view h2")).toHaveText("How long do turtles live?");
 	await options.getByRole("link", { name: "Readers" }).click();
-	await expect(options.locator(".reader strong")).toHaveText(["Google Search, AI Mode", "GitHub Copilot"]);
+	await expect(options.locator(".reader strong")).toHaveText([
+		"Google Search, AI Mode",
+		"GitHub Copilot",
+		"ChatGPT",
+		"Claude",
+		"Gemini",
+	]);
 	await options.getByRole("link", { name: "Prototypes" }).click();
 	await options.getByRole("button", { name: "Make a prototype of GitHub Copilot" }).click();
 	await expect(options.locator("textarea.code")).toHaveValue(/SMC\.reader\(/);

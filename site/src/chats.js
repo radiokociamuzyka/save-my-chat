@@ -12,14 +12,17 @@ export function chats(text = YAML) {
 	return parse(text).chats;
 }
 
-// the readers shipped, each with its conversations' addresses (a `*` written as an ellipsis)
+// the readers shipped, each with its conversations' addresses (a `*` written as an ellipsis);
+// an optional one works once allowed on its webapp, in the Readers tab (phase 5)
 export function shipped(list) {
 	return list
-		.filter((c) => c.status === "default")
+		.filter((c) => c.status === "default" || c.status === "optional")
 		.map((c) => ({
 			name: c.name,
 			addresses: (c.chats ?? []).map((a) => a.replaceAll("*", "…")),
-			state: c.verified ? "checked on live chats" : "not yet checked on a live chat",
+			state:
+				(c.verified ? "checked on live chats" : "not yet checked on a live chat") +
+				(c.status === "optional" ? "; allowed by you in the Readers tab" : ""),
 		}));
 }
 
