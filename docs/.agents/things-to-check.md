@@ -59,3 +59,10 @@ point was added.
   works from the options tab, and whether the event dispatched from the
   isolated world reaches the user script's listener with its string
   detail.
+- **2026-11-27. The hotfix release without pushing master.** When a
+  version reaches `master` already tagged, `release.sh` now tags a bump
+  commit on top of `master` and the back job merges that tag into
+  `development`. Not run yet (versions have always been new); `bash -n`
+  only. The pages, wiki and feed workflows check out `master`, so after
+  such a hotfix they show the version before the bump until the next
+  release.

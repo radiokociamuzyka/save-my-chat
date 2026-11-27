@@ -26,6 +26,11 @@ says, so the entry is removed once the linter is fixed. Turning off
 problems; calling the API through an alias to get past the linter would
 have hidden it from AMO's reviewers.
 
+Reported upstream as
+[mozilla/addons-linter#6282](https://github.com/mozilla/addons-linter/issues/6282)
+(RR3, filed by Cleo on Sett's word); the entry in `scripts/lint.mjs` goes
+when a release of the linter closes it.
+
 ## Recognise it again
 
 A validator that rejects an API the browser's own documentation offers in
