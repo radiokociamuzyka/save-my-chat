@@ -28,4 +28,26 @@ already, `release.sh` pushes a hotfix version bump straight onto `master`,
 and the ruleset would refuse it. Say "RR1 done", and Cleo checks it
 through the API.
 
+## RR2. Prototypes tried in a real Firefox
+
+*Why:* phase 3's prototypes run through Firefox's `userScripts` API,
+which no test here has: jsdom stood in for it, and MDN does not say
+everything (whether a user script's message carries its tab). The last
+step of phase 3 waits for this check.
+
+*How:* in the release after v0.3.6 (its pull request says so), open the
+extension's options, **Prototypes**:
+1. **Allow user scripts**: did Firefox ask, and did the button go away?
+2. **Make a prototype of GitHub Copilot**, then in its code find
+   `return { title: title === "Copilot" ? "" : title, turns };` and change
+   it to `return { title: "proto: " + title, turns };`. **Save**.
+3. Reload a Copilot chat and open the popup: does it say
+   **(your prototype)**? Save it as Markdown: does the title start with
+   `proto: `? Copy the report as before.
+4. Turn the prototype off, reload, save again: is the title back to
+   normal, and the popup without "(your prototype)"?
+
+Report what you saw, the report pasted, and anything the web console
+(F12) said on the chat's page.
+
 ---

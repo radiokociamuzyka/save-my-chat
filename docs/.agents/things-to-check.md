@@ -51,3 +51,11 @@ point was added.
   address should then be https://radiokociamuzyka.github.io/save-my-chat/,
   and it goes into the README and the repository's homepage field (also a
   setting).
+- **2026-11-27. Prototypes in a real Firefox (RR2).** Built from MDN's
+  userScripts pages (Firefox MV3) and tested with the APIs stubbed. Not
+  known here: whether `runtime.onUserScriptMessage` gives `sender.tab`
+  (not required now), whether `{ file }` sources load the vendored
+  turndown in the `USER_SCRIPT` world, whether the permission request
+  works from the options tab, and whether the event dispatched from the
+  isolated world reaches the user script's listener with its string
+  detail.
