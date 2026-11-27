@@ -1,7 +1,7 @@
 <!-- The toolbar button: which reader sees this tab, what it saw there, and saving
      through the background (Q12: built by Vite, Bulma's styles). -->
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, toRaw } from "vue";
 import { reportOf, sinceLine } from "./report.js";
 
 const state = ref("Looking for a conversation…");
@@ -11,6 +11,7 @@ const seen = ref(null);
 const lines = ref([]); // { kind: "warning" | "note" | "grew" | "error" | "done", text }
 const busy = ref(false);
 const copied = ref(false);
+const listed = ref(null); // the chats this page lists (phase 5): { reader, name, chats }
 let tab = null;
 
 const version = browser.runtime.getManifest().version;
@@ -19,6 +20,7 @@ const ask = (msg) => browser.runtime.sendMessage(msg);
 
 onMounted(async () => {
 	[tab] = await browser.tabs.query({ active: true, currentWindow: true });
+	if (tab) ask({ type: "save-my-chat:list", tabId: tab.id }).then((found) => (listed.value = found));
 	reader.value = tab ? await ask({ type: "save-my-chat:present", tabId: tab.id }) : null;
 	if (!reader.value) {
 		state.value = "No supported chat on this page.";
@@ -55,6 +57,22 @@ async function save(as) {
 	}
 }
 
+// what this page lists, how many of it saved already
+const listLine = computed(() => {
+	const chats = listed.value?.chats ?? [];
+	if (!chats.length) return "";
+	const saved = chats.filter((c) => c.savedAt).length;
+	return `This page lists ${chats.length} ${chats.length === 1 ? "chat" : "chats"}${saved ? `, ${saved} saved already` : ""}.`;
+});
+
+// the list handed to the options' Gather tab, which opens and reads each chat (gather.js);
+// the raw object, as storage's structured clone refuses Vue's proxy
+async function gatherAll() {
+	await browser.storage.local.set({ gathering: { ...structuredClone(toRaw(listed.value)), from: tab.url } });
+	await browser.tabs.create({ url: browser.runtime.getURL("options/options.html#gather") });
+	window.close();
+}
+
 async function copy() {
 	await navigator.clipboard.writeText(report.value);
 	copied.value = true;
@@ -77,6 +95,12 @@ const COLOR = { warning: "has-text-warning-dark", note: "has-text-grey", grew: "
 		<p v-for="(line, i) in lines" :key="i" class="line is-size-7" :class="COLOR[line.kind]" role="status">
 			{{ line.text }}
 		</p>
+		<div v-if="listLine" class="listed mt-2">
+			<p class="is-size-7 mb-1">{{ listLine }}</p>
+			<button type="button" class="button is-small is-fullwidth gather" @click="gatherAll">
+				Gather them into the library...
+			</button>
+		</div>
 		<details v-if="seen" class="mt-2">
 			<summary class="is-size-7">What the reader saw</summary>
 			<pre class="seen">{{ report }}</pre>

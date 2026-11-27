@@ -3,10 +3,11 @@
 // kit, the readers, src/vendor/ - as it is. web-ext runs, lints and packs
 // dist/extension/. Not minified, file names without hashes: what AMO's reviewers
 // read stays close to the source uploaded with it.
-import { cpSync, existsSync, readdirSync } from "node:fs";
+import { cpSync, existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
+import { facts, notice } from "./scripts/notice.mjs";
 
 const SRC = new URL("src/", import.meta.url).pathname;
 const OUT = new URL("dist/extension/", import.meta.url).pathname;
@@ -46,10 +47,28 @@ function copyRest() {
 	};
 }
 
+// THIRD-PARTY.md: every package whose code the build holds, bundled into the pages
+// or copied as it is into src/vendor/ (package.json "vendor"), and its license
+// (scripts/notice.mjs; almanac: licenses-met)
+function thirdParty() {
+	return {
+		name: "save-my-chat:third-party",
+		generateBundle(_, bundle) {
+			const ids = Object.values(bundle).flatMap((c) => Object.keys(c.modules ?? {}));
+			const vendor = JSON.parse(readFileSync(new URL("package.json", import.meta.url), "utf8")).vendor ?? {};
+			const copied = Object.entries(vendor)
+				.filter(([, files]) => Object.keys(files).some((f) => f.endsWith(".js")))
+				.map(([name]) => `node_modules/${name}/package.json`);
+			const packages = [...ids.filter((id) => id.includes("/node_modules/")), ...copied].map(facts);
+			this.emitFile({ type: "asset", fileName: "THIRD-PARTY.md", source: notice(packages) });
+		},
+	};
+}
+
 export default defineConfig({
 	root: SRC,
 	base: "/",
-	plugins: [vue(), copyRest()],
+	plugins: [vue(), copyRest(), thirdParty()],
 	resolve: {
 		// a dependency of isomorphic-git's whose shims hold eval, in its native form (rule 5;
 		// src/explorer/typed-array-buffer.js says why, almanac: shims-with-eval)

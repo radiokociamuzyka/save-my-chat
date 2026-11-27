@@ -73,7 +73,7 @@
 
 	// The question goes in as a DOM event from a script in the tab's isolated
 	// world; the answer comes back through onUserScriptMessage.
-	async function askPrototype(tabId, type, timeout = 5000) {
+	async function askPrototype(tabId, type, timeout = 5000, extra = {}) {
 		listen();
 		const id = crypto.randomUUID();
 		const answer = new Promise((resolve, reject) => {
@@ -83,18 +83,23 @@
 		await browser.scripting.executeScript({
 			target: { tabId },
 			func: (detail) => document.dispatchEvent(new CustomEvent("save-my-chat:ask", { detail })),
-			args: [JSON.stringify({ id, type })],
+			args: [JSON.stringify({ ...extra, id, type })],
 		});
 		return answer;
 	}
 
 	// ---- default readers ---------------------------------------------------
 
+	// an optional reader (phase 5) works once the user granted its hosts, in the Readers tab
+	const granted = (r) => !r.optional || browser.permissions.contains({ origins: r.origins });
+
 	async function enabledReaders() {
 		const { disabled = [] } = await browser.storage.local.get("disabled");
 		// a default with a prototype of its own enabled steps aside for it
 		const replaced = (await allowed()) ? (await prototypes()).map((p) => p.from ?? p.id) : [];
-		return SMC.defaults.filter((r) => !disabled.includes(r.id) && !replaced.includes(r.id));
+		const on = SMC.defaults.filter((r) => !disabled.includes(r.id) && !replaced.includes(r.id));
+		const hosts = await Promise.all(on.map(granted));
+		return on.filter((_, i) => hosts[i]);
 	}
 
 	async function register() {
@@ -120,7 +125,7 @@
 	// reader was enabled) has no default yet: inject the kit and every enabled
 	// reader once, each reader's detect() decides, then ask again. A prototype
 	// cannot be injected so: the page is reloaded instead (NOT_LOADED).
-	async function ask(tabId, type) {
+	async function ask(tabId, type, extra = {}) {
 		const proto = await prototypeOf(tabId);
 		if (proto && type === "save-my-chat:present")
 			// the popup asks first: a prototype not loaded yet is named, with what to do
@@ -130,26 +135,62 @@
 				prototype: true,
 				error: error.message,
 			}));
-		if (proto) return askPrototype(tabId, type);
+		if (proto) return askPrototype(tabId, type, 5000, extra);
 		try {
-			return await browser.tabs.sendMessage(tabId, { type });
+			return await browser.tabs.sendMessage(tabId, { ...extra, type });
 		} catch {
 			const files = [...PAGE_KIT, ...(await enabledReaders()).map((r) => r.file)];
 			await browser.scripting.executeScript({ target: { tabId }, files });
-			return await browser.tabs.sendMessage(tabId, { type });
+			return await browser.tabs.sendMessage(tabId, { ...extra, type });
 		}
 	}
 
-	async function save({ tabId, as = "md" }) {
+	// what the tab's reader read, checked; throws what the popup shows
+	async function readTab(tabId) {
 		const read = await ask(tabId, "save-my-chat:read");
 		if (!read) throw new Error("No conversation found on this page.");
 		const { warnings = [], ...c } = read;
 		const problems = SMC.validate(c);
 		if (problems.length) throw new Error(`The reader gave a broken conversation: ${problems.join("; ")}`);
 		if (!c.turns.length) throw new Error("The reader found no messages on this page.");
+		return { c, warnings };
+	}
+
+	async function save({ tabId, as = "md" }) {
+		const { c, warnings } = await readTab(tabId);
 		await write(c, as);
 		await library.record(c);
 		return { title: c.title, turns: c.turns.length, warnings };
+	}
+
+	// ---- gathering (phase 5): the chats a webapp lists, read one by one into the library ----
+	// The options page opens each in a background tab and asks for it here: kept in the
+	// library, no file written (the backup's zip comes after).
+	async function collect({ tabId }) {
+		const { c, warnings } = await readTab(tabId);
+		const entry = await library.record(c);
+		return { title: c.title, turns: c.turns.length, warnings, key: entry.key };
+	}
+
+	// The default reader whose pages a tab is on (a prototype is of a default: its `from`).
+	async function defaultOf(tabId) {
+		const proto = await prototypeOf(tabId);
+		if (proto) return SMC.defaults.find((r) => r.id === (proto.from ?? proto.id)) ?? null;
+		const { url } = await browser.tabs.get(tabId);
+		return SMC.defaults.find((r) => r.matches.some((m) => SMC.matches(m, url))) ?? null;
+	}
+
+	// The chats a tab lists, each with when it was saved, if it was: { reader, name, chats }
+	async function list({ tabId }) {
+		const reader = await defaultOf(tabId);
+		if (!reader) return null;
+		const chats = (await ask(tabId, "save-my-chat:list", { patterns: reader.chats ?? [] })) ?? [];
+		const index = await library.entries();
+		return {
+			reader: reader.id,
+			name: reader.name,
+			chats: chats.map((chat) => ({ ...chat, savedAt: index[`${reader.id} ${chat.url}`]?.savedAt ?? null })),
+		};
 	}
 
 	async function write(c, as) {
@@ -193,11 +234,12 @@
 	browser.storage.onChanged.addListener((changes) => {
 		if (changes.disabled || changes.prototypes) register();
 	});
+	// userScripts: the prototypes; origins: an optional reader's hosts
 	browser.permissions.onAdded.addListener((p) => {
-		if (p.permissions?.includes("userScripts")) register();
+		if (p.permissions?.includes("userScripts") || p.origins?.length) register();
 	});
 	browser.permissions.onRemoved.addListener((p) => {
-		if (p.permissions?.includes("userScripts")) register(); // the defaults come back
+		if (p.permissions?.includes("userScripts") || p.origins?.length) register(); // the defaults come back
 	});
 	listen();
 
@@ -211,7 +253,9 @@
 		if (msg?.type === "save-my-chat:library-chat") return library.chat(msg.key);
 		if (msg?.type === "save-my-chat:library-forget") return library.forget(msg.key);
 		if (msg?.type === "save-my-chat:since") return library.since(msg.reader, msg.url, msg.turns);
+		if (msg?.type === "save-my-chat:list") return list(msg).catch(() => null);
+		if (msg?.type === "save-my-chat:collect") return collect(msg);
 	});
 
-	SMC.background = { register, ask, enabledReaders, prototypeOf }; // for tests
+	SMC.background = { register, ask, enabledReaders, prototypeOf, list, collect }; // for tests
 })();

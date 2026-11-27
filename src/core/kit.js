@@ -324,6 +324,38 @@
 		return glob.test(u.pathname + u.search);
 	}
 
+	// The conversations a page lists (phase 5: gathered one by one, a backup): a
+	// reader's own list(doc, url) when it has one and sees the page, else every link
+	// whose address falls under one of `patterns` (the chat's addresses in chats.yaml,
+	// sent by the background). Each once, without its #fragment, named by its
+	// longest text (a sidebar's title, not an icon's link to the same chat).
+	function label(a) {
+		return (a.textContent || a.getAttribute("aria-label") || a.getAttribute("title") || "").replace(/\s+/g, " ").trim();
+	}
+
+	function listed(doc = root.document, url = root.location?.href, patterns = []) {
+		const own = [...readers.values()].find((r) => r.list && r.detect(doc, url));
+		const found = own
+			? own.list(doc, url)
+			: [...doc.querySelectorAll("a[href]")].map((a) => ({ url: a.getAttribute("href"), title: label(a) }));
+		const chats = new Map();
+		for (const item of found || []) {
+			let href;
+			try {
+				href = new URL(item.url, doc.baseURI);
+			} catch {
+				continue;
+			}
+			href.hash = "";
+			if (!/^https?:$/.test(href.protocol)) continue;
+			if (!own && !patterns.some((p) => matches(p, href.href))) continue;
+			const title = String(item.title || "").trim();
+			const known = chats.get(href.href);
+			if (!known || title.length > known.title.length) chats.set(href.href, { url: href.href, title });
+		}
+		return [...chats.values()];
+	}
+
 	function present(doc = root.document, url = root.location?.href) {
 		for (const r of readers.values()) if (r.detect(doc, url)) return { id: r.id, name: r.name };
 		return null;
@@ -347,6 +379,7 @@
 		readPage,
 		inspect,
 		present,
+		listed,
 		matches,
 	};
 
@@ -359,6 +392,7 @@
 			if (msg?.type === "save-my-chat:present") return Promise.resolve(present());
 			if (msg?.type === "save-my-chat:read") return readPage();
 			if (msg?.type === "save-my-chat:inspect") return inspect();
+			if (msg?.type === "save-my-chat:list") return Promise.resolve(listed(undefined, undefined, msg.patterns));
 		});
 	}
 })();

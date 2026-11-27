@@ -32,14 +32,26 @@ describe("in Firefox: the options", () => {
 	it("open on the library, empty, with the five tabs", async () => {
 		await open(driver, "options/options.html");
 		await find(driver, ".library-status");
-		expect(await texts(driver, ".tabs li")).toEqual(["Library", "Viewer", "Files", "Readers", "Prototypes"]);
+		expect(await texts(driver, ".tabs li")).toEqual(["Library", "Viewer", "Files", "Gather", "Readers", "Prototypes"]);
 		expect(await (await find(driver, ".library-status")).getText()).toMatch(/Nothing saved yet/);
 	});
 
 	it("list the readers with their built-in selectors, from the classic scripts", async () => {
 		await open(driver, "options/options.html#readers");
 		await find(driver, ".reader");
-		expect(await texts(driver, ".reader strong")).toEqual(["Google Search, AI Mode", "GitHub Copilot"]);
+		expect(await texts(driver, ".reader strong")).toEqual([
+			"Google Search, AI Mode",
+			"GitHub Copilot",
+			"ChatGPT",
+			"Claude",
+			"Gemini",
+		]);
+		// an optional reader's webapp is not allowed until the user says so
+		expect((await texts(driver, ".reader .access")).map((t) => t.replace(/\s+/g, " "))).toEqual([
+			"Not allowed on chatgpt.com yet. Allow on chatgpt.com",
+			"Not allowed on claude.ai yet. Allow on claude.ai",
+			"Not allowed on gemini.google.com yet. Allow on gemini.google.com",
+		]);
 		expect((await texts(driver, ".built-in")).length).toBeGreaterThan(0);
 		await shot(driver, "readers");
 	});

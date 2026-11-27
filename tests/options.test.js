@@ -70,6 +70,7 @@ describe("options: the page", () => {
 			"Library",
 			"Viewer",
 			"Files",
+			"Gather",
 			"Readers",
 			"Prototypes",
 		]);
@@ -78,7 +79,7 @@ describe("options: the page", () => {
 		window.dispatchEvent(new HashChangeEvent("hashchange"));
 		await flushPromises();
 		expect(page.find(".tabs li.is-active").text()).toBe("Readers");
-		expect(page.findAll(".reader")).toHaveLength(2);
+		expect(page.findAll(".reader")).toHaveLength(5);
 	});
 });
 
@@ -102,6 +103,33 @@ describe("options: readers and their selectors", () => {
 		await panel.findAll(".reader input[type=checkbox]")[1].setValue(true);
 		await flushPromises();
 		expect(data.disabled).toEqual([]);
+	});
+
+	it("lets an optional reader on its webapp only when asked, and takes it back", async () => {
+		const { state } = firefox();
+		const asked = [];
+		browser.permissions.request = async (p) => asked.push(p) && true;
+		browser.permissions.remove = async (p) => asked.push(p) && true;
+		const panel = mount(ReadersPanel);
+		await flushPromises();
+		expect(panel.findAll(".reader strong").map((s) => s.text())).toEqual([
+			"Google Search, AI Mode",
+			"GitHub Copilot",
+			"ChatGPT",
+			"Claude",
+			"Gemini",
+		]);
+		expect(state.asked).toBe(0);
+		const chatgpt = panel.findAll(".reader")[2];
+		expect(chatgpt.find(".access").text()).toMatch(/^Not allowed on chatgpt\.com yet\./);
+		await chatgpt.find("button.allow").trigger("click");
+		await flushPromises();
+		expect(asked).toEqual([{ origins: ["https://chatgpt.com/*"] }]);
+		expect(chatgpt.find(".access").text()).toMatch(/^Allowed on chatgpt\.com\./);
+		await chatgpt.find("button.take-back").trigger("click");
+		await flushPromises();
+		expect(asked[1]).toEqual({ origins: ["https://chatgpt.com/*"] });
+		expect(chatgpt.find("button.allow").exists()).toBe(true);
 	});
 
 	it("saves valid selectors, refuses invalid ones, and goes back to built-in", async () => {
@@ -194,6 +222,9 @@ describe("options: prototypes", () => {
 		expect(copies.map((b) => b.text())).toEqual([
 			"Make a prototype of Google Search, AI Mode",
 			"Make a prototype of GitHub Copilot",
+			"Make a prototype of ChatGPT",
+			"Make a prototype of Claude",
+			"Make a prototype of Gemini",
 		]);
 		await copies[1].trigger("click");
 		await flushPromises();
@@ -240,7 +271,7 @@ describe("options: prototypes", () => {
 		await panel.find("button.delete-prototype").trigger("click");
 		await flushPromises();
 		expect(data.prototypes).toEqual({});
-		expect(panel.findAll("button.copy")).toHaveLength(2);
+		expect(panel.findAll("button.copy")).toHaveLength(5);
 	});
 
 	it("imports a file of prototypes turned off, skipping broken ones and fields it does not know", async () => {

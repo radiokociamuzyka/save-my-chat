@@ -1,7 +1,7 @@
 {
 	"manifest_version": 3,
 	"name": "save-my-chat",
-	"version": "0.4.36",
+	"version": "0.5.6",
 	"description": "Saves a conversation from an AI chat webapp on your machine, in one clear unified format.",
 	"background": {
 		"scripts": ["core/kit.js", "core/markdown.js", "core/readers.js", "core/library.js", "background/main.js"]
@@ -16,7 +16,12 @@
 	},
 	"permissions": ["scripting", "storage", "downloads", "menus"],
 	"optional_permissions": ["userScripts"],
-	"optional_host_permissions": ["https://api.github.com/*"],
+	"optional_host_permissions": [
+		"https://api.github.com/*",
+		"https://chatgpt.com/*",
+		"https://claude.ai/*",
+		"https://gemini.google.com/*"
+	],
 	"host_permissions": ["https://www.google.com/*", "https://github.com/*"],
 	"browser_specific_settings": {
 		"gecko": {

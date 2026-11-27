@@ -39,6 +39,11 @@ The extension's options (right-click the toolbar button → **Library and
 settings**, or **about:addons** → save-my-chat → *Preferences*) open on
 the library; the **Readers** tab lists every reader with the addresses it
 works on. Turn off the ones you do not want injected into those pages.
+The readers of ChatGPT, Claude and Gemini ask first: **Allow on
+chatgpt.com** (and so on) lets save-my-chat read that webapp's pages,
+after Firefox asks you; **Take back** removes it. They are new and not
+yet checked on the live webapps: if one misses something, see
+[when a reader misses something](troubleshooting.md).
 
 ## The library
 
@@ -46,6 +51,28 @@ Every chat you save is also kept in the extension's library, the first
 tab of the extension's options. There you can search titles and
 messages, **Read** a chat in the viewer, save it again as Markdown or JSON
 (the copy from when you last saved it), or **Forget** it.
+
+**Back up all as .zip** packs the whole library into one file in your
+downloads, `save-my-chat/backup-<date>.zip`: every chat as Markdown and
+JSON, and an index of them ([the backup's layout](../guides/format.md#a-backup-save-my-chatlibrary0)).
+It is made on your machine and goes only to your downloads folder.
+
+## Gathering: every chat a webapp lists
+
+A chat webapp lists your conversations, in its sidebar for example. On
+such a page the popup says *This page lists 12 chats, 3 saved already*;
+**Gather them into the library...** opens the **Gather** tab of the
+options with that list, the chats not saved yet picked. **Gather** opens
+each picked chat in a background tab, waits until its reader sees the
+whole chat, keeps it in the library and closes the tab, one chat at a
+time; **Stop after this one** stops. Each line says how its chat went.
+Then **Back up all as .zip** packs the whole library.
+
+A chat is found on the page by its address (the `chats` of each webapp
+in `resources/data/chats.yaml`); a sidebar that loads more as you
+scroll lists only what it has shown, so scroll it to the end first.
+A chat whose reader sees nothing within 30 seconds is given up and said
+so.
 
 ## The viewer
 

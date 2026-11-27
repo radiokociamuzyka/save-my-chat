@@ -1,6 +1,6 @@
 {
   "name": "save-my-chat",
-  "version": "0.4.36",
+  "version": "0.5.6",
   "private": true,
   "description": "Firefox extension to export your AI chat history out of webapps and save it on your local machine in clear unified formatting",
   "repository": "github:radiokociamuzyka/save-my-chat",
@@ -49,6 +49,7 @@
     "@zenfs/dom": "1.2.14",
     "buffer": "6.0.3",
     "bulma": "1.0.4",
+    "fflate": "0.8.3",
     "isomorphic-git": "1.44.19",
     "marked": "18.3.0",
     "turndown": "7.2.5",
@@ -72,6 +73,9 @@
     },
     "bulma": {
       "LICENSE": "bulma.LICENSE"
+    },
+    "fflate": {
+      "LICENSE": "fflate.LICENSE"
     },
     "isomorphic-git": {
       "LICENSE.md": "isomorphic-git.LICENSE"

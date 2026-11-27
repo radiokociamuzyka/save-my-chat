@@ -17,6 +17,12 @@ machine. That is all it does.
   extension removes it all. The **Files** tab keeps the same chats as
   files in a git repository in the extension's own storage (IndexedDB),
   so each copy you saved stays in its history.
+- **Gathering** opens, at your click, the chats a webapp's page lists,
+  one at a time in a background tab of that same webapp, so its reader
+  can read each into the library, then closes it: the pages load as
+  when you open them yourself, signed in as you are. Nothing read is
+  sent anywhere. The **backup** zip is made on your machine and written
+  to your downloads.
 - **The report** under *What the reader saw* holds selectors and counts,
   never the text of a conversation, and goes to the clipboard only when
   you click **Copy report**.
@@ -26,6 +32,7 @@ machine. That is all it does.
 | Permission | Why |
 | --- | --- |
 | access to `www.google.com` and `github.com` | the pages its readers read |
+| access to `chatgpt.com`, `claude.ai`, `gemini.google.com` (optional, asked when you **Allow** one in the Readers tab) | the pages of those readers |
 | `scripting` | to put a reader into such a page |
 | `storage` | its settings, your prototypes, the library |
 | `downloads` | to write the file you save |

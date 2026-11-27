@@ -16,7 +16,15 @@ const event = () => {
 	return { addListener: (f) => listeners.push(f), listeners };
 };
 
-function background({ granted = true, stored = {}, url = "https://github.com/copilot/c/1", tabWorld, page } = {}) {
+// granted: the userScripts permission; hosts: the optional readers' hosts granted
+function background({
+	granted = true,
+	hosts = [],
+	stored = {},
+	url = "https://github.com/copilot/c/1",
+	tabWorld,
+	page,
+} = {}) {
 	const w = load(["core/kit.js", "core/markdown.js", "core/readers.js", "core/library.js"]);
 	const data = structuredClone(stored);
 	const calls = { contentScripts: [], userScripts: [], world: null, executed: [], downloads: [], menus: [], opened: 0 };
@@ -40,7 +48,11 @@ function background({ granted = true, stored = {}, url = "https://github.com/cop
 			openOptionsPage: async () => calls.opened++,
 		},
 		menus: { create: (item) => calls.menus.push(item), onClicked: event() },
-		permissions: { contains: async () => granted, onAdded: event(), onRemoved: event() },
+		permissions: {
+			contains: async (p) => (p.permissions ? granted : p.origins.every((o) => hosts.includes(o))),
+			onAdded: event(),
+			onRemoved: event(),
+		},
 		tabs: {
 			get: async () => ({ url }),
 			sendMessage: async () => page ?? { from: "default" },
@@ -145,6 +157,22 @@ describe("background: prototypes", () => {
 	});
 });
 
+describe("background: optional readers (phase 5)", () => {
+	it("registers an optional reader only once its hosts are granted, and again when they are", async () => {
+		const { w, calls, bg } = background({ hosts: ["https://claude.ai/*"] });
+		await bg.register();
+		expect(calls.contentScripts.map((s) => s.id)).toEqual([
+			"smc-reader-google-ai-mode",
+			"smc-reader-github-copilot",
+			"smc-reader-claude",
+		]);
+		calls.contentScripts.length = 0;
+		for (const f of w.browser.permissions.onAdded.listeners) f({ origins: ["https://chatgpt.com/*"] });
+		await new Promise((done) => setTimeout(done, 10));
+		expect(calls.contentScripts.map((s) => s.id)).toContain("smc-reader-claude");
+	});
+});
+
 describe("background: the library", () => {
 	const page = {
 		format: "save-my-chat/0",
@@ -176,6 +204,45 @@ describe("background: the library", () => {
 		await send({ type: "save-my-chat:library-forget", key: entry.key });
 		expect(await send({ type: "save-my-chat:library" })).toEqual([]);
 		await expect(send({ type: "save-my-chat:library-save", key: entry.key })).rejects.toThrow(/not in the library/);
+	});
+});
+
+describe("background: gathering (phase 5)", () => {
+	const chat = {
+		format: "save-my-chat/0",
+		source: { reader: "github-copilot", service: "github.com/copilot", url: "https://github.com/copilot/c/1" },
+		title: "Fix the build",
+		savedAt: "2026-11-28T09:00:00.000Z",
+		turns: [
+			{ role: "user", text: "Why?" },
+			{ role: "assistant", text: "Because." },
+		],
+	};
+
+	it("reads a tab into the library without writing a file", async () => {
+		const { calls, send } = background({ url: chat.source.url, page: chat });
+		expect(await send({ type: "save-my-chat:collect", tabId: 7 })).toMatchObject({ title: "Fix the build", turns: 2 });
+		expect(calls.downloads).toEqual([]);
+		expect((await send({ type: "save-my-chat:library" })).map((e) => e.title)).toEqual(["Fix the build"]);
+	});
+
+	it("lists the chats a tab offers, by the reader's chat addresses, marked when saved", async () => {
+		const asked = [];
+		const { w, send } = background({ url: chat.source.url, page: chat });
+		await send({ type: "save-my-chat:collect", tabId: 7 });
+		w.browser.tabs.sendMessage = async (_tab, msg) => {
+			asked.push(msg);
+			return [
+				{ url: "https://github.com/copilot/c/1", title: "Fix the build" },
+				{ url: "https://github.com/copilot/c/2", title: "Another" },
+			];
+		};
+		const found = await send({ type: "save-my-chat:list", tabId: 7 });
+		expect(asked).toEqual([{ type: "save-my-chat:list", patterns: ["https://github.com/copilot/c/*"] }]);
+		expect(found).toMatchObject({ reader: "github-copilot", name: "GitHub Copilot" });
+		expect(found.chats.map((c) => c.savedAt)).toEqual([chat.savedAt, null]);
+		const elsewhere = background({ url: "https://example.org/" });
+		expect(await elsewhere.send({ type: "save-my-chat:list", tabId: 7 })).toBeNull();
 	});
 });
 
