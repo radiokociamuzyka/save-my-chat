@@ -89,7 +89,7 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 - [x] Each release attaches its source archive for AMO, and the README says how to build it
 - [x] The toolbar button's context menu opens the library and settings (RR4)
 - [x] Each release submitted to AMO's listed channel by `release.yml` (`amo.sh`), with its source and notes, the secrets of the `releasing` environment
-- [ ] Vue components, Bulma styles for options and popup
+- [x] Vue components, Bulma styles for options and popup
 - [ ] A viewer of saved conversations (Markdown and JSON of the unified format)
 - [ ] Tests driving the extension in a real Firefox: Selenium with geckodriver, a temporary add-on, its pages by `moz-extension://` address (Q14)
 - [ ] The public site on `github-pages` built by Astro: the project page, popup and options shown with Firefox's APIs stubbed, a viewer of saved chats needing no extension; Playwright tests it (Q13)

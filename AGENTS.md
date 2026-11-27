@@ -129,7 +129,8 @@ src/                     the extension's source: built into dist/extension/ (web
   vendor/                not in git: every dependency of package.json copied unchanged at build (scripts/vendor.mjs, Q10)
   background/main.js     event page: registers enabled readers, answers "save" from the popup, downloads
   popup/                 the toolbar button (Vue, Q12): ToolbarPopup.vue, report.js; which reader sees this tab, save as md / json
-  options/               readers on/off, selector overrides; library.js: the saved chats; prototypes.js: the user's own readers (userScripts)
+  options/               the options (Vue, Q12): OptionsPage.vue, a tab each - LibraryPanel, ReadersPanel (on/off, SelectorEditor),
+                         PrototypesPanel (PrototypeEditor; prototypes.js: their checks and file); the kit and readers loaded first (main.js)
 resources/data/          declarations: chats.yaml, the chat webapps, their domains and conversation addresses (PP2)
 tests/                   vitest + jsdom; fixtures/ are saved HTML of real chats, anonymised
 docs/devlog/             the BOS devlog: VISION, ROADMAP, TODO, BRAINSTORM, PROPOSALS, ORDERS, INQUIRIES;
@@ -138,7 +139,7 @@ docs/devlog/             the BOS devlog: VISION, ROADMAP, TODO, BRAINSTORM, PROP
 scripts/wiki/            build.mjs, translate.mjs: the wiki generated and translated (wiki.yaml)
 scripts/pages/           build.mjs: the static page on github-pages, from resources/pages/ (pages.yml)
 scripts/github/          devlog.py, adapted from P_JOL_ROLL; discussions.py, the feed in Discussions (feed.yml)
-vite.config.mjs          the build step (Q12): PAGES built by Vite, src/ copied, into dist/extension/
+vite.config.mjs          the build step (Q12): PAGES built by Vite (chunks/vue.js and assets/bulma.css shared), src/ copied, into dist/extension/
 scripts/version.mjs      the one version: sync, bump, bump-commit (pre-commit hook), merge driver (.gitattributes)
 scripts/release/         release.sh: what release.yml does on master, runnable by hand; amo.sh: a release to AMO, listed
 docs/changelog/          what happened per phase, the owner's words word for word, append-only
