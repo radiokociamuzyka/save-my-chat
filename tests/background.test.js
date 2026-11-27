@@ -238,7 +238,7 @@ describe("background: gathering (phase 5)", () => {
 			];
 		};
 		const found = await send({ type: "save-my-chat:list", tabId: 7 });
-		expect(asked).toEqual([{ type: "save-my-chat:list", patterns: ["https://github.com/copilot/c/*"] }]);
+		expect(asked).toEqual([{ type: "save-my-chat:list", patterns: ["https://github.com/copilot/c/*"], load: false }]);
 		expect(found).toMatchObject({ reader: "github-copilot", name: "GitHub Copilot" });
 		expect(found.chats.map((c) => c.savedAt)).toEqual([chat.savedAt, null]);
 		const elsewhere = background({ url: "https://example.org/" });

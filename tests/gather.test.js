@@ -41,6 +41,34 @@ describe("the chats a page lists", () => {
 		]);
 	});
 
+	it("of AI Mode are its links with udm=50, wherever it stands in the address", () => {
+		const w = load(KIT, {
+			url: "https://www.google.com/search?q=a&udm=50",
+			html: `<body><a href="/search?udm=50&q=turtles&mstk=x">Turtles</a><a href="/search?q=b">plain</a></body>`,
+		});
+		expect(w.SaveMyChat.listed(w.document, w.location.href, ["https://www.google.com/search?*udm=50*"])).toEqual([
+			{ url: "https://www.google.com/search?udm=50&q=turtles&mstk=x", title: "Turtles" },
+		]);
+	});
+
+	it("are loaded whole: the list scrolled to its end until no more chats come (RR7)", async () => {
+		const w = load(KIT, { url: "https://chatgpt.com/", html: `<body><nav id="side"></nav></body>` });
+		const side = w.document.getElementById("side");
+		const add = (n) => {
+			for (let i = 0; i < n; i++) {
+				const a = w.document.createElement("a");
+				a.href = `/c/${side.children.length + 1}`;
+				a.textContent = `Chat ${side.children.length + 1}`;
+				side.append(a);
+			}
+		};
+		add(20);
+		const batches = [11, 16, 0, 0];
+		w.HTMLElement.prototype.scrollIntoView = () => add(batches.shift() ?? 0); // the webapp loading on scroll
+		const all = await w.SaveMyChat.loadList(w.document, w.location.href, ["https://chatgpt.com/c/*"], { wait: 1 });
+		expect(all).toHaveLength(47);
+	});
+
 	it("are answered by a prototype's bridge, with the patterns the background sent", async () => {
 		const w = load(KIT, { url: "https://github.com/copilot", html: SIDEBAR });
 		const sent = [];
@@ -76,6 +104,7 @@ describe("gathering, one chat at a time", () => {
 			collect: async (tabId) => ({ title: `t${tabId}`, turns: 2 }),
 			close: async (tabId) => log.push(`close ${tabId}`),
 			pause: async () => log.push("pause"),
+			finish: async () => log.push("finish"),
 		};
 	}
 
@@ -95,6 +124,7 @@ describe("gathering, one chat at a time", () => {
 			"pause",
 			"open https://a/3",
 			"close 2",
+			"finish",
 		]);
 		expect(heard).toEqual(["One reading", "One done", "Two reading", "Two failed", "Three reading", "Three done"]);
 	});
@@ -114,40 +144,79 @@ describe("gathering, one chat at a time", () => {
 		expect(heard).toEqual(["One reading", "One done", "Two stopped", "Three stopped"]);
 	});
 
-	it("waits for the tab to load and for the reader to see the same messages twice", async () => {
+	// Firefox with one window for gathering: its tab loads what it is sent to
+	function windowed(counts = []) {
 		const listeners = new Set();
 		const sent = [];
-		const counts = [0, 2, 4, 4];
+		const complete = (id) =>
+			setTimeout(() => {
+				for (const f of listeners) f(id, { status: "complete" });
+			}, 1);
+		let windows = 0;
 		const browser = {
-			tabs: {
-				create: async (t) => {
-					setTimeout(() => {
-						for (const f of listeners) f(5, { status: "loading" });
-						for (const f of listeners) f(5, { status: "complete" });
-					}, 1);
-					return { id: 5, ...t };
+			windows: {
+				create: async ({ url, focused }) => {
+					sent.push(`window ${url} focused=${focused}`);
+					windows++;
+					complete(50 + windows);
+					return { id: windows, tabs: [{ id: 50 + windows }] };
 				},
-				onUpdated: { addListener: (f) => listeners.add(f), removeListener: (f) => listeners.delete(f) },
-				remove: async (id) => sent.push(`remove ${id}`),
+				remove: async (id) => sent.push(`close window ${id}`),
+			},
+			tabs: {
+				update: async (id, { url }) => {
+					if (browser.closed) throw new Error("no tab");
+					sent.push(`tab ${id} ${url}`);
+					complete(id);
+					return { id };
+				},
+				onUpdated: {
+					addListener: (f) => listeners.add(f),
+					removeListener: (f) => listeners.delete(f),
+					hasListener: (f) => listeners.has(f),
+				},
 			},
 			runtime: {
 				sendMessage: async (msg) => {
 					sent.push(msg.type);
-					if (msg.type === "save-my-chat:inspect")
-						return { turns: { user: counts[0] / 2, assistant: counts.shift() / 2 } };
+					if (msg.type === "save-my-chat:inspect") return { turns: { user: counts.shift() ?? 0 } };
+					if (msg.type === "save-my-chat:load") return 9;
 					return { title: "A chat", turns: 4 };
 				},
 			},
 		};
+		return { browser, sent, listeners };
+	}
+
+	it("opens the chats in a window of its own, one tab reused, closed at the end", async () => {
+		const { browser, sent, listeners } = windowed();
 		const real = firefox(browser, { ready: 1000, poll: 1, pause: 0 });
-		const tabId = await real.open("https://a/1");
-		expect(tabId).toBe(5);
+		expect(await real.open("https://a/1")).toBe(51);
+		expect(await real.open("https://a/2")).toBe(51);
+		browser.closed = true; // the user closed the window: a new one
+		expect(await real.open("https://a/3")).toBe(52);
+		await real.finish();
+		expect(sent).toEqual([
+			"window https://a/1 focused=false",
+			"tab 51 https://a/2",
+			"window https://a/3 focused=false",
+			"close window 2",
+		]);
 		expect(listeners.size).toBe(0);
-		expect(await real.collect(tabId)).toEqual({ title: "A chat", turns: 4 });
-		expect(sent.filter((t) => t === "save-my-chat:inspect")).toHaveLength(4);
-		expect(sent.at(-1)).toBe("save-my-chat:collect");
-		await real.close(tabId);
-		expect(sent.at(-1)).toBe("remove 5");
+	});
+
+	it("scrolls a chat up once it shows, then waits for the reader to see the same messages twice", async () => {
+		const { browser, sent } = windowed([0, 2, 9, 9]);
+		const real = firefox(browser, { ready: 1000, poll: 1, pause: 0 });
+		expect(await real.collect(51)).toEqual({ title: "A chat", turns: 4 });
+		expect(sent).toEqual([
+			"save-my-chat:inspect",
+			"save-my-chat:inspect",
+			"save-my-chat:load",
+			"save-my-chat:inspect",
+			"save-my-chat:inspect",
+			"save-my-chat:collect",
+		]);
 	});
 
 	it("gives up on a chat whose reader sees nothing", async () => {
@@ -200,13 +269,20 @@ describe("the popup on a page that lists chats", () => {
 	it("says how many, and hands them to the Gather tab", async () => {
 		const stored = {};
 		const created = [];
+		const asked = [];
+		const MORE = { url: "https://github.com/copilot/c/3", title: "Older", savedAt: null };
 		globalThis.close = () => {};
 		globalThis.browser = {
 			runtime: {
 				getManifest: () => ({ version: "9.9.9" }),
 				getURL: (p) => `moz-extension://x/${p}`,
-				sendMessage: async (msg) =>
-					msg.type === "save-my-chat:list" ? { reader: LISTED.reader, name: LISTED.name, chats: LISTED.chats } : null,
+				sendMessage: async (msg) => {
+					if (msg.type !== "save-my-chat:list") return null;
+					asked.push(msg.load ?? false);
+					// the whole list, once scrolled to its end, holds one more
+					const chats = msg.load ? [...LISTED.chats, MORE] : LISTED.chats;
+					return { reader: LISTED.reader, name: LISTED.name, chats };
+				},
 			},
 			tabs: {
 				query: async () => [{ id: 7, url: "https://github.com/copilot" }],
@@ -220,7 +296,28 @@ describe("the popup on a page that lists chats", () => {
 		expect(popup.find(".listed").text()).toMatch(/This page lists 2 chats, 1 saved already\./);
 		await popup.find("button.gather").trigger("click");
 		await flushPromises();
-		expect(stored[KEY]).toEqual(LISTED);
+		expect(asked).toEqual([false, true]);
+		expect(stored[KEY]).toEqual({ ...LISTED, chats: [...LISTED.chats, MORE] });
 		expect(created).toEqual(["moz-extension://x/options/options.html#gather"]);
+	});
+});
+
+describe("a long chat loaded whole", () => {
+	it("is scrolled up until no older messages come", async () => {
+		const w = load([...KIT, "readers/chatgpt.js"], {
+			url: "https://chatgpt.com/c/1",
+			html: `<!doctype html><body><main id="m"><div data-message-author-role="user">Last?</div></main></body>`,
+		});
+		const m = w.document.getElementById("m");
+		const batches = [2, 2, 0, 0];
+		w.HTMLElement.prototype.scrollIntoView = () => {
+			for (let i = batches.shift() ?? 0; i > 0; i--) {
+				const older = w.document.createElement("div");
+				older.setAttribute("data-message-author-role", i % 2 ? "assistant" : "user");
+				older.textContent = "older";
+				m.prepend(older);
+			}
+		};
+		expect(await w.SaveMyChat.loadChat(w.document, w.location.href, {}, { wait: 1 })).toBe(5);
 	});
 });

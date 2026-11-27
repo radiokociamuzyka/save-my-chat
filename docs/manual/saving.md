@@ -61,18 +61,19 @@ It is made on your machine and goes only to your downloads folder.
 
 A chat webapp lists your conversations, in its sidebar for example. On
 such a page the popup says *This page lists 12 chats, 3 saved already*;
-**Gather them into the library...** opens the **Gather** tab of the
-options with that list, the chats not saved yet picked. **Gather** opens
-each picked chat in a background tab, waits until its reader sees the
-whole chat, keeps it in the library and closes the tab, one chat at a
-time; **Stop after this one** stops. Each line says how its chat went.
-Then **Back up all as .zip** packs the whole library.
+**Gather them into the library...** first scrolls the page's list to its
+end, waiting each time for more chats to load, until no more come; then
+it opens the **Gather** tab of the options with the whole list, the
+chats not saved yet picked. **Gather** opens the picked chats in a
+window of its own, one after another: each is scrolled to its top until
+its older messages are in, kept in the library once its reader sees the
+same messages twice, and the window closes at the end. **Stop after
+this one** stops. Each line says how its chat went. Then **Back up all
+as .zip** packs the whole library.
 
 A chat is found on the page by its address (the `chats` of each webapp
-in `resources/data/chats.yaml`); a sidebar that loads more as you
-scroll lists only what it has shown, so scroll it to the end first.
-A chat whose reader sees nothing within 30 seconds is given up and said
-so.
+in `resources/data/chats.yaml`). A chat whose reader sees nothing within
+30 seconds is given up and said so.
 
 ## The viewer
 

@@ -356,6 +356,79 @@
 		return [...chats.values()];
 	}
 
+	// ---- loading what a page draws only as it is scrolled (Sett, RR7) ----------
+	// A webapp's list of chats grows as its end is scrolled to (ChatGPT: 20, 31,
+	// 47...), a long chat brings its older messages as its top is. Load and wait:
+	// scroll the box holding the items to that end, wait, count again, until the
+	// count stays the same `still` times in a row.
+
+	const pause = (ms) => new Promise((done) => setTimeout(done, ms));
+
+	// the nearest ancestor that scrolls, else the page
+	function scroller(el, doc) {
+		for (let e = el?.parentElement; e; e = e.parentElement) {
+			const overflow = doc.defaultView.getComputedStyle(e).overflowY;
+			if (/auto|scroll|overlay/.test(overflow) && e.scrollHeight > e.clientHeight) return e;
+		}
+		return doc.scrollingElement || doc.documentElement;
+	}
+
+	//   find(): the items now on the page (elements); to: "top" | "bottom"
+	async function loadAll(doc, find, to, { wait = 1200, still = 2, rounds = 300 } = {}) {
+		let most = find().length;
+		for (let i = 0, same = 0; i < rounds && same < still; i++) {
+			const items = find();
+			const edge = to === "top" ? items[0] : items.at(-1);
+			const box = scroller(edge, doc);
+			box.scrollTop = to === "top" ? 0 : box.scrollHeight;
+			edge?.scrollIntoView?.({ block: to === "top" ? "start" : "end" });
+			await pause(wait);
+			const now = find().length;
+			same = now > most ? 0 : same + 1;
+			most = Math.max(most, now);
+		}
+		return most;
+	}
+
+	// the reader's messages as elements: every part's selectors but the title's
+	function messagesOf(sets, doc) {
+		const css = selector(
+			Object.entries(sets)
+				.filter(([part]) => part !== "title")
+				.flatMap(([, list]) => list),
+			doc,
+		);
+		return () => (css ? [...doc.querySelectorAll(css)] : []);
+	}
+
+	// a chat's older messages brought in: how many messages the page then holds
+	async function loadChat(doc = root.document, url = root.location?.href, overrides, options) {
+		for (const r of readers.values()) {
+			if (!r.detect(doc, url)) continue;
+			const sets = effective(r.selectors, overrides ?? (await overridesOf(r.id)));
+			return loadAll(doc, messagesOf(sets, doc), "top", options);
+		}
+		return 0;
+	}
+
+	// the whole list: its links to chats, scrolled to its end until no more come
+	async function loadList(doc = root.document, url = root.location?.href, patterns = [], options) {
+		const links = () => {
+			const wanted = new Set(listed(doc, url, patterns).map((c) => c.url));
+			return [...doc.querySelectorAll("a[href]")].filter((a) => {
+				try {
+					const href = new URL(a.getAttribute("href"), doc.baseURI);
+					href.hash = "";
+					return wanted.has(href.href);
+				} catch {
+					return false;
+				}
+			});
+		};
+		await loadAll(doc, links, "bottom", options);
+		return listed(doc, url, patterns);
+	}
+
 	function present(doc = root.document, url = root.location?.href) {
 		for (const r of readers.values()) if (r.detect(doc, url)) return { id: r.id, name: r.name };
 		return null;
@@ -380,6 +453,9 @@
 		inspect,
 		present,
 		listed,
+		loadAll,
+		loadChat,
+		loadList,
 		matches,
 	};
 
@@ -392,7 +468,11 @@
 			if (msg?.type === "save-my-chat:present") return Promise.resolve(present());
 			if (msg?.type === "save-my-chat:read") return readPage();
 			if (msg?.type === "save-my-chat:inspect") return inspect();
-			if (msg?.type === "save-my-chat:list") return Promise.resolve(listed(undefined, undefined, msg.patterns));
+			if (msg?.type === "save-my-chat:list")
+				return msg.load
+					? loadList(undefined, undefined, msg.patterns)
+					: Promise.resolve(listed(undefined, undefined, msg.patterns));
+			if (msg?.type === "save-my-chat:load") return loadChat();
 		});
 	}
 })();
