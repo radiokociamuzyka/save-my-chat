@@ -26,3 +26,9 @@ From issue #23, Sett, 2026-11-27:
 From issue #24, Sett, 2026-11-27:
 
 > your `Lean:` way is good but add also that all to be done by batched `task build` that also gathers that codes in `src/vendor` right now (we want it to be gitignored in the repo, like `node_modules`, so all that we will have as dependencies of `package.json` will become packed and added inside `src/vendor` for our released packed addon of browser)
+
+### Q11
+
+From issue #25, Sett, 2026-11-27:
+
+> settings was been changes and these autor entries just fill like here they was been made: https://github.com/Sarverott/P-jol-roll/blob/master/.github/AUTHORS
