@@ -147,3 +147,18 @@ found, and no text of the conversation.
   translator.
 - Argos Translate is wired (`translator: argos`) but not run here: not
   installed on this machine.
+
+## 2026-11-27, seen live after v0.2.21
+
+- Read the Docs: https://save-my-chat.readthedocs.io answers (project slug
+  `save-my-chat`, its API v2 lists it with this repository); the manual's
+  pages are there. Before the release the same address answered 404: the
+  project was made between the two looks.
+- The wiki: `save-my-chat.wiki.git` holds the generated pages, `Home-pl`
+  answers; the workflow's own token was enough to push.
+- The feed's third run: the release notes of v0.2.13 and v0.2.21, the
+  almanac cases `feed-edit-refused`, `feed-too-quickly`,
+  `version-hook-merges` and the newest changelog post created, every
+  other entry "same" or "posted already", nothing refused. The three
+  checks of the feed, the wiki's push and Read the Docs' build left
+  `things-to-check.md`.
