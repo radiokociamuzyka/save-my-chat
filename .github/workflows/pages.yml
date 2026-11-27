@@ -34,12 +34,13 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          mkdir site && cd site && git init -q -b github-pages
+          # the branch's work tree outside the checkout, which has a site/ of its own (the sources)
+          branch="$RUNNER_TEMP/github-pages" && mkdir "$branch" && cd "$branch" && git init -q -b github-pages
           git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           if git fetch -q --depth 1 origin github-pages 2> /dev/null; then git reset -q --soft FETCH_HEAD; fi
           git rm -rq --cached --ignore-unmatch . > /dev/null
-          cp -r ../dist/pages/. .
+          cp -r "$GITHUB_WORKSPACE/dist/pages/." .
           git add -A
           if git rev-parse -q --verify HEAD > /dev/null && git diff --cached --quiet HEAD; then echo "the page is current"; exit 0; fi
-          git commit -qm "the page generated from ${GITHUB_SHA::7} (v$(node -p 'require("../package.json").version'))"
+          git commit -qm "the page generated from ${GITHUB_SHA::7} (v$(node -p "require('$GITHUB_WORKSPACE/package.json').version"))"
           git push -q origin github-pages
