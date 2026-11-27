@@ -16,3 +16,4 @@ solved gets its case here, so the next one is recognised faster.
 - [version-hook-merges](cataclistics/version-hook-merges.md): the version hook bumped a merge, reformatted the manifest, staged more than the version
 - [dependabot-branch-drift](cataclistics/dependabot-branch-drift.md): dependabot's branch left behind, half the workflows updated
 - [copilot-reader-blind](cataclistics/copilot-reader-blind.md): the Copilot reader saw no messages on the live page
+- [ai-mode-swapped-pairs](cataclistics/ai-mode-swapped-pairs.md): AI Mode saved every question after its answer, 1,0,3,2,5,4
