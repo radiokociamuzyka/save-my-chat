@@ -3,7 +3,6 @@
 # in the wiki, generated in more than one language (task wiki), and left out here.
 site_name: save-my-chat
 site_description: Save AI chat conversations from webapps on your own machine, in one clear format.
-site_url: https://save-my-chat.readthedocs.io/
 repo_url: https://github.com/radiokociamuzyka/save-my-chat
 edit_uri: edit/development/docs/
 docs_dir: docs
