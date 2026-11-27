@@ -23,3 +23,14 @@ refused, and its next run adds the one missing almanac case.
 removed `scripts/github/__pycache__/` was never tracked, on any branch,
 so there is no deletion to commit; `.gitignore` gets Python's compiled
 files in full, and `discussions.py` no longer writes them.
+
+## 2026-11-27, the owner on Read the Docs (the chat, word for word)
+
+> great! ready for next steps then. the project's documentation setups on readthedocs is almost ready, waiting for it's setup files. continue
+
+**Decision:** `.readthedocs.yaml` and `mkdocs.yml` build the project's
+documentation with MkDocs and Material: a user's manual (install, saving,
+a reader that misses something, privacy) and the developer guides; the
+devlog, changelog and almanac stay the wiki's. The feed's failure after
+v0.2.13 (an edit of its own note refused) is fixed: announcements are
+written once, and a refusal no longer stops the run.
