@@ -67,6 +67,7 @@
 			for (const c of list)
 				lines.push(`  ${c.found === null ? "invalid" : c.found} - ${c.css}${c.override ? " (override)" : ""}`);
 		}
+		for (const [where, n] of Object.entries(s.nested || {})) lines.push(`nested: ${n} ${where}`);
 		if (s.error) lines.push(`error: ${s.error}`);
 		for (const w of s.warnings) lines.push(`warning: ${w}`);
 		return lines.join("\n");

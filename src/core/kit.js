@@ -124,30 +124,52 @@
 		return out;
 	}
 
-	// Every element matching any role's set, in page order: what Sett's proof
-	// of work did with one querySelectorAll. An element inside a turn of the
-	// same role is a duplicate and skipped; one of another role becomes its
-	// own turn and is left out of the outer turn's text, so nothing is lost
-	// and nothing is written twice.
+	// Sett's way (proof of work, 2026-11-27): find every message with one query
+	// over all roles' selectors, then tell each one's role by which set it
+	// matches. An element inside a message of the same role is a duplicate and
+	// skipped; one of the other role is its own message, cut out of the outer
+	// one's text, so nothing is lost and nothing is written twice.
+	// The order is where each message's own text starts, not where its element
+	// opens: querySelectorAll lists an ancestor before what it holds, so an
+	// answer block holding its question came out first, 1,0,3,2,5,4 (almanac:
+	// ai-mode-swapped-pairs).
+	const SKIPPED = "script, style, noscript, template, button, svg, [aria-hidden='true']";
+
+	function ownStart(el, inner, doc) {
+		const walker = doc.createTreeWalker(el, 4); // NodeFilter.SHOW_TEXT
+		for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+			if (!node.data.trim()) continue;
+			if (inner.some((i) => i.contains(node))) continue;
+			const skipped = node.parentElement?.closest(SKIPPED);
+			if (skipped && el.contains(skipped)) continue;
+			return node;
+		}
+		return el;
+	}
+
 	function turnsBy(doc, roles, scope = doc) {
 		const sets = Object.entries(roles)
 			.map(([role, list]) => [role, selector(list, doc)])
 			.filter(([, css]) => css);
 		const all = sets.map(([, css]) => css).join(", ");
 		if (!all) return [];
-		const taken = [];
-		const turns = [];
+		const found = [];
 		for (const el of scope.querySelectorAll(all)) {
 			const [role] = sets.find(([, css]) => el.matches(css));
-			if (taken.some((t) => t.role === role && t.el.contains(el))) continue;
-			taken.push({ role, el });
+			if (found.some((f) => f.role === role && f.el.contains(el))) continue;
+			found.push({ role, el });
+		}
+		const placed = found.map((f) => {
+			const inner = found.filter((g) => g.role !== f.role && f.el.contains(g.el)).map((g) => g.el);
 			const others = sets
-				.filter(([r]) => r !== role)
+				.filter(([r]) => r !== f.role)
 				.map(([, c]) => c)
 				.join(", ");
-			turns.push(turn(role, el, {}, others));
-		}
-		return turns;
+			return { at: ownStart(f.el, inner, doc), turn: turn(f.role, f.el, {}, others) };
+		});
+		// DOCUMENT_POSITION_FOLLOWING (4): b comes after a
+		placed.sort((a, b) => (a.at === b.at ? 0 : a.at.compareDocumentPosition(b.at) & 4 ? -1 : 1));
+		return placed.map((p) => p.turn);
 	}
 
 	function conversation(reader, read, url, now = new Date()) {
@@ -242,6 +264,17 @@
 				});
 			}
 			const seen = { reader: r.id, name: r.name, host: new URL(url).host, parts, turns: {}, warnings: [] };
+			// messages held inside a message of the other role ("user in assistant": 3)
+			const roles = ["user", "assistant"].filter((role) => selector(sets[role], doc));
+			for (const inner of roles)
+				for (const outer of roles) {
+					if (inner === outer) continue;
+					const n = [...doc.querySelectorAll(selector(sets[inner], doc))].filter((el) =>
+						el.parentElement?.closest(selector(sets[outer], doc)),
+					).length;
+					if (!n) continue;
+					seen.nested = { ...seen.nested, [`${inner} in ${outer}`]: n };
+				}
 			try {
 				const c = conversation(r, r.read(doc, url, sets), url);
 				for (const t of c.turns) seen.turns[t.role] = (seen.turns[t.role] || 0) + 1;
