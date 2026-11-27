@@ -1,9 +1,8 @@
 // web-ext reads this from the project root: https://extensionworkshop.com/documentation/develop/web-ext-command-reference/
 export default {
-	sourceDir: "src",
+	// the build (Q12, vite.config.mjs): the pages built from Vue, the rest of src/ as it is
+	sourceDir: "dist/extension",
 	artifactsDir: "dist",
-	// Sett's snippets are sources of readers, not part of the extension (Q5).
-	ignoreFiles: ["readers/drafted-snippets"],
 	build: {
 		overwriteDest: true,
 	},

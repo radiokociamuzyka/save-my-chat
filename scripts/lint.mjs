@@ -16,6 +16,14 @@ export const KNOWN = [
 			" (max_manifest_version 2) and the MV3 one, and checks the first; Firefox has the MV3" +
 			" API (MDN). Almanac: linter-userscripts-register; upstream: mozilla/addons-linter#6282.",
 	},
+	{
+		code: "UNSAFE_VAR_ASSIGNMENT",
+		file: "popup/popup.js",
+		message: "Unsafe assignment to innerHTML",
+		why:
+			"Vue's runtime (runtime-dom insertStaticContent), bundled by Vite (Q12): it is given only" +
+			" HTML that Vue's compiler wrote at build time from our own templates; no v-html in src/.",
+	},
 ];
 
 // the linter's findings split into the known ones and the rest

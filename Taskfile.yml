@@ -18,10 +18,11 @@ tasks:
       - npm ci
 
   run:
-    desc: Firefox with the extension loaded, reloads on save
+    desc: Firefox with the built extension loaded (Q12), rebuilt and reloaded on every change of src/
     cmds:
       - npm run vendor
-      - npx web-ext run {{.CLI_ARGS}}
+      - npm run extension
+      - node scripts/run.mjs {{.CLI_ARGS}}
 
   check:
     desc: Biome, changes nothing
@@ -34,9 +35,9 @@ tasks:
       - npx biome check --write .
 
   lint:ext:
-    desc: web-ext lint, the validator AMO runs, warnings as errors but the known false positives named in scripts/lint.mjs
+    desc: web-ext lint of the build, the validator AMO runs, warnings as errors but the known false positives named in scripts/lint.mjs
     cmds:
-      - node scripts/lint.mjs
+      - npm run lint:ext
 
   test:
     desc: vitest
@@ -51,7 +52,7 @@ tasks:
       - task: test
 
   build:
-    desc: "the batch (Q10): every dependency into src/vendor, readers.js and host permissions from chats.yaml, the .zip into dist/"
+    desc: "the batch (Q10, Q12): every dependency into src/vendor, readers.js and host permissions from chats.yaml, the pages built into dist/extension, the .zip into dist/"
     cmds:
       - npm run build
 
@@ -66,6 +67,11 @@ tasks:
     desc: 'the version of package.json written into every copy (-- bump patch|minor|major to raise it)'
     cmds:
       - node scripts/version.mjs {{.CLI_ARGS | default "sync"}}
+
+  extension:
+    desc: the extension built into dist/extension (Q12) - the Vue pages by Vite, the rest of src as it is
+    cmds:
+      - npm run extension
 
   vendor:
     desc: every dependency of package.json copied unchanged into src/vendor (gitignored; the files of each in package.json "vendor")

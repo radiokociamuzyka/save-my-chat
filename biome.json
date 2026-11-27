@@ -42,5 +42,8 @@
 		"formatter": {
 			"enabled": false
 		}
+	},
+	"html": {
+		"experimentalFullSupportEnabled": true
 	}
 }
