@@ -1,0 +1,91 @@
+# dev/dependabot kept level with development, its updates landed through a pull request
+# (the owner's inquiry of 2026-11-27, almanac: dependabot-branch-drift).
+#   follow: after each push to development, development is merged into dev/dependabot,
+#           so dependabot updates every file the repository has, not an old copy of it;
+#           a collision is not forced: it becomes an issue for Jarvis (GitHub Copilot)
+#           with the prompt .github/prompts/dependabot.prompt.md
+#   land:   after dependabot's pull request is merged into dev/dependabot, a pull request
+#           dev/dependabot -> development is opened (or kept) for Joker (Codex) to review;
+#           Cleo merges it once the checks and the review pass. Nothing here merges it.
+name: "dependabot › dev/dependabot follows development, lands by a pull request"
+
+on:
+  push:
+    branches: [development, dev/dependabot]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dependabot
+  cancel-in-progress: false
+
+jobs:
+  follow:
+    if: github.ref == 'refs/heads/development' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v7
+        with: { ref: dev/dependabot, fetch-depth: 0 }
+      - name: development into dev/dependabot
+        env:
+          HUSKY: "0"
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # the merge driver of .gitattributes: the higher version, the formatting kept
+          git config merge.version.driver 'node scripts/version.mjs merge %O %A %B'
+          if git merge-base --is-ancestor origin/development HEAD; then
+            echo "dev/dependabot has development already"; exit 0
+          fi
+          if git merge --no-ff origin/development -m "merge(development): dev/dependabot follows development"; then
+            git push origin dev/dependabot
+            exit 0
+          fi
+          files=$(git diff --name-only --diff-filter=U | sed 's/^/- `/; s/$/`/')
+          git merge --abort
+          gh label create dependabot-collision --color D93F0B \
+            --description "dev/dependabot does not merge with development" 2>/dev/null || true
+          if [ -n "$(gh issue list --label dependabot-collision --state open --json number --jq '.[].number')" ]; then
+            echo "a collision issue is open already"; exit 1
+          fi
+          gh issue create --label dependabot-collision \
+            --title "dev/dependabot collides with development" \
+            --body "$(printf '%s\n' \
+              "development (${GITHUB_SHA::7}) does not merge into dev/dependabot. Files in conflict:" "" "$files" "" \
+              "Jarvis: follow .github/prompts/dependabot.prompt.md, on a branch from dev/dependabot." \
+              "Every line both sides changed is understood and kept on purpose, never dropped or commented out to pass.")"
+          exit 1
+
+  land:
+    if: github.ref == 'refs/heads/dev/dependabot'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+        with: { fetch-depth: 0 }
+      - name: a pull request dev/dependabot -> development
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet origin/development...HEAD; then
+            echo "nothing of dependabot's waits for development"; exit 0
+          fi
+          if [ -n "$(gh pr list --head dev/dependabot --base development --state open --json number --jq '.[].number')" ]; then
+            echo "the pull request is open already, the new commits are on it"; exit 0
+          fi
+          gh pr create --base development --head dev/dependabot \
+            --title "build(deps): dependabot's updates into development" \
+            --body "$(printf '%s\n' \
+              "Dependabot's updates merged into dev/dependabot, ready for development." "" \
+              "- Checks: verify (Biome, web-ext lint, vitest, the vendored copies) and the packed extension." \
+              "- Joker reviews it (AGENTS.md, review guidelines); Cleo merges once both pass." "" \
+              "@codex review")" \
+            || echo "::warning::the pull request was not opened; the repository setting 'Allow GitHub Actions to create and approve pull requests' may be off"
