@@ -126,6 +126,7 @@ src/                     the extension's source: built into dist/extension/ (web
     readers.js           the list of default readers, written from resources/data/chats.yaml (task chats)
   readers/               one default reader per chat webapp, each calls SaveMyChat.reader({...})
     drafted-snippets/    Sett's snippets as written, the sources readers are fitted from; not packaged
+  licenses/              GPL-3.0.txt: the GPL the LGPL of ZenFS supplements, shipped as LGPL 4(b) asks
   vendor/                not in git: every dependency of package.json copied unchanged at build (scripts/vendor.mjs, Q10)
   background/main.js     event page: registers enabled readers, answers "save" from the popup, downloads
   popup/                 the toolbar button (Vue, Q12): ToolbarPopup.vue, report.js; which reader sees this tab, save as md / json
@@ -146,6 +147,7 @@ scripts/github/          devlog.py, adapted from P_JOL_ROLL; discussions.py, the
 site/                    the public site (Q13), Astro (astro.config.mjs) into dist/pages: the project page, the viewer,
                          the extension's popup and options with Firefox's APIs played by the page; tests/ by Playwright
 vite.config.mjs          the build step (Q12): PAGES built by Vite (chunks/vue.js and assets/bulma.css shared), src/ copied, into dist/extension/
+scripts/notice.mjs       THIRD-PARTY.md written by the build: every package built in, its license; an unknown license stops it
 scripts/version.mjs      the one version: sync, bump, bump-commit (pre-commit hook), merge driver (.gitattributes)
 scripts/release/         release.sh: what release.yml does on master, runnable by hand; amo.sh: a release to AMO, listed
 docs/changelog/          what happened per phase, the owner's words word for word, append-only
