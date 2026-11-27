@@ -41,7 +41,7 @@ names its `Q<n>`.
 - [ ] The options page edits the selector overrides of each reader
 - [x] GitHub Copilot reader from Sett's snippet (`.message-container`, `user__` / `ai__`)
 - ~~[ ] A saved, anonymised page of each as `tests/fixtures/`, and tests reading them~~ - for now we do not need other's people input, so if issues will come then we will make that anonymised raporting of page tests
-- [ ] Each reader checked by hand in Firefox on a live conversation, the result in `docs/.agents/NOTES.md`
+- [ ] Each reader checked by hand in Firefox on a live conversation, the result in `docs/.agents/NOTES.md` - __there i have no access as i claim it your own sovereign domain! i can only read it__ but sounds that this was done when i raport you that copilot's reader does not work... just close that step or move out of phase 1 
 - [x] The add-on id corrected to `save-my-chat@radiokociamuzyka.pl` (Sett's inquiry)
 - [x] `dev/dependabot` caught up with `development`, every workflow on the same actions; the almanac case
 - [x] The version hook: a merge neither bumps nor reformats a file; the almanac case
