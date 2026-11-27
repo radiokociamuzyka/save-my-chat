@@ -31,7 +31,8 @@ function page({ stored = {}, granted = false } = {}) {
 			},
 		},
 	};
-	w.fetch = async (path) => ({ text: async () => `// the file ${path}\nSaveMyChat.reader({ id: "x" });` });
+	// the real reader files, as the options page fetches them (a stub once hid RR2's bug)
+	w.fetch = async (path) => ({ text: async () => load.source(path.replace(/^\.\.\//, "")) });
 	w.eval(load.source("options/prototypes.js"));
 	const settle = () => new Promise((done) => setTimeout(done, 30));
 	const $ = (css) => w.document.querySelector(css);
@@ -65,10 +66,14 @@ describe("options: prototypes", () => {
 			name: "GitHub Copilot",
 			from: "github-copilot",
 			matches: ["https://github.com/copilot*"],
-			code: '// the file ../readers/github-copilot.js\nSaveMyChat.reader({ id: "x" });',
+			code: load.source("readers/github-copilot.js"),
 			enabled: true,
 		});
 		expect($("legend").textContent).toBe("GitHub Copilot, your prototype");
+		// saved unchanged, as RR2 did: accepted
+		w.document.querySelector("fieldset button").click();
+		await settle();
+		expect($("fieldset [role=status]").textContent).toBe("Saved. Reload the chat's page to run it.");
 	});
 
 	it("saves an edit, refuses a site it may not read or code with no reader, turns off and deletes", async () => {
