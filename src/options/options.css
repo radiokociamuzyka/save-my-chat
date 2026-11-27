@@ -32,3 +32,26 @@ textarea {
 .invalid {
 	color: #b00020;
 }
+
+#prototypes {
+	list-style: none;
+	padding: 0;
+}
+
+#prototypes > li {
+	margin-bottom: 1rem;
+}
+
+.block {
+	display: block;
+	margin: 0.5rem 0;
+}
+
+textarea.code {
+	tab-size: 4;
+	white-space: pre;
+}
+
+.file input {
+	margin-left: 0.25rem;
+}
