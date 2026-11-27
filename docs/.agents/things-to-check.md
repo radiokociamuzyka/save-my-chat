@@ -44,3 +44,10 @@ point was added.
 - **2026-11-27. The popup's report and the options' selector editor in a
   real Firefox.** Both tested in jsdom only; the clipboard write and the
   options page loading reader files as scripts are Firefox's to confirm.
+- **2026-11-27. The static page's first push.** `pages.yml` after the
+  next release creates the branch `github-pages` (tried here only against
+  a local remote, twice: the second run said "the page is current"). It
+  is served once Pages are set to deploy that branch from its root; the
+  address should then be https://radiokociamuzyka.github.io/save-my-chat/,
+  and it goes into the README and the repository's homepage field (also a
+  setting).
