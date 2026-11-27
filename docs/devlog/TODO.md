@@ -61,12 +61,12 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 
 - [x] `task github:devlog`: a milestone per milestone of ROADMAP, an issue per phase (its items a task list), per `Q<n>` and per `PP<n>`; answered and decided ones closed with the owner's words
 - [x] A project board for the devlog (organization project #1, private until Sett opens it)
-- [ ] Announcements (discussion #17): short notes with links - changelog posts, proposals with their issue and a discussion of their own, changes of phases and concepts, releases introduced, other news
-- [ ] Almanac cases as Q&A discussions, their solution the answer
+- [x] Announcements (discussion #17): short notes with links - changelog posts, proposals with their issue and a discussion of their own, changes of phases and concepts, releases introduced, other news
+- [x] Almanac cases as Q&A discussions, their solution the answer
 - [x] The wiki (`save-my-chat.wiki.git`) for developers and contributors: the almanac and the devlog generated into it, English and Polish, translated by LibreTranslate or Argos (`task wiki`, `wiki.yml` after each release)
-- [ ] The wiki seen published by `wiki.yml`
+- [x] The wiki seen published by `wiki.yml`
 - [x] Read the Docs: the documentation of the project, without what the wiki holds - the manual and the guides (`mkdocs.yml`, `.readthedocs.yaml`, `task docs`)
-- [ ] The documentation seen built on Read the Docs
+- [x] The documentation seen built on Read the Docs
 - [ ] A static page of the project on the `github-pages` branch
 - [x] Workflow `devlog.yml`: the devlog synced on each push of it to `development`
 - [x] Workflows: the release (`release.yml`) and the checks on every pull request into `master`

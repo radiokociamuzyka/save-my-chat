@@ -44,24 +44,3 @@ point was added.
 - **2026-11-27. The popup's report and the options' selector editor in a
   real Firefox.** Both tested in jsdom only; the clipboard write and the
   options page loading reader files as scripts are Firefox's to confirm.
-- **2026-11-27. The feed's first run.** `feed.yml` after the release of
-  0.2.x: 34 discussions (15 changelog posts, 3 phases, 2 proposals twice,
-  5 releases, 7 almanac Q&A). To check: categories right, links working,
-  the Q&A answers marked, a second run saying "same" for all. The
-  workflow's token may be refused marking answers; then the comment stays
-  unmarked and the run fails, saying so.
-- **2026-11-27. The wiki's first push.** `wiki.yml` after the next
-  release: the LibreTranslate container in the runner (model download,
-  up to 10 minutes allowed), the push to `save-my-chat.wiki.git` with the
-  workflow's token (not tried yet; if refused, a token with access to the
-  wiki is needed), Sett's three placeholder pages replaced.
-- **2026-11-27. The feed's second run** should create only the almanac
-  case `version-hook-merges` and the new changelog posts of phase 2,
-  saying "same" for the 34 others.
-- **2026-11-27. Read the Docs' first build.** The project's address is
-  unknown here (`save-my-chat.readthedocs.io` answers 404, the API knows no
-  such project). Once Sett names it, it goes into README and the wiki's
-  Home. The build is pinned and strict; `task docs` builds the same.
-- **2026-11-27. The feed's third run** (after the next release) should
-  post the release note and the two almanac cases left, and say
-  "posted already" for the phase notes.
