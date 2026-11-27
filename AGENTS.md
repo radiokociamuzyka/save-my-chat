@@ -139,8 +139,9 @@ docs/devlog/             the BOS devlog: VISION, ROADMAP, TODO, BRAINSTORM, PROP
                          shown on GitHub as milestones, issues and a board (scripts/github/devlog.py) -
                          an issue changed by hand is overwritten: answer in ORDERS.md, ask in INQUIRIES.md
 scripts/wiki/            build.mjs, translate.mjs: the wiki generated and translated (wiki.yaml)
-scripts/pages/           build.mjs: the static page on github-pages, from resources/pages/ (pages.yml)
 scripts/github/          devlog.py, adapted from P_JOL_ROLL; discussions.py, the feed in Discussions (feed.yml)
+site/                    the public site (Q13), Astro (astro.config.mjs) into dist/pages: the project page, the viewer,
+                         the extension's popup and options with Firefox's APIs played by the page; tests/ by Playwright
 vite.config.mjs          the build step (Q12): PAGES built by Vite (chunks/vue.js and assets/bulma.css shared), src/ copied, into dist/extension/
 scripts/version.mjs      the one version: sync, bump, bump-commit (pre-commit hook), merge driver (.gitattributes)
 scripts/release/         release.sh: what release.yml does on master, runnable by hand; amo.sh: a release to AMO, listed
@@ -193,7 +194,8 @@ stamps the format, source and time. The format is described in
 | `task github:discussions` (`-- --dry`) | the devlog's news in Discussions (#17): changelog posts, phases, proposals, releases in Announcements, a discussion per `PP<n>` in Ideas, almanac cases in Q&A with their solution as the answer; `feed.yml` runs it after each release |
 | `task wiki` (`-- --translator none`) | the wiki into `dist/wiki/` from `docs/` in the languages of `resources/data/wiki.yaml`; new texts translated by LibreTranslate (`task translate:server`, or `LIBRETRANSLATE_URL`) or Argos, kept in `resources/data/translations/`; `wiki.yml` pushes it after each release |
 | `task docs` (`-- serve -a 0.0.0.0:8000`) | the Read the Docs site (`mkdocs.yml`, `.readthedocs.yaml`): the manual and the guides, strictly; the devlog, changelog and almanac are the wiki's |
-| `task pages` | the project's static page into `dist/pages/` from `resources/pages/`, its readers from `chats.yaml`; `pages.yml` commits it on the `github-pages` branch after each release |
+| `task pages` (`pages:dev`) | the public site (Q13) built by Astro from `site/` into `dist/pages/`; `pages.yml` commits it on the `github-pages` branch after each release |
+| `task test:site` | the site built and tested by Playwright in Chromium and Firefox (`site/tests/`) |
 
 ## Conventions
 
