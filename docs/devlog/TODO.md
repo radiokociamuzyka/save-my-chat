@@ -50,7 +50,9 @@ names its `Q<n>`.
 - [x] Jarvis's instructions and dependabot prompt (`.github/copilot-instructions.md`, `.github/prompts/`); Joker's review guidelines in AGENTS.md
 - [x] Jarvis and Joker in `.github/AUTHORS` (Q11)
 - [x] `resources/data/chats.yaml`: the chat webapps, their domains and conversation addresses, held to `readers.js` by a test (PP2)
-- [ ] `readers.js` from `chats.yaml` (Q10)
+- [x] `readers.js` and host permissions written from `chats.yaml` (`task chats`), checked by a test (Q10)
+- [x] `src/vendor/` out of git, every dependency gathered into it by `task build`, the batch: vendor, chats, pack (Q10)
+- [x] The version hook stages the version alone
 
 ## Phase 2: GitHub integration
 
@@ -79,8 +81,8 @@ names its `Q<n>`.
 - [ ] A viewer of saved conversations (Markdown and JSON of the unified format)
 - [ ] Playwright tests driving the extension in Firefox
 - [ ] The library (PP1): an index of saved chats in `storage.local`, search, re-export, a chat that grew since it was saved
-- [ ] An explorer of the stored files on a browser file system with isomorphic-git (Q8)
-- [ ] A saved chat as a gist through Octokit, on the user's request only (Q9)
+- [ ] An explorer of the stored files on ZenFS (IndexedDB) with isomorphic-git, both dependencies gathered by `task build` (Q8)
+- [ ] A "gist" button: a saved chat as a secret gist through Octokit, the user's token, `api.github.com` optional, declared in `data_collection_permissions.optional` (Q9)
 
 ## Phase 5: more webapps
 
