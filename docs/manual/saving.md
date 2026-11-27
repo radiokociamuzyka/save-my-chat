@@ -38,3 +38,13 @@ role in a row. The file is saved anyway; see
 The extension's options (**about:addons** → save-my-chat → *Preferences*)
 list every reader with the addresses it works on. Turn off the ones you do
 not want injected into those pages.
+
+## The library
+
+Every chat you save is also kept in the extension's library: open the
+extension's options, **Library**. There you can search titles and
+messages, save a chat again as Markdown or JSON (the copy from when you
+last saved it), or **Forget** it.
+
+When you open the popup on a chat you saved before, it says when, and how
+many messages it gained since, so you know when to save it again.

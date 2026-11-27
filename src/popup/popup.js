@@ -39,6 +39,23 @@
 			copy.textContent = "Copied";
 		});
 		for (const warning of seen.error ? [seen.error, ...seen.warnings] : seen.warnings) say(warning, "warning");
+		// the library (PP1): saved before, and grown since?
+		const count = Object.values(seen.turns).reduce((a, b) => a + b, 0);
+		const before = await browser.runtime.sendMessage({
+			type: "save-my-chat:since",
+			reader: seen.reader,
+			url: tab.url,
+			turns: count,
+		});
+		if (before) {
+			const day = new Date(before.savedAt).toLocaleDateString();
+			say(
+				before.grew
+					? `Saved on ${day} with ${before.saved} messages: ${before.grew} new since.`
+					: `Saved on ${day}; nothing new since.`,
+				before.grew ? "grew" : "note",
+			);
+		}
 	}
 
 	actions.addEventListener("click", async (event) => {

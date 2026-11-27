@@ -147,6 +147,12 @@
 		const problems = SMC.validate(c);
 		if (problems.length) throw new Error(`The reader gave a broken conversation: ${problems.join("; ")}`);
 		if (!c.turns.length) throw new Error("The reader found no messages on this page.");
+		await write(c, as);
+		await library.record(c);
+		return { title: c.title, turns: c.turns.length, warnings };
+	}
+
+	async function write(c, as) {
 		const text = as === "json" ? `${JSON.stringify(c, null, "\t")}\n` : SMC.toMarkdown(c);
 		const type = as === "json" ? "application/json" : "text/markdown";
 		const url = URL.createObjectURL(new Blob([text], { type: `${type};charset=utf-8` }));
@@ -155,7 +161,18 @@
 		} finally {
 			setTimeout(() => URL.revokeObjectURL(url), 60_000);
 		}
-		return { title: c.title, turns: c.turns.length, warnings };
+	}
+
+	// ---- the library (PP1) ------------------------------------------------------
+
+	const library = SMC.library();
+
+	// a chat of the library saved again as a file, from its kept copy
+	async function saveAgain({ key, as = "md" }) {
+		const c = await library.chat(key);
+		if (!c) throw new Error("That chat is not in the library any more.");
+		await write(c, as);
+		return { title: c.title, turns: c.turns.length };
 	}
 
 	browser.runtime.onInstalled.addListener(register);
@@ -176,6 +193,10 @@
 		if (msg?.type === "save-my-chat:present") return ask(msg.tabId, msg.type).catch(() => null);
 		if (msg?.type === "save-my-chat:inspect") return ask(msg.tabId, msg.type).catch(() => null);
 		if (msg?.type === "save-my-chat:defaults") return Promise.resolve(SMC.defaults);
+		if (msg?.type === "save-my-chat:library") return library.list(msg.query);
+		if (msg?.type === "save-my-chat:library-save") return saveAgain(msg);
+		if (msg?.type === "save-my-chat:library-forget") return library.forget(msg.key);
+		if (msg?.type === "save-my-chat:since") return library.since(msg.reader, msg.url, msg.turns);
 	});
 
 	SMC.background = { register, ask, enabledReaders, prototypeOf }; // for tests
