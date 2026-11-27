@@ -25,3 +25,41 @@ fix. Phase 5 grows beyond new readers:
 
 The merges into `master` are asked for again (the hand-over ended with
 phase 4).
+
+### RR7 (issue #122, word for word)
+
+> some where handled but not all were working
+>
+> - claude reads right way list, but gathers nothing due to wrong selectors - look at drafts
+> - ai mode google search does not see any list
+> - at gemini listed chats and gathers nothing - like in claude case does not see any message
+> - same case of chatGPT - sees list, no mesage found at chat... also requires to scroll down list of chats there, for me at first loads around 20 of conversations, after scroll down a bit it found 31 conversations, then another scroll down loads another batch and shows 47. it has to load and wait, load and wait to get full list, same strategy at chats (some of them can contain hundrets of messages)
+> - initialized also some drafts related with items that can be also supported
+
+**Decision:** what each point says, and what follows:
+
+- **Claude lists, reads nothing.** Its messages are not where the
+  reader looked: Sett's snippet (`drafted-snippets/claude-basic-handle.js`)
+  reads every `[data-perf-row]` row. The reader reads those rows, a
+  row's role told by its attribute's value or by the user's message
+  inside it.
+- **ChatGPT and Gemini list, read nothing in a gathered chat.** Their
+  selectors are the webapps' long-standing ones, so the suspect common
+  to all three is the background tab: never shown, a webapp may not
+  draw its chat there. Gathering now opens its chats in a window of its
+  own, where the tab is the one shown. Whether the selectors hold on
+  a chat in front of the user is asked in RR8.
+- **Long lists and long chats load as they scroll.** Before handing the
+  list over, the popup scrolls the page's list to its end, waits, and
+  again, until no more chats come; before reading a gathered chat, its
+  page is scrolled to the top the same way, until no older messages
+  come.
+- **AI Mode lists nothing.** Its history is not found as links of the
+  address in `chats.yaml`, which wanted `q` before `udm=50`: any order is
+  taken now, and RR8 asks what its history is made of.
+- **The new drafts** (DeepSeek, Google AI Studio, a Gradio space on
+  Hugging Face, Grok on grok.com and x.com, NotebookLM, Open WebUI) go
+  into `chats.yaml` as `planned`; each waits for its snippet. Open WebUI
+  runs at an address of its user's own, so it cannot be declared as the
+  others: Q15.
+
