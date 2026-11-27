@@ -6,3 +6,11 @@ on `PP<n>` of [PROPOSALS.md](PROPOSALS.md), each under `### Q<n>` or
 changelog and leave this file with its header only.
 
 ---
+
+### Q8
+
+From issue #22, Sett, 2026-11-27:
+
+> read that issue's commentary about `src/vendor` and dependencies: https://github.com/radiokociamuzyka/save-my-chat/issues/24
+>
+> these things should be placed in gitignored vendor dir at building before packing an release archive file.
