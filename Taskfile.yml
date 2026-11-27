@@ -61,6 +61,11 @@ tasks:
     cmds:
       - npx web-ext sign --channel unlisted --api-key "$AMO_JWT_ISSUER" --api-secret "$AMO_JWT_SECRET"
 
+  version:
+    desc: 'the version of package.json written into every copy (-- bump patch|minor|major to raise it)'
+    cmds:
+      - node scripts/version.mjs {{.CLI_ARGS | default "sync"}}
+
   vendor:
     desc: copy third-party libraries unchanged from node_modules into src/vendor (committed; AMO compares them with the originals)
     cmds:
@@ -68,3 +73,8 @@ tasks:
       - cp node_modules/turndown/LICENSE src/vendor/turndown.LICENSE
       - cp node_modules/turndown-plugin-gfm/dist/turndown-plugin-gfm.js src/vendor/turndown-plugin-gfm.js
       - cp node_modules/turndown-plugin-gfm/LICENSE src/vendor/turndown-plugin-gfm.LICENSE
+
+  github:devlog:
+    desc: 'the devlog on GitHub - milestones of ROADMAP, an issue per phase, Q<n> and PP<n>, the board (-- --dry prints, -- --no-board skips the board)'
+    cmds:
+      - python3 scripts/github/devlog.py {{.CLI_ARGS}}

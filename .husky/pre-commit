@@ -1,0 +1,4 @@
+# the merge driver of .gitattributes registered in this clone, then the commit's own version (Q7)
+git config merge.version.name 'save-my-chat - the higher version, then a three-way merge'
+git config merge.version.driver 'node scripts/version.mjs merge %O %A %B'
+node scripts/version.mjs bump-commit

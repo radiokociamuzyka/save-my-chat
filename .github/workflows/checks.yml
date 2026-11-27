@@ -5,6 +5,7 @@ on:
     branches: [development, "dev/**"]
   pull_request:
     branches: [development, master]
+  workflow_call:
 
 permissions:
   contents: read
@@ -19,9 +20,11 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+        env: { HUSKY: "0" }
       - run: npm run verify
       - run: npm run build
       - uses: actions/upload-artifact@v7
         with:
+          # a pull request builds the packed extension too (Q7); master releases it
           name: save-my-chat-zip
           path: dist/*.zip

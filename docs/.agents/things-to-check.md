@@ -6,12 +6,15 @@ point was added.
 
 ## Decisions for Sett
 
-- **2026-11-26. Q7:** which "minor changes" the v0.0.1 demo needs.
 - **2026-11-26. Jarvis and Joker have branches** (`dev/Jarvis`,
   `dev/Joker`) but no line in `.github/AUTHORS` here; only Sett can add
   them (Q4 named the branches, not the members).
 
 ## Not verified
+
+- **2026-11-26. `release.yml` has not run yet.** It runs on the first
+  merge of `development` into `master`: tag, release with the zip,
+  `master` back into `development`. Unsigned until the AMO secrets exist.
 
 - **2026-11-26. AI Mode's classes are Sett's, not seen by Cleo.** Tests
   use hand-made pages with `.ilZyRc`, `.L4dlbc`, `.CKgc1d`. Sett's snippet

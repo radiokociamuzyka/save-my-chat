@@ -31,8 +31,14 @@ repository: `forge/sarverott/github-repos/Sarverott/AGENTS.md` and its
    with the almanac case and new `Q<n>` in their own commits (Q4). Never
    `--no-verify`. When a batch is done, `dev/<name>` is merged into
    `development` with `--no-ff`; members push `development` and their own
-   `dev/<name>`. `master`, tags, releases, AMO uploads and repository
-   settings are always asked for first.
+   `dev/<name>`, and Cleo opens and tends pull requests (Sett, 2026-11-26).
+   **Versions (Q7):** every commit on a `dev/*` branch bumps `Z` of
+   `vX.Y.Z` by the pre-commit hook (`scripts/version.mjs`); never edit a
+   version by hand and never `--amend` on `dev/*` (each amend bumps again).
+   A phase ends with the dev branches gathered in `development` and a pull
+   request `development` → `master`; its merge releases (`release.yml`:
+   tag, packed extension, the latest). Merging into `master`, AMO uploads
+   and repository settings are always asked for first.
    **The owner's edits** found in the working tree go first, as they are,
    one commit per change on `dev/Sarverott`, with a message saying how the
    agent understood them; then that branch is merged into `development`.
@@ -83,7 +89,12 @@ src/                     the extension itself, loaded by Firefox as written (web
   popup/                 the toolbar button: which reader sees this tab, save as md / json
   options/               readers on/off; later the prototypes editor (userScripts)
 tests/                   vitest + jsdom; fixtures/ are saved HTML of real chats, anonymised
-docs/devlog/             the BOS devlog: VISION, ROADMAP, TODO, BRAINSTORM, PROPOSALS, ORDERS, INQUIRIES
+docs/devlog/             the BOS devlog: VISION, ROADMAP, TODO, BRAINSTORM, PROPOSALS, ORDERS, INQUIRIES;
+                         shown on GitHub as milestones, issues and a board (scripts/github/devlog.py) -
+                         an issue changed by hand is overwritten: answer in ORDERS.md, ask in INQUIRIES.md
+scripts/github/          devlog.py, adapted from P_JOL_ROLL
+scripts/version.mjs      the one version: sync, bump, bump-commit (pre-commit hook), merge driver (.gitattributes)
+scripts/release/         release.sh: what release.yml does on master, runnable by hand
 docs/changelog/          what happened per phase, the owner's words word for word, append-only
 docs/guides/             how to write a reader, the unified format
 docs/almanac/            what was learnt the hard way: cataclistics/ (a case per page), solutions/ (a topic each)
@@ -123,6 +134,9 @@ stamps the format, source and time. The format is described in
 | `task verify` | check, lint:ext, test — run before a step is reported done |
 | `task build` | the `.zip` for AMO into `dist/` |
 | `task devlog:scrapnote` | a new scrapnote in `docs/devlog/` |
+| `task version` (`-- bump minor`) | the version of `package.json` written into every copy, or raised by hand (the hook does it per commit) |
+| `task vendor` | turndown and its GFM plugin copied unchanged into `src/vendor/` |
+| `task github:devlog` (`-- --dry`) | the devlog on GitHub: milestones, an issue per phase, `Q<n>`, `PP<n>`, the board; `devlog.yml` does it on each push of the devlog to `development`, but the board |
 
 ## Conventions
 

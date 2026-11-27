@@ -1,0 +1,60 @@
+# Every push to master releases (Q7): a merged pull request development -> master.
+#   1. checks (checks.yml)
+#   2. tag v<version> and the GitHub release with the packed extension, marked the latest
+#      (scripts/release/release.sh; a version released already gets a hotfix bump first)
+#   3. master merged back into development, so the release's version goes on from there
+name: "release › master: tag, packed extension, back into development"
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  checks:
+    uses: ./.github/workflows/checks.yml
+
+  release:
+    needs: checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      tag: ${{ steps.release.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v5
+        with: { ref: master, fetch-depth: 0 }
+      - uses: actions/setup-node@v5
+        with: { node-version: 24, cache: npm }
+      - run: npm ci
+        env: { HUSKY: "0" }
+      - name: Tag, packed extension, GitHub release
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
+          AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+        run: scripts/release/release.sh
+
+  back:
+    needs: release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+        with: { ref: development, fetch-depth: 0 }
+      - name: master back into development
+        env: { HUSKY: "0" }
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git merge --no-ff origin/master -m "merge(master): ${{ needs.release.outputs.tag || 'master' }} back into development"
+          git push origin development

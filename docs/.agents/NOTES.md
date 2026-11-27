@@ -4,6 +4,35 @@ Findings, newest on top, dated. People answer in `docs/devlog/`, not here.
 What waits for a decision or was not verified is kept in
 [things-to-check.md](things-to-check.md).
 
+## 2026-11-26 · Cleo · Q7: the flow of versions and releases
+
+- Sett's answer came as a comment on issue #14 and discussion #17 opened
+  the feed; Cleo copied both into ORDERS.md / INQUIRIES.md and committed
+  them on `dev/Sarverott`, as Sett asked. An answer on GitHub has to be
+  carried into the markdown by hand: `devlog.py` writes issues, it does
+  not read their comments.
+- `scripts/version.mjs` (from P_JOL_ROLL's `version.ts`): the hook bumped
+  0.1.0 → 0.1.1 on the commit that brought it. `git commit --amend` on a
+  `dev/*` branch runs pre-commit again and bumps once more, so no amends
+  there (written into AGENTS.md).
+- `release.yml` is written and its build step checked here
+  (`save-my-chat-0.1.2.zip`, manifest at 0.1.2); the tag, the release and
+  the merge back run only on GitHub, on the first merge into `master`.
+- A release is unsigned until Sett adds `AMO_JWT_ISSUER` and
+  `AMO_JWT_SECRET` as repository secrets.
+
+## 2026-11-26 · Cleo · phase 2 begun: the devlog on GitHub
+
+- `task github:devlog` ran once from this machine: milestones M0-M6, issues
+  #1-#7 (phases), #8-#13 (Q1-Q6, closed with Sett's words), #14 (Q7),
+  #15-#16 (PP1, PP2), and the board https://github.com/orgs/radiokociamuzyka/projects/1
+  (made by gh, so private to the organization until Sett opens it). A second
+  run changed nothing.
+- `checks.yml` passed on GitHub for `dev/Cleo`, `development` and the bots'
+  branches.
+- The board needs a person's token (scope `project`); `devlog.yml` runs
+  with `--no-board`, as in P_JOL_ROLL.
+
 ## 2026-11-26 · Cleo · phase 1: turndown, selector sets, AI Mode for real
 
 - Sett's test of v0.0.1: AI Mode saved without user messages. The guessed
