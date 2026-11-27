@@ -50,4 +50,22 @@ extension's options, **Prototypes**:
 Report what you saw, the report pasted, and anything the web console
 (F12) said on the chat's page.
 
+## RR3. The linter's false positive reported to Mozilla
+
+*Why:* `scripts/lint.mjs` excuses one warning of addons-linter
+(almanac: linter-userscripts-register) until Mozilla fixes it; an issue
+upstream gets it fixed, and the exception removed. Writing on Mozilla's
+tracker speaks for the project outside it, so it is yours to do or to
+hand over.
+
+*How:* either say "Cleo, file it" (Cleo opens it with `gh` under your
+account), or open an issue at https://github.com/mozilla/addons-linter/issues
+yourself with: *title* `UNSUPPORTED_API false positive for MV3
+userScripts.register`; *body*: with `manifest_version: 3` and
+`optional_permissions: ["userScripts"]`, a call to
+`browser.userScripts.register([...])` is reported as "has been removed in
+Manifest Version 3". The userScripts schema holds `register` twice (one
+with `max_manifest_version: 2`, one with `min_manifest_version: 3`) and
+the check seems to take the first. Seen in 10.14.0 and 10.16.0.
+
 ---
