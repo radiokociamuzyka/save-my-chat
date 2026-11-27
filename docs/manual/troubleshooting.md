@@ -37,6 +37,9 @@ every message of that kind carries. Save, then save the conversation
 again: the selector is used at once. Invalid CSS is refused, and **Back to
 built-in** removes yours.
 
+When a selector is not enough, copy the reader into a
+[prototype](prototypes.md) and change its code.
+
 ## Telling us
 
 Open an issue with the

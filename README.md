@@ -8,7 +8,7 @@ and the conversation is saved as Markdown (or JSON) into your downloads.
 Nothing is sent anywhere: the extension reads the page you have open and
 writes a file.
 
-> Status: phase 2, GitHub integration. Both readers are checked on live
+> Status: phase 3, prototypes. Both readers are checked on live
 > chats. The plan: [docs/devlog/TODO.md](docs/devlog/TODO.md), also in the
 > [wiki](https://github.com/radiokociamuzyka/save-my-chat/wiki) in English and Polish.
 
@@ -23,11 +23,11 @@ The webapps, planned ones too, are declared in
 [resources/data/chats.yaml](resources/data/chats.yaml).
 
 Each webapp has its own **reader**, a small script injected into its pages.
-The ones shipped with the extension are the defaults; you will be able to
-copy one into your own **prototype**, change it, and run it instead
-(phase 3, through Firefox's `userScripts` API). Until then a reader that
+The ones shipped with the extension are the defaults. A reader that
 misses messages can be fixed from the options page with your own
-selectors; the popup's *What the reader saw* tells which part broke.
+selectors (the popup's *What the reader saw* tells which part broke), or
+copied into your own **prototype**, changed, and run instead, through
+Firefox's `userScripts` API ([the manual](https://save-my-chat.readthedocs.io/en/latest/manual/prototypes/)).
 
 ## Install
 
