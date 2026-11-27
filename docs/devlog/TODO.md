@@ -39,7 +39,7 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 - [x] Selectors as sets of candidates; the kit collects turns of every role in page order
 - [x] Google AI Mode reader rebuilt from Sett's proof of work, the snippet kept in `src/readers/drafted-snippets/` (Q5)
 - [x] The lost user messages in the almanac: case, cause, solution
-- [x] Selector overrides from `storage.local`, so a changed class name is fixed without a release (set from the console for now)
+- [x] Selector overrides from `storage.local`, so a changed class name is fixed without a release
 - [x] The options page edits the selector overrides of each reader
 - [x] The popup reports what the reader saw: messages per role, which selector found them, so a test in the wild says what to fix
 - [x] GitHub Copilot reader from Sett's snippet (`.message-container`, `user__` / `ai__`)
