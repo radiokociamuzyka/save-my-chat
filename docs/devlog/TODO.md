@@ -22,7 +22,7 @@ names its `Q<n>`.
 - [x] First commit on `master`, then `development`, `dev/Sarverott`, `dev/Cleo`, `dev/Jarvis`, `dev/Joker`, `dev/dependabot` (Q4)
 - [x] The owner's answers and inquiries moved word for word into the changelog; the plan renumbered
 - [x] License MPL-2.0 (Q1)
-- [x] Gecko id `@save-my-chat.radiokociamuzyka.pl` (Q2)
+- [x] Gecko id `save-my-chat@radiokociamuzyka.pl` (Q2, corrected 2026-11-27)
 - [x] Cleo in `.github/AUTHORS`; AGENTS.md: a commit per step, the branch set (Q4)
 - [x] Husky hooks: commitlint on `commit-msg`, `task verify` on `pre-push`
 - [x] Dependabot into `dev/dependabot`
@@ -42,6 +42,15 @@ names its `Q<n>`.
 - [ ] GitHub Copilot reader from a snippet of Sett's or a saved page
 - [ ] A saved, anonymised page of each as `tests/fixtures/`, and tests reading them
 - [ ] Each reader checked by hand in Firefox on a live conversation, the result in `docs/.agents/NOTES.md`
+- [x] The add-on id corrected to `save-my-chat@radiokociamuzyka.pl` (Sett's inquiry)
+- [x] `dev/dependabot` caught up with `development`, every workflow on the same actions; the almanac case
+- [x] The version hook: a merge neither bumps nor reformats a file; the almanac case
+- [x] `src/vendor/` held to its npm packages by a test, so a dependency bump cannot leave the old copy
+- [x] Workflow `dependabot.yml`: `dev/dependabot` follows `development`, lands by a pull request; a collision becomes an issue for Jarvis
+- [x] Jarvis's instructions and dependabot prompt (`.github/copilot-instructions.md`, `.github/prompts/`); Joker's review guidelines in AGENTS.md
+- [ ] Jarvis and Joker in `.github/AUTHORS` (Q11)
+- [x] `resources/data/chats.yaml`: the chat webapps, their domains and conversation addresses, held to `readers.js` by a test (PP2)
+- [ ] `readers.js` from `chats.yaml` (Q10)
 
 ## Phase 2: GitHub integration
 
@@ -69,3 +78,16 @@ names its `Q<n>`.
 - [ ] Vue components, Bulma styles for options and popup
 - [ ] A viewer of saved conversations (Markdown and JSON of the unified format)
 - [ ] Playwright tests driving the extension in Firefox
+- [ ] The library (PP1): an index of saved chats in `storage.local`, search, re-export, a chat that grew since it was saved
+- [ ] An explorer of the stored files on a browser file system with isomorphic-git (Q8)
+- [ ] A saved chat as a gist through Octokit, on the user's request only (Q9)
+
+## Phase 5: more webapps
+
+- [ ] A reader for each `planned` chat of `resources/data/chats.yaml` (PP2), each with a fixture, its host an optional permission
+- [ ] Each one's patterns checked on the live webapp, `verified: true`
+
+## Phase 6: release
+
+- [ ] Icons, store listing, privacy statement
+- [ ] The id settled for good and the first signing (`AMO_JWT_*` secrets, Sett), listed on AMO

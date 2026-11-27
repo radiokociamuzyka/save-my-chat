@@ -1,6 +1,6 @@
 {
   "name": "save-my-chat",
-  "version": "0.1.10",
+  "version": "0.1.24",
   "private": true,
   "description": "Firefox extension to export your AI chat history out of webapps and save it on your local machine in clear unified formatting",
   "repository": "github:radiokociamuzyka/save-my-chat",
@@ -27,7 +27,8 @@
     "husky": "9.1.7",
     "jsdom": "31.0.1",
     "vitest": "5.1.2",
-    "web-ext": "10.8.0"
+    "web-ext": "10.8.0",
+    "yaml": "2.9.1"
   },
   "dependencies": {
     "turndown": "7.2.5",
