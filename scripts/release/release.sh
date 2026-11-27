@@ -2,7 +2,8 @@
 # Releases the version of package.json from master (Q7), unless its tag exists already:
 #   1. a version released already that reaches master again gets its patch bumped: a hotfix commit
 #      on top of master, reached only through its tag (master is not pushed: its ruleset, RR1)
-#   2. the packed extension built: dist/save-my-chat-<version>.zip, and dist/save-my-chat.zip
+#   2. the packed extension built: dist/save-my-chat-<version>.zip, and dist/save-my-chat.zip,
+#      and its source for AMO: dist/save-my-chat-<version>-source.zip
 #      for the fixed address of the latest:
 #      https://github.com/radiokociamuzyka/save-my-chat/releases/latest/download/save-my-chat.zip
 #   3. signed by AMO for self-distribution (unlisted, Q3) when AMO_JWT_ISSUER and AMO_JWT_SECRET are set
@@ -25,12 +26,17 @@ if git rev-parse -q --verify "refs/tags/v$(version)" > /dev/null; then
 fi
 tag="v$(version)"
 
-# the batch of `task build` (Q10): dependencies into src/vendor, chats.yaml already written in
+# the batch of `task build` (Q10, Q12): dependencies into src/vendor, chats.yaml already written in,
+# the pages built by Vite into dist/extension (web-ext's sourceDir)
 npm run vendor
 node scripts/chats.mjs --check
+npm run extension
 npx web-ext build --filename "save-my-chat-$(version).zip"
 cp "dist/save-my-chat-$(version).zip" dist/save-my-chat.zip
-assets=("dist/save-my-chat-$(version).zip" dist/save-my-chat.zip)
+# the source AMO asks for with a built extension (Q12): the repository at this commit,
+# built by `npm ci && npm run build` (README, "Building from source")
+git archive --format=zip --prefix="save-my-chat-$(version)-source/" -o "dist/save-my-chat-$(version)-source.zip" HEAD
+assets=("dist/save-my-chat-$(version).zip" dist/save-my-chat.zip "dist/save-my-chat-$(version)-source.zip")
 
 if [ -n "${AMO_JWT_ISSUER:-}" ] && [ -n "${AMO_JWT_SECRET:-}" ]; then
   npx web-ext sign --channel unlisted --api-key "$AMO_JWT_ISSUER" --api-secret "$AMO_JWT_SECRET" \

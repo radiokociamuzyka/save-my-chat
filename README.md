@@ -34,8 +34,9 @@ Firefox's `userScripts` API ([the manual](https://save-my-chat.readthedocs.io/en
 The newest release, packed:
 [save-my-chat.zip](https://github.com/radiokociamuzyka/save-my-chat/releases/latest/download/save-my-chat.zip)
 (every version: [releases](https://github.com/radiokociamuzyka/save-my-chat/releases)).
-Until builds are signed by AMO, load it in Firefox from `about:debugging` →
-*This Firefox* → *Load Temporary Add-on…*.
+It is also [on addons.mozilla.org](https://addons.mozilla.org/firefox/addon/save-my-chat/)
+(v0.4.6 waiting for review). Until then, load the release in Firefox from
+`about:debugging` → *This Firefox* → *Load Temporary Add-on…*.
 
 ## Getting started
 
@@ -44,12 +45,38 @@ You need Node.js 24, npm and Firefox 142 or later.
 
 ```sh
 npm ci
-task run      # Firefox with the extension loaded, reloads on save
-task verify   # Biome, web-ext lint, tests
+task run      # Firefox with the extension loaded, rebuilt and reloaded on save
+task verify   # the build, Biome, web-ext lint, tests
 task build    # the .zip into dist/
 ```
 
 Without Task: `npm start`, `npm run verify`, `npm run build`.
+
+## Building from source
+
+For AMO's reviewers, with each version's source archive
+(`save-my-chat-<version>-source.zip`, attached to its
+[release](https://github.com/radiokociamuzyka/save-my-chat/releases)).
+On Linux, macOS or Windows, with Node.js 24 and npm 11:
+
+```sh
+npm ci
+npm run build
+```
+
+The extension is then `dist/extension/` and packed as
+`dist/save-my-chat-<version>.zip`. What the build does:
+
+1. `scripts/vendor.mjs` copies the files of the dependencies that run as
+   they are (turndown and its GFM plugin) from `node_modules/` into
+   `src/vendor/`, unchanged, with the licenses of all dependencies.
+2. `scripts/chats.mjs` checks the readers' list and host permissions.
+3. Vite (`vite.config.mjs`) builds the extension's pages written in Vue
+   (`src/popup/`) into `dist/extension/`, **not minified**, Vue and Bulma
+   bundled in, and copies the rest of `src/` there as it is: the
+   background, the content scripts and the readers are plain JavaScript,
+   not processed.
+4. `web-ext build` packs `dist/extension/`.
 
 ## Where to read on
 
