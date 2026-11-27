@@ -123,4 +123,17 @@ describe("selector sets", () => {
 			{ role: "user", text: "a question inside" },
 		]);
 	});
+
+	it("warns when a chat does not go user, agent, user, agent... ending with the agent", () => {
+		const w = load(KIT);
+		const s = (roles) => w.SaveMyChat.suspicions(roles.map((role) => ({ role, text: "x" })));
+		expect(s(["user", "assistant", "user", "assistant", "user", "assistant"])).toEqual([]);
+		expect(s(["assistant", "user", "assistant", "user"])).toEqual([
+			"It starts with an answer: the order may be wrong.",
+			"It ends with a question: its answer is missing or still being written.",
+		]);
+		expect(s(["user", "assistant", "user"])).toEqual([
+			"It ends with a question: its answer is missing or still being written.",
+		]);
+	});
 });

@@ -62,6 +62,7 @@
 		const lines = [`save-my-chat ${version}, reader ${s.reader}, on ${s.host}`];
 		const roles = Object.entries(s.turns);
 		lines.push(`messages: ${roles.length ? roles.map(([role, n]) => `${role} ${n}`).join(", ") : "none"}`);
+		if (s.order) lines.push(`order: ${s.order} (U user, A agent)`);
 		for (const [part, list] of Object.entries(s.parts)) {
 			lines.push(`${part}:`);
 			for (const c of list)

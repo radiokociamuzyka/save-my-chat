@@ -42,6 +42,7 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 - [x] Selector overrides from `storage.local`, so a changed class name is fixed without a release
 - [x] The options page edits the selector overrides of each reader
 - [x] The popup reports what the reader saw: messages per role, which selector found them, so a test in the wild says what to fix
+- [x] The report shows the order of roles (`U A U A`), and warns when a chat does not start with the user, end with the agent and alternate (Sett)
 - [x] GitHub Copilot reader from Sett's snippet (`.message-container`, `user__` / `ai__`)
 - [x] AI Mode in its true order when a question sits inside its answer's block (Sett: 1,0,3,2,5,4); messages ordered by where their own text starts
 - [x] The add-on id corrected to `save-my-chat@radiokociamuzyka.pl` (Sett's inquiry)

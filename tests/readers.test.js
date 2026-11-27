@@ -54,7 +54,10 @@ describe("readers", () => {
 			["assistant", "Second answer."],
 		]);
 		expect(c.turns[0].from).toBe("address");
-		expect(c.warnings).toEqual(["2 answers but 1 question: a user selector may be out of date."]);
+		expect(c.warnings).toEqual([
+			"2 answers but 1 question: a user selector may be out of date.",
+			"Two messages of one role in a row at 2-3: a message of the other role may be missing.",
+		]);
 	});
 
 	it("google-ai-mode finds the renamed class once an override names it", async () => {
@@ -106,7 +109,11 @@ describe("readers", () => {
 		expect(seen.reader).toBe("github-copilot");
 		expect(seen.host).toBe("github.com");
 		expect(seen.turns).toEqual({ user: 1, assistant: 2 });
-		expect(seen.warnings).toEqual(["2 answers but 1 question: a user selector may be out of date."]);
+		expect(seen.order).toBe("U A A");
+		expect(seen.warnings).toEqual([
+			"2 answers but 1 question: a user selector may be out of date.",
+			"Two messages of one role in a row at 2-3: a message of the other role may be missing.",
+		]);
 		expect(seen.parts.user).toEqual([
 			{ css: "div[", found: null, override: true },
 			{ css: ".gone", found: 0, override: true },
