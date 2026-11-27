@@ -62,7 +62,7 @@ function home(pages, code, config) {
 	const lines = [
 		"# save-my-chat wiki",
 		"",
-		"For developers and contributors: how the work goes (the devlog), what happened (the changelog) and what was learnt the hard way (the almanac). The user's documentation is on Read the Docs.",
+		"For developers and contributors: how the work goes (the devlog), what happened (the changelog) and what was learnt the hard way (the almanac). The user's documentation is on [Read the Docs](https://save-my-chat.readthedocs.io).",
 		"",
 	];
 	for (const [group, list] of groups) {

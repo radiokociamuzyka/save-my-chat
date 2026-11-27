@@ -34,3 +34,14 @@ a reader that misses something, privacy) and the developer guides; the
 devlog, changelog and almanac stay the wiki's. The feed's failure after
 v0.2.13 (an edit of its own note refused) is fixed: announcements are
 written once, and a refusal no longer stops the run.
+
+## 2026-11-27, the owner after v0.2.21 went public (the chat, word for word)
+
+> alright! all wents public, continue
+
+**Decision:** seen live after the release of v0.2.21: Read the Docs builds
+the manual at https://save-my-chat.readthedocs.io, the wiki is published
+in English and Polish, and the feed's third run posted the two missing
+release notes and the three missing almanac cases, with nothing refused.
+The address goes into the README, the wiki's Home and `mkdocs.yml`; next
+is the static page on `github-pages`.
