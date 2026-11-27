@@ -18,15 +18,15 @@ labelled `request` (`task github:devlog`), closed when it leaves this file.
 merged while its checks still run or fail; a red release would be tagged
 and published by `release.yml`.
 
-*How:* Settings → Rules → Rulesets → New branch ruleset: name it `master`,
-enforcement *Active*, target the default branch, then tick *Require a pull
-request before merging* (0 approvals is enough: you merge your own) and
-*Require status checks to pass*, adding `verify`. *Block force pushes* and
-*Restrict deletions* are on by default; keep them. Under *Bypass list*,
-add the app *GitHub Actions* (always allow): when a version was released
-already, `release.sh` pushes a hotfix version bump straight onto `master`,
-and the ruleset would refuse it. Say "RR1 done", and Cleo checks it
-through the API.
+*How:* your ruleset `master` is made (Settings → Rules → Rulesets), with
+*Require a pull request before merging* and *Require status checks to
+pass* (`verify`); it waits disabled. No bypass is needed any more: the
+release no longer pushes onto `master` (Sett, issue #79, there was no
+"GitHub Actions" to add). Leave the bypass list empty, set *Enforcement
+status* to **Active** and save. Say "RR1 done", and Cleo checks it through
+the API. Turning it on before this release is merged is safe too: the
+old hotfix path runs only for a version released already, and this one
+is new.
 
 ## RR2. Prototypes tried in a real Firefox
 
@@ -35,7 +35,8 @@ which no test here has: jsdom stood in for it, and MDN does not say
 everything (whether a user script's message carries its tab). The last
 step of phase 3 waits for this check.
 
-*How:* in the first release of 0.3.x (its pull request says so), open the
+*How:* v0.3.11 refused to save any prototype, unchanged ones too (Sett,
+issue #80): fixed. In the next release (its pull request says so), open the
 extension's options, **Prototypes**:
 1. **Allow user scripts**: did Firefox ask, and did the button go away?
 2. **Make a prototype of GitHub Copilot**, then in its code find
@@ -47,25 +48,9 @@ extension's options, **Prototypes**:
 4. Turn the prototype off, reload, save again: is the title back to
    normal, and the popup without "(your prototype)"?
 
-Report what you saw, the report pasted, and anything the web console
-(F12) said on the chat's page.
-
-## RR3. The linter's false positive reported to Mozilla
-
-*Why:* `scripts/lint.mjs` excuses one warning of addons-linter
-(almanac: linter-userscripts-register) until Mozilla fixes it; an issue
-upstream gets it fixed, and the exception removed. Writing on Mozilla's
-tracker speaks for the project outside it, so it is yours to do or to
-hand over.
-
-*How:* either say "Cleo, file it" (Cleo opens it with `gh` under your
-account), or open an issue at https://github.com/mozilla/addons-linter/issues
-yourself with: *title* `UNSUPPORTED_API false positive for MV3
-userScripts.register`; *body*: with `manifest_version: 3` and
-`optional_permissions: ["userScripts"]`, a call to
-`browser.userScripts.register([...])` is reported as "has been removed in
-Manifest Version 3". The userScripts schema holds `register` twice (one
-with `max_manifest_version: 2`, one with `min_manifest_version: 3`) and
-the check seems to take the first. Seen in 10.14.0 and 10.16.0.
+Report what you saw, the report pasted, and what the chat page's web
+console (F12, the page's own, not the add-on's) said: a prototype now
+writes `save-my-chat: prototype loaded, reader github-copilot` there when
+it starts.
 
 ---

@@ -14,7 +14,7 @@ export const KNOWN = [
 		why:
 			"addons-linter 10.14-10.16 holds two userScripts.register in its schema, the MV2 one" +
 			" (max_manifest_version 2) and the MV3 one, and checks the first; Firefox has the MV3" +
-			" API (MDN). Almanac: linter-userscripts-register.",
+			" API (MDN). Almanac: linter-userscripts-register; upstream: mozilla/addons-linter#6282.",
 	},
 ];
 

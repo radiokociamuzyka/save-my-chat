@@ -2,7 +2,7 @@
 #   1. checks (checks.yml)
 #   2. tag v<version> and the GitHub release with the packed extension, marked the latest
 #      (scripts/release/release.sh; a version released already gets a hotfix bump first)
-#   3. master merged back into development, so the release's version goes on from there
+#   3. the release's tag (master, or its hotfix bump) merged back into development, so the version goes on from there
 name: "release › master: tag, packed extension, back into development"
 
 on:
@@ -58,5 +58,6 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           # the merge driver of .gitattributes: the higher version, the formatting kept
           git config merge.version.driver 'node scripts/version.mjs merge %O %A %B'
-          git merge --no-ff origin/master -m "merge(master): ${{ needs.release.outputs.tag || 'master' }} back into development"
+          # the release's tag: master itself, or a hotfix bump on top of it that master never got
+          git merge --no-ff "refs/tags/${{ needs.release.outputs.tag }}" -m "merge(master): ${{ needs.release.outputs.tag }} back into development"
           git push origin development
