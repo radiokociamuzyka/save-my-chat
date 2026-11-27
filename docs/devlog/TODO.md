@@ -43,6 +43,7 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 - [x] The options page edits the selector overrides of each reader
 - [x] The popup reports what the reader saw: messages per role, which selector found them, so a test in the wild says what to fix
 - [x] GitHub Copilot reader from Sett's snippet (`.message-container`, `user__` / `ai__`)
+- [x] AI Mode in its true order when a question sits inside its answer's block (Sett: 1,0,3,2,5,4); messages ordered by where their own text starts
 - [x] The add-on id corrected to `save-my-chat@radiokociamuzyka.pl` (Sett's inquiry)
 - [x] `dev/dependabot` caught up with `development`, every workflow on the same actions; the almanac case
 - [x] The version hook: a merge neither bumps nor reformats a file; the almanac case
