@@ -6,9 +6,9 @@
 #      and its source for AMO: dist/save-my-chat-<version>-source.zip
 #      for the fixed address of the latest:
 #      https://github.com/radiokociamuzyka/save-my-chat/releases/latest/download/save-my-chat.zip
-#   3. signed by AMO for self-distribution (unlisted, Q3) when AMO_JWT_ISSUER and AMO_JWT_SECRET are set
-#   4. the annotated tag v<version> and the GitHub release, marked the latest, notes from the pull requests
-# Writes tag=v<version> to $GITHUB_OUTPUT. Needs GH_TOKEN. Usage: release.sh
+#   3. the annotated tag v<version> and the GitHub release, marked the latest, notes from the pull requests
+# AMO is a job of its own after this one (amo.sh, listed): an unlisted signing here would take the
+# version number AMO gives once. Writes tag=v<version> to $GITHUB_OUTPUT. Needs GH_TOKEN. Usage: release.sh
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 export HUSKY=0
@@ -37,18 +37,6 @@ cp "dist/save-my-chat-$(version).zip" dist/save-my-chat.zip
 # built by `npm ci && npm run build` (README, "Building from source")
 git archive --format=zip --prefix="save-my-chat-$(version)-source/" -o "dist/save-my-chat-$(version)-source.zip" HEAD
 assets=("dist/save-my-chat-$(version).zip" dist/save-my-chat.zip "dist/save-my-chat-$(version)-source.zip")
-
-if [ -n "${AMO_JWT_ISSUER:-}" ] && [ -n "${AMO_JWT_SECRET:-}" ]; then
-  npx web-ext sign --channel unlisted --api-key "$AMO_JWT_ISSUER" --api-secret "$AMO_JWT_SECRET" \
-    --artifacts-dir dist/signed
-  for xpi in dist/signed/*.xpi; do
-    cp "$xpi" "dist/save-my-chat-$(version).xpi"
-    cp "$xpi" dist/save-my-chat.xpi
-  done
-  assets+=("dist/save-my-chat-$(version).xpi" dist/save-my-chat.xpi)
-else
-  echo "not signed: AMO_JWT_ISSUER / AMO_JWT_SECRET are not set (the zip loads as a temporary add-on)"
-fi
 
 git tag -a "$tag" -m "$tag"
 git push -q origin "$tag"

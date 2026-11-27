@@ -87,3 +87,15 @@ The owner's merge of the pull request into `master` is the ask of rule 2
 for that upload. Setting the secrets is the owner's move: RR6. Once they
 are set, versions are no longer uploaded by hand (AMO takes a version
 number only once).
+
+## 2026-11-27, the owner sets the AMO secrets and hands over the merges (chat, word for word)
+
+> i added releasing environment for github actions with 2 secrets variables "AMO_JWT_SECRET" and "AMO_JWT_ISSUER". the `.env` file and example of it also has them in our local repo with github PAT for radiokociamuzyka wide access. if we are ready then let's add automatic publication upload when releasing so our work here will be solved by itself where we can handle things by automations. proceede all that you can without me, including PR creation and merging them into master until phase 4 is done or troubles requires my attention - feel free to work on your own for a while right now, i believe i can leave you making these decisions right now. let me know if you met any problem you want to ask about - i'm here for you Cleo. thanks in advance, good luck and have a fun!
+
+**Decision:** the `amo` job of `release.yml` runs in the `releasing`
+environment, whose secrets it reads, and submits each release to AMO's
+listed channel (`scripts/release/amo.sh`); `release.sh` no longer signs
+unlisted. Versions are not uploaded by hand any more. Until phase 4 is
+done, Cleo merges the pull requests into `master` as well, each merge
+releasing to GitHub and AMO; trouble goes to Sett. AGENTS rule 2 says so.
+`.env.example` names the variables of `.env` (which stays ignored).
