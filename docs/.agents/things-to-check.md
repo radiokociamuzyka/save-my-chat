@@ -105,3 +105,10 @@ point was added.
   30 seconds may not do), and how a webapp takes a few dozen chats
   opened one after another. A sidebar loading more on scroll lists only
   what it has shown.
+- **2026-11-27. The readers of ChatGPT, Claude and Gemini, unverified.**
+  Written from those webapps' known structure (ChatGPT's
+  `data-message-author-role`, Claude's `data-testid="user-message"` and
+  `.font-claude-response`, Gemini's `user-query .query-text` and
+  `model-response message-content`), tested on made-up pages only.
+  Gemini's title comes from the sidebar's selected chat, a guess. Each
+  says `NOTE: unverified`, `verified: false` in chats.yaml. RR7 asks.

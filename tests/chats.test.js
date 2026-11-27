@@ -15,7 +15,8 @@ describe("chats.yaml", () => {
 		expect(new Set(ids).size).toBe(ids.length);
 		for (const c of chats) {
 			expect(c.name, c.id).toBeTruthy();
-			expect(["default", "planned"], c.id).toContain(c.status);
+			expect(["default", "optional", "planned"], c.id).toContain(c.status);
+			if (c.status !== "planned") expect(c.reader, c.id).toBe(`readers/${c.id}.js`);
 			expect(c.matches.length, c.id).toBeGreaterThan(0);
 			for (const m of c.matches) expect(c.domains, `${c.id}: ${m}`).toContain(new URL(m.replace("*", "")).host);
 		}
@@ -23,15 +24,25 @@ describe("chats.yaml", () => {
 
 	it("is what src/core/readers.js ships, in the same order", () => {
 		const defaults = load([...KIT, "core/readers.js"]).SaveMyChat.defaults;
-		const declared = chats.filter((c) => c.status === "default");
-		expect(defaults.map(({ id, name, matches, file }) => ({ id, name, matches, file }))).toEqual(
-			declared.map(({ id, name, matches, reader }) => ({ id, name, matches, file: reader })),
+		const declared = chats.filter((c) => c.status !== "planned");
+		expect(defaults.map(({ id, name, matches, file, optional }) => ({ id, name, matches, file, optional }))).toEqual(
+			declared.map(({ id, name, matches, reader, status }) => ({
+				id,
+				name,
+				matches,
+				file: reader,
+				optional: status === "optional" || undefined,
+			})),
 		);
 	});
 
-	it("asks host permissions for the default readers only", () => {
-		const hosts = chats.filter((c) => c.status === "default").flatMap((c) => c.domains.map((d) => `https://${d}/*`));
-		expect([...manifest.host_permissions].sort()).toEqual([...new Set(hosts)].sort());
+	it("asks host permissions for the default readers at install, an optional one's only when turned on", () => {
+		const of = (status) =>
+			chats.filter((c) => c.status === status).flatMap((c) => c.domains.map((d) => `https://${d}/*`));
+		expect([...manifest.host_permissions].sort()).toEqual([...new Set(of("default"))].sort());
+		expect([...manifest.optional_host_permissions].sort()).toEqual(
+			[...new Set(["https://api.github.com/*", ...of("optional")])].sort(),
+		);
 	});
 
 	it("readers.js and the manifest are what scripts/chats.mjs writes (npm run chats)", () => {
