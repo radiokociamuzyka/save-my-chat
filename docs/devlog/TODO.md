@@ -39,7 +39,7 @@ names its `Q<n>`.
 - [x] The lost user messages in the almanac: case, cause, solution
 - [x] Selector overrides from `storage.local`, so a changed class name is fixed without a release (set from the console for now)
 - [ ] The options page edits the selector overrides of each reader
-- [ ] GitHub Copilot reader from a snippet of Sett's or a saved page
+- [x] GitHub Copilot reader from Sett's snippet (`.message-container`, `user__` / `ai__`)
 - [ ] A saved, anonymised page of each as `tests/fixtures/`, and tests reading them
 - [ ] Each reader checked by hand in Firefox on a live conversation, the result in `docs/.agents/NOTES.md`
 - [x] The add-on id corrected to `save-my-chat@radiokociamuzyka.pl` (Sett's inquiry)

@@ -9,3 +9,4 @@ Biome.
 | Snippet | Reader | Webapp |
 | --- | --- | --- |
 | `google-ai-mode.turndown.js` | `../google-ai-mode.js` | Google Search, AI Mode |
+| `github-copilot.turndown.js` | `../github-copilot.js` | GitHub Copilot (immersive chat) |

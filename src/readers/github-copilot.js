@@ -1,39 +1,31 @@
-// NOTE: unverified. Written without the live page: the selectors below are
-// guesses to be replaced by Sett's existing script for Copilot chat, or
-// checked against a saved page (tests/fixtures/github-copilot.html).
-// The immersive chat lives at https://github.com/copilot/c/<id>.
+// GitHub Copilot, the immersive chat at https://github.com/copilot/c/<id>.
+// Fitted from Sett's proof of work, drafted-snippets/github-copilot.turndown.js:
+// every message is a .message-container; a user's carries a class "user__…",
+// Copilot's "ai__…" (CSS-module names: the part after "__" changes with
+// GitHub's builds, the prefix stays). Read in page order, through turndown.
+// NOTE: the classes are Sett's, seen on 2026-11-27; this reader itself was
+// not yet run on the live page. A new name goes in front of its set (or as
+// an override in storage.local); keep the old ones.
 (() => {
 	const SMC = globalThis.SaveMyChat;
-
-	const SELECTORS = {
-		message: "[data-smc-role], [data-testid$='-message'], [class*='ChatMessage-module__chatMessage']",
-		body: "[data-smc-body], .markdown-body",
-		title: "[data-smc-title], h1",
-	};
-
-	function roleOf(el) {
-		const hint = [el.dataset.smcRole, el.dataset.testid, el.className, el.getAttribute("aria-label")]
-			.join(" ")
-			.toLowerCase();
-		if (/user|you\b/.test(hint)) return "user";
-		if (/copilot|assistant|ai\b/.test(hint)) return "assistant";
-		return null;
-	}
 
 	SMC.reader({
 		id: "github-copilot",
 		name: "GitHub Copilot",
 		service: "github.com/copilot",
+		selectors: {
+			user: [".message-container[class*='user__']"],
+			assistant: [
+				".message-container[class^='ai__']",
+				".message-container[class*=' ai__']",
+				".message-container[class*='_ai__']",
+			],
+		},
 		detect: (_doc, url) => new URL(url).pathname.startsWith("/copilot"),
-		read(doc) {
-			const turns = [];
-			for (const el of doc.querySelectorAll(SELECTORS.message)) {
-				const role = roleOf(el);
-				if (!role) continue;
-				turns.push(SMC.turn(role, el.querySelector(SELECTORS.body) || el));
-			}
-			const title = doc.querySelector(SELECTORS.title)?.textContent || doc.title.replace(/ · GitHub$/, "");
-			return { title, turns };
+		read(doc, _url, sets) {
+			const turns = SMC.turnsBy(doc, { user: sets.user, assistant: sets.assistant });
+			const title = doc.title.replace(/\s*·\s*GitHub( Copilot)?$/, "").trim();
+			return { title: title === "Copilot" ? "" : title, turns };
 		},
 	});
 })();
