@@ -37,3 +37,7 @@ point was added.
 - **2026-11-27. The planned chats' patterns** in `resources/data/chats.yaml`
   are from memory of those sites, `verified: false`; each is checked when
   its reader is written (phase 5).
+- **2026-11-27. The Copilot reader on the live page.** Rebuilt from Sett's
+  snippet; run only on hand-made pages in jsdom. To check: messages found
+  in order, the turndown text has no leftover labels ("You said",
+  avatars, names) that `innerText` hid or showed, the title is the chat's.
