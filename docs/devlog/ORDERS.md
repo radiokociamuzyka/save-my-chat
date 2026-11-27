@@ -26,3 +26,9 @@ From issue #16, Sett, 2026-11-27:
 > but this brings us topic of declaring these domains and chat patterns assigned to them
 >
 > write declaration of that chats in yaml file in `resources/data/` dir
+
+### Signing
+
+From the chat, Sett, 2026-11-27:
+
+> signing will be carried later, for sure not before that preparations to official publishing in mozzila extension registry. now we just use it as temporary add-on.
