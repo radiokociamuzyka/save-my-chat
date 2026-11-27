@@ -19,3 +19,7 @@ solved gets its case here, so the next one is recognised faster.
 - [ai-mode-swapped-pairs](cataclistics/ai-mode-swapped-pairs.md): AI Mode saved every question after its answer, 1,0,3,2,5,4
 - [feed-too-quickly](cataclistics/feed-too-quickly.md): the first feed run refused by GitHub, "submitted too quickly"
 - [feed-edit-refused](cataclistics/feed-edit-refused.md): the workflow's token refused an edit of a feed note, and the run stopped
+- [linter-userscripts-register](cataclistics/linter-userscripts-register.md): AMO's linter calls userScripts.register removed in MV3
+- [webdriver-moz-extension](cataclistics/webdriver-moz-extension.md): WebDriver may not open the extension's own pages
+- [vite-glob-before-imports](cataclistics/vite-glob-before-imports.md): a glob's imports run before the imports written above it
+- [ignored-site-dir](cataclistics/ignored-site-dir.md): the public site's folder was ignored as MkDocs' output
