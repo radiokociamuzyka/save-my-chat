@@ -23,6 +23,7 @@ Le Chat, DeepSeek, HuggingChat): see the
 - [Install](manual/install.md): the newest release in Firefox
 - [Save a conversation](manual/saving.md): the popup, the formats, where files go
 - [When a reader misses something](manual/troubleshooting.md): the report, your own selectors
+- [Your own reader](manual/prototypes.md): a prototype, copied from a default and changed
 - [Privacy](manual/privacy.md): what the extension reads and writes
 - For developers: [how a reader is written](guides/readers.md) and [the unified format](guides/format.md)
 

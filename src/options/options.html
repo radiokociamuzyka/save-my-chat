@@ -14,11 +14,26 @@
 			yours are tried before the built-in ones and take effect on the next save, no update needed.
 		</p>
 		<ul id="readers"></ul>
-		<!-- NOTE: phase 3 - prototypes: copy a default reader into an editor, change it,
-		     and run it through the userScripts API (optional permission, asked here). -->
+
+		<h2>Prototypes</h2>
+		<p>
+			A prototype is your own copy of a reader: change its code, and it runs in place of the default on the pages
+			you name, until you turn it off or delete it. Nothing leaves your machine; export them to keep or share.
+		</p>
+		<p>
+			<button type="button" id="allow" hidden>Allow user scripts</button>
+			<span id="allowed"></span>
+		</p>
+		<ul id="prototypes"></ul>
+		<p>
+			<button type="button" id="export">Export prototypes</button>
+			<label class="file">Import prototypes <input type="file" id="import" accept=".json,application/json" /></label>
+			<span id="prototypes-status" role="status"></span>
+		</p>
 		<!-- the kit and the default readers, for their built-in selectors only -->
 		<script src="../core/kit.js"></script>
 		<script src="../core/readers.js"></script>
 		<script src="options.js"></script>
+		<script src="prototypes.js"></script>
 	</body>
 </html>
