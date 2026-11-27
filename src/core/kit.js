@@ -264,6 +264,17 @@
 				});
 			}
 			const seen = { reader: r.id, name: r.name, host: new URL(url).host, parts, turns: {}, warnings: [] };
+			// messages held inside a message of the other role ("user in assistant": 3)
+			const roles = ["user", "assistant"].filter((role) => selector(sets[role], doc));
+			for (const inner of roles)
+				for (const outer of roles) {
+					if (inner === outer) continue;
+					const n = [...doc.querySelectorAll(selector(sets[inner], doc))].filter((el) =>
+						el.parentElement?.closest(selector(sets[outer], doc)),
+					).length;
+					if (!n) continue;
+					seen.nested = { ...seen.nested, [`${inner} in ${outer}`]: n };
+				}
 			try {
 				const c = conversation(r, r.read(doc, url, sets), url);
 				for (const t of c.turns) seen.turns[t.role] = (seen.turns[t.role] || 0) + 1;

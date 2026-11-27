@@ -135,5 +135,7 @@ describe("readers", () => {
 		]);
 		expect(c.turns.map((t) => t.role)).toEqual(["user", "assistant", "user", "assistant", "user", "assistant"]);
 		expect(c.warnings).toBeUndefined();
+		const seen = await w.SaveMyChat.inspect();
+		expect(seen.nested).toEqual({ "user in assistant": 3 });
 	});
 });
