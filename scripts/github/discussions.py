@@ -254,7 +254,14 @@ def answer_of(discussion: dict, text: str):
         return
     mine = said_already(discussion, text) or comment(discussion, text, "answer")
     if not mine.get("isAnswer"):
+        # GitHub marks one answer at a time: the old one unmarked first (it stays, as written)
+        for old in discussion["comments"]["nodes"]:
+            if old.get("isAnswer") and old["id"] != mine["id"]:
+                graphql("mutation($c:ID!){unmarkDiscussionCommentAsAnswer(input:{id:$c}){discussion{id}}}",
+                        c=old["id"])
+                old["isAnswer"] = False
         graphql("mutation($c:ID!){markDiscussionCommentAsAnswer(input:{id:$c}){discussion{id}}}", c=mine["id"])
+        mine["isAnswer"] = True
 
 
 def main():
