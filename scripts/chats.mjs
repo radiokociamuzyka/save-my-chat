@@ -19,13 +19,14 @@ export function readersJs(chats) {
 		.filter((c) => c.status === "default")
 		.map(
 			(c) =>
-				`\t\t{\n\t\t\tid: ${q(c.id)},\n\t\t\tname: ${q(c.name)},\n\t\t\tmatches: [${c.matches.map(q).join(", ")}],\n\t\t\tfile: ${q(c.reader)},\n\t\t},\n`,
+				`\t\t{\n\t\t\tid: ${q(c.id)},\n\t\t\tname: ${q(c.name)},\n\t\t\tmatches: [${c.matches.map(q).join(", ")}],\n\t\t\tchats: [${c.chats.map(q).join(", ")}],\n\t\t\tfile: ${q(c.reader)},\n\t\t},\n`,
 		)
 		.join("");
 	return `// Written by scripts/chats.mjs from resources/data/chats.yaml (Q10): edit the YAML,
 // then \`npm run chats\` (or \`task build\`). The default readers shipped with the
 // extension; the background registers each enabled one as a content script,
 // core/kit.js first, then its file. Their hosts are the manifest's host_permissions.
+// chats: the addresses of one conversation, how the links a page lists are found.
 (() => {
 \tglobalThis.SaveMyChat.defaults = [
 ${entries}\t];

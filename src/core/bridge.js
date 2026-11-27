@@ -2,10 +2,10 @@
 // world (userScripts API), loaded after turndown, the kit and the user's own
 // reader code. That world cannot be sent messages, only send them: the
 // background asks by a DOM event, "save-my-chat:ask", whose detail is a JSON
-// string { id, type }, and this answers through runtime.sendMessage, which the
-// background hears as runtime.onUserScriptMessage. The answer goes to the
-// extension only; the page sees the question (an id and a type), never what was
-// read. A page that forges a question gets nothing: the background drops an
+// string { id, type } (and, for a list, the chat's address patterns), and this
+// answers through runtime.sendMessage, which the background hears as
+// runtime.onUserScriptMessage. The answer goes to the extension only; the page
+// sees the question (an id, a type, the patterns), never what was read. A page that forges a question gets nothing: the background drops an
 // answer whose id it did not ask with.
 (() => {
 	const SMC = globalThis.SaveMyChat;
@@ -20,13 +20,14 @@
 			: "save-my-chat: prototype loaded, but its code registered no reader (an error above?)",
 	);
 
-	async function answer(type) {
+	async function answer(type, ask) {
 		if (type === "save-my-chat:present") {
 			const seen = SMC.present();
 			return seen && { ...seen, prototype: true };
 		}
 		if (type === "save-my-chat:read") return SMC.readPage(undefined, undefined, {});
 		if (type === "save-my-chat:inspect") return SMC.inspect(undefined, undefined, {});
+		if (type === "save-my-chat:list") return SMC.listed(undefined, undefined, [].concat(ask.patterns || []));
 		return null;
 	}
 
@@ -40,7 +41,7 @@
 		if (typeof ask?.id !== "string" || typeof ask.type !== "string") return;
 		const reply = { type: "save-my-chat:answer", id: ask.id };
 		try {
-			reply.answer = (await answer(ask.type)) ?? null;
+			reply.answer = (await answer(ask.type, ask)) ?? null;
 		} catch (error) {
 			reply.error = String(error?.message || error);
 		}
