@@ -90,8 +90,18 @@ point was added.
   library of many chats (each sync reads every copy), or after an update
   of the extension (the repository should stay, its IndexedDB being the
   extension's).
-- **2026-11-27. ZenFS's license.** `@zenfs/core` and `@zenfs/dom` are
-  LGPL-3.0-or-later, built into the options page (MPL-2.0 allows the
-  combination); the build is not minified, their licenses are vendored
-  and the source archive goes to AMO. A question for Sett if he wants it
-  otherwise.
+- **2026-11-27. ZenFS's license.** Looked into in phase 5 (almanac:
+  licenses-met): the combination is allowed. What was missing, the
+  notice of LGPL 4(a) and the GPL text of 4(b), the build now writes
+  (`THIRD-PARTY.md`, `licenses/GPL-3.0.txt`). Not checked: how AMO's
+  reviewers read an LGPL library in a listed add-on; none has said a
+  word on it so far.
+- **2026-11-27. Gathering, never run on a live webapp.** Tested with
+  Firefox's APIs stubbed and on the site's demo only. Not known yet:
+  whether GitHub Copilot's sidebar holds plain links to
+  `/copilot/c/<id>` (the generic finding of a list needs them), whether
+  AI Mode lists its past chats at all, whether a webapp draws a chat in
+  a tab that was never shown (a background tab may be throttled: the
+  30 seconds may not do), and how a webapp takes a few dozen chats
+  opened one after another. A sidebar loading more on scroll lists only
+  what it has shown.

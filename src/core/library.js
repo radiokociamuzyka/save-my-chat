@@ -66,7 +66,7 @@
 			await storage.remove(`chat:${key}`);
 		}
 
-		return { record, list, chat, since, forget };
+		return { record, list, chat, since, forget, entries: index };
 	}
 
 	SMC.library = library;

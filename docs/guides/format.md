@@ -50,3 +50,21 @@ such a line after a blank line: a message whose own text holds `## User`
 after a blank line reads as two. The JSON has no such limit.
 
 Files go to `Downloads/save-my-chat/<reader>/<YYYY-MM-DD>-<title>.<md|json>`.
+
+## A backup: `save-my-chat/library/0`
+
+**Back up all as .zip** (the library) packs every chat saved into
+`Downloads/save-my-chat/backup-<YYYY-MM-DD>.zip`:
+
+```
+save-my-chat/
+  <reader>/<YYYY-MM-DD>-<title>.md     the day it was first saved, as in the Files tab;
+  <reader>/<YYYY-MM-DD>-<title>.json   a second chat of one name and day gets -2, -3...
+  library.json                         the index
+```
+
+`library.json` is `{ "format": "save-my-chat/library/0", "chats": [...] }`,
+one entry per chat, oldest first: `key` (its reader and address), `title`,
+`reader`, `service`, `url`, `turns` (how many), `firstSavedAt`, `savedAt`,
+`saves` (how many times), and `files` (`md`, `json`: its paths under
+`save-my-chat/`).

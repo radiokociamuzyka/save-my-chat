@@ -53,6 +53,8 @@ same whichever service it came from.
   saved chat to Obsidian through its `obsidian://` links (Q13).
 - **Phase 5, more webapps.** New default readers (PP2), each with a fixture,
   declared first in `resources/data/chats.yaml` with their domains and
-  conversation addresses (Q10).
+  conversation addresses (Q10). And a backup: the conversations a
+  webapp lists, gathered one by one into the library at the user's
+  click, and the whole library packed into one `.zip` (Sett, 2026-11-27).
 - **Phase 6, release.** Icons, store listing, privacy statement; listed on
   AMO, the first signing with it (until then a temporary add-on).

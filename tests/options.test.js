@@ -70,6 +70,7 @@ describe("options: the page", () => {
 			"Library",
 			"Viewer",
 			"Files",
+			"Gather",
 			"Readers",
 			"Prototypes",
 		]);
