@@ -15,3 +15,4 @@ solved gets its case here, so the next one is recognised faster.
 - [lost-user-messages](cataclistics/lost-user-messages.md): AI Mode saved without the user's messages
 - [version-hook-merges](cataclistics/version-hook-merges.md): the version hook bumped a merge and reformatted the manifest
 - [dependabot-branch-drift](cataclistics/dependabot-branch-drift.md): dependabot's branch left behind, half the workflows updated
+- [copilot-reader-blind](cataclistics/copilot-reader-blind.md): the Copilot reader saw no messages on the live page

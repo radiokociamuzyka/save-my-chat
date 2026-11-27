@@ -31,7 +31,8 @@ chats:
     domains: [github.com]
     matches: ["https://github.com/copilot*"]
     chats: ["https://github.com/copilot/c/*"]
-    verified: false
+    note: messages are .message-container with a class user__… or ai__… (Sett, 2026-11-27)
+    verified: true
 
   - id: chatgpt
     name: ChatGPT
