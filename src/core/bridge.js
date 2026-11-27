@@ -11,6 +11,14 @@
 	const SMC = globalThis.SaveMyChat;
 	if (!SMC?.kit || SMC.bridged) return;
 	SMC.bridged = true;
+	// a line in the page's console (F12), for checking a prototype in the wild: which
+	// readers its code registered, none when the code broke before SaveMyChat.reader
+	const ids = [...SMC.readers.keys()];
+	console.info(
+		ids.length
+			? `save-my-chat: prototype loaded, reader ${ids.join(", ")}`
+			: "save-my-chat: prototype loaded, but its code registered no reader (an error above?)",
+	);
 
 	async function answer(type) {
 		if (type === "save-my-chat:present") {

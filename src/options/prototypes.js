@@ -106,7 +106,8 @@
 					: "It needs at least one pattern.";
 				return;
 			}
-			if (!/SaveMyChat\.reader\s*\(/.test(code.value)) {
+			// the defaults call it through a name of their own (const SMC = globalThis.SaveMyChat)
+			if (!/\.reader\s*\(/.test(code.value)) {
 				status.className = "invalid";
 				status.textContent = "The code registers no reader: it needs SaveMyChat.reader({...}).";
 				return;
