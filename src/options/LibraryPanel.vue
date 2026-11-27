@@ -1,6 +1,6 @@
 <!-- The library (PP1): what was saved, searched, saved again, forgotten; the background keeps it. -->
 <script setup>
-import { onMounted, ref } from "vue";
+import { onActivated, onMounted, ref } from "vue";
 import { backup } from "./backup.js";
 import { shown } from "./shown.js";
 
@@ -36,6 +36,7 @@ async function pack() {
 }
 
 onMounted(list);
+onActivated(list); // shown again (the tabs are kept alive): what Gather added since is listed
 </script>
 
 <template>

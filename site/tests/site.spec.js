@@ -64,6 +64,19 @@ test("the popup runs on the site, sees the made-up chat and saves it", async ({ 
 	await expect(popup).toContainText('Saved "Why does the build fail on CI?", 3 messages.');
 });
 
+test("the popup hands the chats a page lists to the Gather tab, which gathers them", async ({ page }) => {
+	await page.goto("demo/");
+	const popup = page.locator(".demo-popup");
+	await expect(popup.locator(".listed")).toContainText("This page lists 3 chats, 1 saved already.");
+	await popup.getByRole("button", { name: "Gather them into the library..." }).click();
+	const options = page.locator(".demo-options");
+	await expect(options.locator(".tabs li.is-active")).toHaveText("Gather");
+	await options.getByRole("button", { name: "Gather 2 chats" }).click();
+	await expect(options.locator(".gather-said")).toHaveText("2 of 2 gathered into the library.", { timeout: 15_000 });
+	await options.getByRole("link", { name: "Library" }).click();
+	await expect(options.locator(".entry")).toHaveCount(4);
+});
+
 test("the options run on the site: the library, its search, the viewer, the readers", async ({ page }) => {
 	await page.goto("demo/");
 	const options = page.locator(".demo-options");

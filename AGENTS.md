@@ -134,8 +134,9 @@ src/                     the extension's source: built into dist/extension/ (web
                          images never loaded); conversation.js reads .md / .json back; shared with the public site (Q13)
   explorer/              repo.js: the library as files in a git repository (isomorphic-git) on ZenFS in IndexedDB (Q8);
                          typed-array-buffer.js: a dependency's native form, its shims holding eval (rule 5)
-  options/               the options (Vue, Q12): OptionsPage.vue, a tab each - LibraryPanel, ViewerPanel (GistShare, gist.js: Q9),
-                         ExplorerPanel (the files), ReadersPanel (on/off, SelectorEditor),
+  options/               the options (Vue, Q12): OptionsPage.vue, a tab each - LibraryPanel (backup.js: the library as a zip),
+                         ViewerPanel (GistShare, gist.js: Q9), ExplorerPanel (the files),
+                         GatherPanel (gather.js: the chats a page lists, each opened in a background tab and read), ReadersPanel (on/off, SelectorEditor),
                          PrototypesPanel (PrototypeEditor; prototypes.js: their checks and file); the kit and readers loaded first (main.js)
 resources/data/          declarations: chats.yaml, the chat webapps, their domains and conversation addresses (PP2)
 tests/                   vitest + jsdom; fixtures/ are saved HTML of real chats, anonymised; firefox/: Selenium in a real Firefox (Q14)

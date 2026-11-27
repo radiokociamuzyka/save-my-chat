@@ -96,3 +96,12 @@ point was added.
   (`THIRD-PARTY.md`, `licenses/GPL-3.0.txt`). Not checked: how AMO's
   reviewers read an LGPL library in a listed add-on; none has said a
   word on it so far.
+- **2026-11-27. Gathering, never run on a live webapp.** Tested with
+  Firefox's APIs stubbed and on the site's demo only. Not known yet:
+  whether GitHub Copilot's sidebar holds plain links to
+  `/copilot/c/<id>` (the generic finding of a list needs them), whether
+  AI Mode lists its past chats at all, whether a webapp draws a chat in
+  a tab that was never shown (a background tab may be throttled: the
+  30 seconds may not do), and how a webapp takes a few dozen chats
+  opened one after another. A sidebar loading more on scroll lists only
+  what it has shown.
