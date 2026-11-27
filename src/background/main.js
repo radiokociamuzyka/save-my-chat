@@ -55,7 +55,9 @@
 		browser.runtime.onUserScriptMessage.addListener((msg, sender) => {
 			if (msg?.type !== "save-my-chat:answer") return;
 			const waiting = pending.get(msg.id);
-			if (!waiting || sender?.tab?.id !== waiting.tabId) return; // not ours, or not from that tab
+			if (!waiting) return; // not asked: a forged or a late answer
+			// MDN does not promise sender.tab here: when it is there, it must be the tab asked
+			if (sender?.tab && sender.tab.id !== waiting.tabId) return;
 			pending.delete(msg.id);
 			if (msg.error) waiting.reject(new Error(msg.error));
 			else waiting.resolve(msg.answer);
