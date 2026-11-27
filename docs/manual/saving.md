@@ -55,5 +55,19 @@ message with its code, tables and links. Images in a chat are named, not
 loaded, since the extension makes no requests of its own. The file is
 read by the page; nothing of it is kept.
 
+## The files
+
+The **Files** tab keeps every chat of the library as two files, Markdown
+and JSON, in a git repository inside the extension's storage, brought up
+to date when the tab opens. A chat saved again is the same files with a
+new version: pick a file to see each version, **Read** one in the viewer,
+or **Download** it.
+
+## A gist
+
+From the viewer, **Share as a secret gist** makes the chat a secret gist
+of your GitHub account, with a token of yours: see
+[privacy](privacy.md#a-chat-as-a-gist-the-one-thing-it-sends).
+
 When you open the popup on a chat you saved before, it says when, and how
 many messages it gained since, so you know when to save it again.

@@ -131,7 +131,10 @@ src/                     the extension's source: built into dist/extension/ (web
   popup/                 the toolbar button (Vue, Q12): ToolbarPopup.vue, report.js; which reader sees this tab, save as md / json
   viewer/                a saved chat shown (ChatView.vue, MarkdownText.vue: marked's tokens made elements, no innerHTML,
                          images never loaded); conversation.js reads .md / .json back; shared with the public site (Q13)
-  options/               the options (Vue, Q12): OptionsPage.vue, a tab each - LibraryPanel, ViewerPanel, ReadersPanel (on/off, SelectorEditor),
+  explorer/              repo.js: the library as files in a git repository (isomorphic-git) on ZenFS in IndexedDB (Q8);
+                         typed-array-buffer.js: a dependency's native form, its shims holding eval (rule 5)
+  options/               the options (Vue, Q12): OptionsPage.vue, a tab each - LibraryPanel, ViewerPanel (GistShare, gist.js: Q9),
+                         ExplorerPanel (the files), ReadersPanel (on/off, SelectorEditor),
                          PrototypesPanel (PrototypeEditor; prototypes.js: their checks and file); the kit and readers loaded first (main.js)
 resources/data/          declarations: chats.yaml, the chat webapps, their domains and conversation addresses (PP2)
 tests/                   vitest + jsdom; fixtures/ are saved HTML of real chats, anonymised; firefox/: Selenium in a real Firefox (Q14)
