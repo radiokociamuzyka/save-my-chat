@@ -17,7 +17,11 @@ const when = (iso) => new Date(iso).toLocaleString();
 
 const folders = () => {
 	const by = {};
-	for (const path of list.value ?? []) (by[path.split("/")[0]] ??= []).push(path);
+	for (const path of list.value ?? []) {
+		const folder = path.split("/")[0];
+		by[folder] ??= [];
+		by[folder].push(path);
+	}
 	return by;
 };
 
