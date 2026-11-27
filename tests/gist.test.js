@@ -28,9 +28,10 @@ describe("the gist", () => {
 		expect(Object.keys(filesOf(CHAT, tools))).toEqual(["2026-11-27-fix-the-build.md", "2026-11-27-fix-the-build.json"]);
 		const asked = [];
 		const octokit = {
-			request: async (route, body) => (
-				asked.push({ route, body }), { data: { html_url: "https://gist.github.com/x" } }
-			),
+			request: async (route, body) => {
+				asked.push({ route, body });
+				return { data: { html_url: "https://gist.github.com/x" } };
+			},
 		};
 		expect(await share(CHAT, "t", tools, octokit)).toBe("https://gist.github.com/x");
 		expect(asked[0].route).toBe("POST /gists");
