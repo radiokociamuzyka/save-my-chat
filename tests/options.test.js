@@ -8,6 +8,8 @@ import LibraryPanel from "../src/options/LibraryPanel.vue";
 import OptionsPage from "../src/options/OptionsPage.vue";
 import PrototypesPanel from "../src/options/PrototypesPanel.vue";
 import ReadersPanel from "../src/options/ReadersPanel.vue";
+import { shown } from "../src/options/shown.js";
+import ViewerPanel from "../src/options/ViewerPanel.vue";
 import { load } from "./load.js";
 
 beforeAll(() => {
@@ -55,7 +57,7 @@ describe("options: the page", () => {
 		location.hash = "";
 		const page = mount(OptionsPage);
 		await flushPromises();
-		expect(page.findAll(".tabs li").map((li) => li.text())).toEqual(["Library", "Readers", "Prototypes"]);
+		expect(page.findAll(".tabs li").map((li) => li.text())).toEqual(["Library", "Viewer", "Readers", "Prototypes"]);
 		expect(page.find(".tabs li.is-active").text()).toBe("Library");
 		location.hash = "#readers";
 		window.dispatchEvent(new HashChangeEvent("hashchange"));
@@ -132,7 +134,7 @@ describe("options: the library", () => {
 		const entry = panel.find(".entry");
 		expect(entry.find("a").text()).toBe("Turtles");
 		expect(entry.find(".about").text()).toMatch(/^google.com\/search, 2 messages, saved .* \(2 times\)$/);
-		const [md, json] = entry.findAll("button");
+		const [, md, json] = entry.findAll("button");
 		await md.trigger("click");
 		await json.trigger("click");
 		expect(state.sent.filter((m) => m.type === "save-my-chat:library-save").map((m) => m.as)).toEqual(["md", "json"]);
@@ -265,5 +267,66 @@ describe("options: prototypes", () => {
 		expect(panel.find(".prototypes-status").text()).toBe(
 			"1 imported, turned off: look at each, then turn it on. 1 skipped as broken.",
 		);
+	});
+});
+
+const CHAT = {
+	format: "save-my-chat/0",
+	source: { reader: "github-copilot", service: "github.com/copilot", url: "https://github.com/copilot/c/1" },
+	title: "Fix the build",
+	savedAt: "2026-11-27T10:00:00.000Z",
+	turns: [
+		{ role: "user", text: "Why does it fail?" },
+		{ role: "assistant", text: "Missing `await`.", author: "GPT-5" },
+	],
+};
+
+describe("options: the viewer", () => {
+	it("reads a chat of the library", async () => {
+		const { state } = firefox({
+			answer: (msg) =>
+				msg.type === "save-my-chat:library"
+					? [
+							{
+								key: "k",
+								title: CHAT.title,
+								url: "https://x/",
+								service: "s",
+								turns: 2,
+								savedAt: CHAT.savedAt,
+								saves: 1,
+							},
+						]
+					: msg.type === "save-my-chat:library-chat"
+						? CHAT
+						: undefined,
+		});
+		location.hash = "";
+		const panel = mount(LibraryPanel);
+		await flushPromises();
+		await panel.find("button.read").trigger("click");
+		await flushPromises();
+		expect(state.sent.at(-1)).toEqual({ type: "save-my-chat:library-chat", key: "k" });
+		expect(location.hash).toBe("#viewer");
+		const viewer = mount(ViewerPanel);
+		expect(viewer.find("h2").text()).toBe("Fix the build");
+		expect(viewer.findAll(".turn .tag").map((t) => t.text())).toEqual(["User", "Assistant"]);
+		expect(viewer.find(".turn.assistant code").text()).toBe("await");
+	});
+
+	it("opens a saved file, and says what is wrong with one it cannot read", async () => {
+		firefox();
+		shown.chat = null;
+		const viewer = mount(ViewerPanel);
+		const open = async (name, text) => {
+			const input = viewer.find("input.open-file");
+			Object.defineProperty(input.element, "files", { value: [{ name, text: async () => text }], configurable: true });
+			await input.trigger("change");
+			await flushPromises();
+		};
+		await open("chat.json", JSON.stringify(CHAT));
+		expect(viewer.find("h2").text()).toBe("Fix the build");
+		await open("notes.md", "# just notes");
+		expect(viewer.find(".viewer-status").text()).toBe("notes.md: Not a file saved by save-my-chat: no front matter.");
 	});
 });

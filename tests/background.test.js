@@ -162,6 +162,7 @@ describe("background: the library", () => {
 		expect(await send({ type: "save-my-chat:save", tabId: 7, as: "md" })).toMatchObject({ title: "Turtles", turns: 2 });
 		const [entry] = await send({ type: "save-my-chat:library" });
 		expect(entry).toMatchObject({ title: "Turtles", turns: 2, saves: 1 });
+		expect(await send({ type: "save-my-chat:library-chat", key: entry.key })).toEqual(page);
 		await send({ type: "save-my-chat:library-save", key: entry.key, as: "json" });
 		expect(calls.downloads).toEqual([
 			"save-my-chat/google-ai-mode/2026-11-28-turtles.md",

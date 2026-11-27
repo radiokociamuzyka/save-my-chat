@@ -1,6 +1,6 @@
 {
   "name": "save-my-chat",
-  "version": "0.4.19",
+  "version": "0.4.20",
   "private": true,
   "description": "Firefox extension to export your AI chat history out of webapps and save it on your local machine in clear unified formatting",
   "repository": "github:radiokociamuzyka/save-my-chat",
@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "bulma": "1.0.4",
+    "marked": "18.3.0",
     "turndown": "7.2.5",
     "turndown-plugin-gfm": "1.0.2",
     "vue": "3.5.46"
@@ -45,6 +46,9 @@
   "vendor": {
     "bulma": {
       "LICENSE": "bulma.LICENSE"
+    },
+    "marked": {
+      "LICENSE": "marked.LICENSE"
     },
     "turndown": {
       "dist/turndown.js": "turndown.js",

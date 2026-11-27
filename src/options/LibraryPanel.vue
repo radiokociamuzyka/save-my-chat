@@ -1,6 +1,7 @@
 <!-- The library (PP1): what was saved, searched, saved again, forgotten; the background keeps it. -->
 <script setup>
 import { onMounted, ref } from "vue";
+import { shown } from "./shown.js";
 
 const query = ref("");
 const entries = ref(null);
@@ -13,6 +14,10 @@ const again = (e, as) => ask({ type: "save-my-chat:library-save", key: e.key, as
 async function forget(e) {
 	await ask({ type: "save-my-chat:library-forget", key: e.key });
 	await list();
+}
+async function read(e) {
+	shown.chat = await ask({ type: "save-my-chat:library-chat", key: e.key });
+	location.hash = "#viewer";
 }
 const when = (iso) => new Date(iso).toLocaleString();
 
@@ -43,6 +48,7 @@ onMounted(list);
 				{{ e.service }}, {{ e.turns }} messages, saved {{ when(e.savedAt) }}{{ e.saves > 1 ? ` (${e.saves} times)` : "" }}
 			</p>
 			<div class="buttons are-small mt-2">
+				<button type="button" class="button is-link is-light read" @click="read(e)">Read</button>
 				<button type="button" class="button" @click="again(e, 'md')">Markdown</button>
 				<button type="button" class="button" @click="again(e, 'json')">JSON</button>
 				<button type="button" class="button is-danger is-light" @click="forget(e)">Forget</button>

@@ -1,13 +1,15 @@
-<!-- The extension's options: the library, the readers, the prototypes, one tab each
+<!-- The extension's options: the library, the viewer, the readers, the prototypes, one tab each
      (Q12: Vue, Bulma). The tab is kept in the address (#library), so a link opens it. -->
 <script setup>
 import { onMounted, ref } from "vue";
 import LibraryPanel from "./LibraryPanel.vue";
 import PrototypesPanel from "./PrototypesPanel.vue";
 import ReadersPanel from "./ReadersPanel.vue";
+import ViewerPanel from "./ViewerPanel.vue";
 
 const TABS = [
 	{ id: "library", name: "Library", panel: LibraryPanel },
+	{ id: "viewer", name: "Viewer", panel: ViewerPanel },
 	{ id: "readers", name: "Readers", panel: ReadersPanel },
 	{ id: "prototypes", name: "Prototypes", panel: PrototypesPanel },
 ];

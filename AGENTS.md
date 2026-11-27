@@ -129,7 +129,9 @@ src/                     the extension's source: built into dist/extension/ (web
   vendor/                not in git: every dependency of package.json copied unchanged at build (scripts/vendor.mjs, Q10)
   background/main.js     event page: registers enabled readers, answers "save" from the popup, downloads
   popup/                 the toolbar button (Vue, Q12): ToolbarPopup.vue, report.js; which reader sees this tab, save as md / json
-  options/               the options (Vue, Q12): OptionsPage.vue, a tab each - LibraryPanel, ReadersPanel (on/off, SelectorEditor),
+  viewer/                a saved chat shown (ChatView.vue, MarkdownText.vue: marked's tokens made elements, no innerHTML,
+                         images never loaded); conversation.js reads .md / .json back; shared with the public site (Q13)
+  options/               the options (Vue, Q12): OptionsPage.vue, a tab each - LibraryPanel, ViewerPanel, ReadersPanel (on/off, SelectorEditor),
                          PrototypesPanel (PrototypeEditor; prototypes.js: their checks and file); the kit and readers loaded first (main.js)
 resources/data/          declarations: chats.yaml, the chat webapps, their domains and conversation addresses (PP2)
 tests/                   vitest + jsdom; fixtures/ are saved HTML of real chats, anonymised
