@@ -183,10 +183,14 @@
 	}
 
 	// The chats a tab lists, each with when it was saved, if it was: { reader, name, chats };
-	// load: the page's list scrolled to its end first, until no more chats come (RR7)
+	// load: the page's list scrolled to its end first, until no more chats come (RR7). The
+	// tab is brought to the front of its window for it: ChatGPT loads more of its list only
+	// while its page is shown (seen live through the gate: a fresh tab in the background, 21
+	// chats and no more; in front, 47 in one run).
 	async function list({ tabId, load = false }) {
 		const reader = await defaultOf(tabId);
 		if (!reader) return null;
+		if (load) await browser.tabs.update(tabId, { active: true });
 		const chats = (await ask(tabId, "save-my-chat:list", { patterns: reader.chats ?? [], load })) ?? [];
 		const index = await library.entries();
 		return {
