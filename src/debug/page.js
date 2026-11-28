@@ -404,7 +404,10 @@
 		return { box: signature(box), before, moved, after: { ...where(box), count: counted() } };
 	}
 
-	const TOOLS = { outline, query, element, snapshot, highlight, clear, point, scroll, picks: () => picks };
+	// how far a whole read is (kit readWhole), without touching the page
+	const progress = () => globalThis.SaveMyChat?.progress ?? null;
+
+	const TOOLS = { outline, query, element, snapshot, highlight, clear, point, scroll, progress, picks: () => picks };
 
 	globalThis.SaveMyChatDebug = {
 		// what debug/background.js calls through scripting.executeScript: a name and its arguments

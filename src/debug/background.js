@@ -70,6 +70,7 @@
 		highlight: (args) => onPage(tabArg(args), "highlight", args),
 		clear: (args) => onPage(tabArg(args), "clear", args),
 		scroll: (args) => onPage(tabArg(args), "scroll", args),
+		progress: (args) => onPage(tabArg(args), "progress", args),
 		async point(args) {
 			const tabId = tabArg(args);
 			const tab = await browser.tabs.update(tabId, { active: true });
@@ -81,7 +82,7 @@
 			if (clear) await browser.storage.local.set({ [PICKS]: [] });
 			return all;
 		},
-		read: (args) => SMC.background.ask(tabArg(args), "save-my-chat:read"),
+		read: (args) => SMC.background.ask(tabArg(args), "save-my-chat:read", args.whole ? { whole: true } : {}),
 		inspect: (args) => SMC.background.ask(tabArg(args), "save-my-chat:inspect"),
 		list: (args) => SMC.background.list({ tabId: tabArg(args), load: Boolean(args.load) }),
 		// what the tab's reader reads with these selectors in front of its own (as the
