@@ -1,0 +1,49 @@
+{
+    "type":"S3",
+    "name":"huggingface media bucket",
+    "url":"https://huggingface.co/buckets/Sarverott/mediacontainer",
+    "flags":{
+        "remote_store_delegation":true
+    },
+    "use":[
+        {
+            "path":[
+                "save-my-chat_poster.png"
+            ],
+            "label":"poster",
+            "description":"",
+            "hashes":[],
+            "meta":{}
+        },
+        {
+            "path":[
+                "save-my-chat_logo.png"
+            ],
+            "label":"icon",
+            "description":"",
+            "hashes":[],
+            "meta":{}
+        },
+        {
+            "path":[
+                "save-my-chat_tweet-image-in-afrikaans.png"
+            ],
+            "label":"coverbox with afrikaans text",
+            "description":"",
+            "hashes":[],
+            "meta":{}
+        },
+        {
+            "path":[
+                "save-my-chat_banner.png",
+                "save-my-chat_banner_compressed.png"
+            ],
+            "label":"banner",
+            "description":"banner image for marketing purposes and rich presence stuff for soc-med and else",
+            "hashes":[
+                "xet_0ccebd5af3bc4049623d843b928fd4605a600c53607c0f4ef27028edef9671b2",
+            ],
+            "meta":{}
+        }
+    ]
+}
