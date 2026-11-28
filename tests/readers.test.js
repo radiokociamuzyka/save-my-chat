@@ -262,6 +262,21 @@ describe("readers", () => {
 		]);
 	});
 
+	it("claude lists a chat once, by its address without the artifact's query and its own title", () => {
+		const w = load([...KIT, "readers/claude.js"], {
+			url: "https://claude.ai/recents",
+			html: `<!doctype html><body><nav>
+				<a href="/chat/abc?artifact=x1&frame_from=row"><span data-row-label="iconless"><span dir="auto">A draft</span></span><span>Includes an artifact</span></a>
+				<a href="/chat/abc">A draft</a>
+				<a href="/chat/def">Plain one</a>
+				<a href="/new">New chat</a><a href="/chat/def/edit">not a chat</a></nav></body>`,
+		});
+		expect(w.SaveMyChat.listed(w.document, w.location.href, [])).toEqual([
+			{ url: "https://claude.ai/chat/abc", title: "A draft" },
+			{ url: "https://claude.ai/chat/def", title: "Plain one" },
+		]);
+	});
+
 	it("claude reads the older layout without rows: the user's messages and Claude's answers", async () => {
 		const c = await read(
 			"claude",
