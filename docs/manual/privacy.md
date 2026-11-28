@@ -37,7 +37,7 @@ machine. That is all it does.
 | Permission | Why |
 | --- | --- |
 | access to `www.google.com` and `github.com` | the pages its readers read |
-| access to `chatgpt.com`, `claude.ai`, `gemini.google.com` (optional, asked when you **Allow** one in the Readers tab) | the pages of those readers |
+| access to `chatgpt.com`, `claude.ai`, `gemini.google.com`, `chat.deepseek.com`, `grok.com`, `x.com` (optional, asked when you **Allow** one in the Readers tab) | the pages of those readers; on `x.com`, Grok's pages only (`/i/grok`) are read |
 | `scripting` | to put a reader into such a page |
 | `storage` | its settings, your prototypes, the library |
 | `downloads` | to write the file you save |

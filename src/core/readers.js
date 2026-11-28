@@ -47,5 +47,32 @@
 			origins: ["https://gemini.google.com/*"],
 			file: "readers/gemini.js",
 		},
+		{
+			id: "deepseek",
+			name: "DeepSeek",
+			matches: ["https://chat.deepseek.com/*"],
+			chats: ["https://chat.deepseek.com/a/chat/s/*"],
+			optional: true,
+			origins: ["https://chat.deepseek.com/*"],
+			file: "readers/deepseek.js",
+		},
+		{
+			id: "grok",
+			name: "Grok",
+			matches: ["https://grok.com/*"],
+			chats: ["https://grok.com/c/*"],
+			optional: true,
+			origins: ["https://grok.com/*"],
+			file: "readers/grok.js",
+		},
+		{
+			id: "x-grok",
+			name: "Grok on X",
+			matches: ["https://x.com/i/grok*"],
+			chats: ["https://x.com/i/grok/c/*"],
+			optional: true,
+			origins: ["https://x.com/*"],
+			file: "readers/x-grok.js",
+		},
 	];
 })();
