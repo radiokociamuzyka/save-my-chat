@@ -1,19 +1,21 @@
 // Claude, a conversation at https://claude.ai/chat/<id>.
-// Fitted from Sett's snippet, drafted-snippets/claude-basic-handle.js (RR7): on the
-// live page every message is an element with a data-perf-row attribute. A row's
-// role is told by that attribute's value when it names one (user, human /
-// assistant...), else by the user's message ([data-testid="user-message"]) inside
-// it: a row without one is Claude's. The older layout, without rows (user-message
+// Fitted from Sett's snippet, drafted-snippets/claude-basic-handle.js (RR7, RR8): on
+// the live page every message is an element with a data-perf-row attribute, "human"
+// for the user's and "assistant" for Claude's (Sett, RR8). Another value is guessed
+// from its words (user / model...), else by the user's message
+// ([data-testid="user-message"]) inside the row: a row without one is Claude's. The older layout, without rows (user-message
 // and font-claude-response), is read when no row is found. The page's title is
 // "<chat> - Claude".
-// NOTE: the rows are Sett's, seen on 2026-11-27; what values data-perf-row takes
-// was not seen, nor this reader run on the live page. A new selector goes in front
+// NOTE: the rows and their values are Sett's, seen on 2026-11-27 and 28; this
+// reader has not been run on the live page. A new selector goes in front
 // of its set (or as an override in the Readers tab); keep the old ones.
 (() => {
 	const SMC = globalThis.SaveMyChat;
 
 	function roleOf(row, userCss) {
 		const value = row.getAttribute("data-perf-row") || "";
+		if (value === "human") return "user";
+		if (value === "assistant") return "assistant";
 		if (/user|human/i.test(value)) return "user";
 		if (/assistant|claude|response|model|\bai\b/i.test(value)) return "assistant";
 		return userCss && (row.matches(userCss) || row.querySelector(userCss)) ? "user" : "assistant";

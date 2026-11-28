@@ -23,6 +23,11 @@ machine. That is all it does.
   when you open them yourself, signed in as you are. Nothing read is
   sent anywhere. The **backup** zip is made on your machine and written
   to your downloads.
+- **The debug build** (`task run`, for developing readers; not what AMO
+  ships) has a **Debug** tab that connects an agent of your own to the
+  pages open in Firefox, through a program on your machine. What it
+  reads of a page goes to that agent and its model: it connects only
+  when you click **Connect**. See the [debug gate](../guides/debug.md).
 - **The report** under *What the reader saw* holds selectors and counts,
   never the text of a conversation, and goes to the clipboard only when
   you click **Copy report**.

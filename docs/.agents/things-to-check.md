@@ -12,6 +12,19 @@ point was added.
 
 ## Not verified
 
+- **2026-11-28. The debug gate has not run in a real Firefox.** Its
+  pieces are tested apart (tests/debug.test.js: the page's tools in
+  jsdom, the host and the MCP server over a real socket with the
+  extension played by the test); the native host was not installed on
+  Sett's machine by Cleo (RR9 asks Sett to). Unknown: whether Firefox
+  keeps the event page alive while the native port is open (MDN says an
+  open port does), and whether `executeScript` returns the page tools'
+  promises' values in Firefox 142 as in the tests.
+- **2026-11-28. ChatGPT's transcript rows and Claude's `human` /
+  `assistant` values** come from Sett's snippets, not from a page Cleo
+  saw; the load-and-wait's step back is a guess at ChatGPT's
+  IntersectionObserver.
+
 - **2026-11-26. `release.yml` has not run yet.** It runs on the first
   merge of `development` into `master`: tag, release with the zip,
   `master` back into `development`. Unsigned until the AMO secrets exist.

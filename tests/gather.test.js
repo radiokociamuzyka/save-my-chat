@@ -69,6 +69,30 @@ describe("the chats a page lists", () => {
 		expect(all).toHaveLength(47);
 	});
 
+	it("keep the chats a virtual list drops as it is scrolled, and wait for a slow batch (RR8)", async () => {
+		const w = load(KIT, { url: "https://chatgpt.com/", html: `<body><nav id="side"></nav></body>` });
+		const side = w.document.getElementById("side");
+		let next = 1;
+		const show = (n) => {
+			side.replaceChildren(); // only the newest batch stays on the page
+			for (let i = 0; i < n; i++) {
+				const a = w.document.createElement("a");
+				a.href = `/c/${next}`;
+				a.textContent = `Chat ${next++}`;
+				side.append(a);
+			}
+		};
+		show(20);
+		const batches = [10, 0, 0, 7, 0, 0, 0]; // a batch late by two rounds
+		w.HTMLElement.prototype.scrollIntoView = () => {
+			const n = batches.shift() ?? 0;
+			if (n) show(n);
+		};
+		const all = await w.SaveMyChat.loadList(w.document, w.location.href, ["https://chatgpt.com/c/*"], { wait: 1 });
+		expect(all).toHaveLength(37);
+		expect(all.at(-1)).toEqual({ url: "https://chatgpt.com/c/37", title: "Chat 37" });
+	});
+
 	it("are answered by a prototype's bridge, with the patterns the background sent", async () => {
 		const w = load(KIT, { url: "https://github.com/copilot", html: SIDEBAR });
 		const sent = [];

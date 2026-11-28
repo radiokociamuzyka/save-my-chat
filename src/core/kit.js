@@ -356,11 +356,16 @@
 		return [...chats.values()];
 	}
 
-	// ---- loading what a page draws only as it is scrolled (Sett, RR7) ----------
+	// ---- loading what a page draws only as it is scrolled (Sett, RR7, RR8) ------
 	// A webapp's list of chats grows as its end is scrolled to (ChatGPT: 20, 31,
 	// 47...), a long chat brings its older messages as its top is. Load and wait:
 	// scroll the box holding the items to that end, wait, count again, until the
 	// count stays the same `still` times in a row.
+	// RR8: ChatGPT's list still stopped short. A webapp loads its next batch when a
+	// mark at the end comes into view (an IntersectionObserver): a box already at its
+	// end does not bring it into view again, and a batch slower than one wait looked
+	// like the end. So each round first steps back from the end, then goes to it, and
+	// the end is taken after three quiet rounds of 1.5 s, not two of 1.2 s.
 
 	const pause = (ms) => new Promise((done) => setTimeout(done, ms));
 
@@ -373,28 +378,35 @@
 		return doc.scrollingElement || doc.documentElement;
 	}
 
-	//   find(): the items now on the page (elements); to: "top" | "bottom"
-	async function loadAll(doc, find, to, { wait = 1200, still = 2, rounds = 300 } = {}) {
-		let most = find().length;
+	//   find(): the items now on the page (elements); to: "top" | "bottom";
+	//   count(): how many are known, after each round (default: those on the page)
+	async function loadAll(doc, find, to, { wait = 1500, still = 3, rounds = 300, count = () => find().length } = {}) {
+		let most = count();
 		for (let i = 0, same = 0; i < rounds && same < still; i++) {
 			const items = find();
 			const edge = to === "top" ? items[0] : items.at(-1);
 			const box = scroller(edge, doc);
+			// a step back from the end, so the end comes into view again
+			const back = Math.max(box.clientHeight / 2, 200);
+			box.scrollTop = to === "top" ? box.scrollTop + back : Math.max(box.scrollTop - back, 0);
+			await pause(Math.min(wait, 150));
 			box.scrollTop = to === "top" ? 0 : box.scrollHeight;
 			edge?.scrollIntoView?.({ block: to === "top" ? "start" : "end" });
 			await pause(wait);
-			const now = find().length;
+			const now = count();
 			same = now > most ? 0 : same + 1;
 			most = Math.max(most, now);
 		}
 		return most;
 	}
 
-	// the reader's messages as elements: every part's selectors but the title's
+	// the reader's messages as elements: every part's selectors but the title's and
+	// the transcript's (what holds them all)
+	const NOT_MESSAGES = ["title", "transcript"];
 	function messagesOf(sets, doc) {
 		const css = selector(
 			Object.entries(sets)
-				.filter(([part]) => part !== "title")
+				.filter(([part]) => !NOT_MESSAGES.includes(part))
 				.flatMap(([, list]) => list),
 			doc,
 		);
@@ -411,22 +423,33 @@
 		return 0;
 	}
 
-	// the whole list: its links to chats, scrolled to its end until no more come
+	// The whole list: its links to chats, scrolled to its end until no more come.
+	// Every chat seen on the way is kept: a long list may drop from the page the
+	// ones scrolled past (a virtual list), as long chats may.
 	async function loadList(doc = root.document, url = root.location?.href, patterns = [], options) {
+		const seen = new Map();
+		const keep = () => {
+			for (const chat of listed(doc, url, patterns)) {
+				const known = seen.get(chat.url);
+				if (!known || chat.title.length > known.title.length) seen.set(chat.url, chat);
+			}
+			return seen.size;
+		};
 		const links = () => {
-			const wanted = new Set(listed(doc, url, patterns).map((c) => c.url));
+			keep();
 			return [...doc.querySelectorAll("a[href]")].filter((a) => {
 				try {
 					const href = new URL(a.getAttribute("href"), doc.baseURI);
 					href.hash = "";
-					return wanted.has(href.href);
+					return seen.has(href.href);
 				} catch {
 					return false;
 				}
 			});
 		};
-		await loadAll(doc, links, "bottom", options);
-		return listed(doc, url, patterns);
+		await loadAll(doc, links, "bottom", { ...options, count: keep });
+		keep();
+		return [...seen.values()];
 	}
 
 	function present(doc = root.document, url = root.location?.href) {

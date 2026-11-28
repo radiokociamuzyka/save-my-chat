@@ -129,6 +129,8 @@ src/                     the extension's source: built into dist/extension/ (web
   licenses/              GPL-3.0.txt: the GPL the LGPL of ZenFS supplements, shipped as LGPL 4(b) asks
   vendor/                not in git: every dependency of package.json copied unchanged at build (scripts/vendor.mjs, Q10)
   background/main.js     event page: registers enabled readers, answers "save" from the popup, downloads
+  debug/                 the debug gate, in the debug build only (task run, SMC_DEBUG=1): background.js, native messaging
+                         to scripts/debug/host.mjs and the agent's tools; page.js, in a tab: outline, query, marks, pointing
   popup/                 the toolbar button (Vue, Q12): ToolbarPopup.vue, report.js; which reader sees this tab, save as md / json
   viewer/                a saved chat shown (ChatView.vue, MarkdownText.vue: marked's tokens made elements, no innerHTML,
                          images never loaded); conversation.js reads .md / .json back; shared with the public site (Q13)
@@ -136,9 +138,14 @@ src/                     the extension's source: built into dist/extension/ (web
                          typed-array-buffer.js: a dependency's native form, its shims holding eval (rule 5)
   options/               the options (Vue, Q12): OptionsPage.vue, a tab each - LibraryPanel (backup.js: the library as a zip),
                          ViewerPanel (GistShare, gist.js: Q9), ExplorerPanel (the files),
-                         GatherPanel (gather.js: the chats a page lists, each opened in a background tab and read), ReadersPanel (on/off, SelectorEditor),
+                         GatherPanel (gather.js: the chats a page lists, each read in a window of its own), ReadersPanel (on/off, SelectorEditor),
+                         DebugPanel (the debug build's gate: connect, point, picks),
                          PrototypesPanel (PrototypeEditor; prototypes.js: their checks and file); the kit and readers loaded first (main.js)
 resources/data/          declarations: chats.yaml, the chat webapps, their domains and conversation addresses (PP2)
+resources/media/         .index.json: Sett's media container (a Hugging Face bucket), the images fetched for a release
+resources/samples/       Sett's public shares (.map.json) and their pages sampled by the gate, DN_<host>/<name>/
+scripts/debug/           the debug gate's side on the machine: server.mjs (MCP, .mcp.json), host.mjs (native messaging),
+                         install.mjs (task debug:install), tools.mjs (the tools), samples.mjs, manifest.mjs (the debug build's)
 tests/                   vitest + jsdom; fixtures/ are saved HTML of real chats, anonymised; firefox/: Selenium in a real Firefox (Q14)
 docs/devlog/             the BOS devlog: VISION, ROADMAP, TODO, BRAINSTORM, PROPOSALS, ORDERS, INQUIRIES;
                          shown on GitHub as milestones, issues and a board (scripts/github/devlog.py) -
@@ -183,7 +190,8 @@ stamps the format, source and time. The format is described in
 | Command | What it does |
 | --- | --- |
 | `task install` | `npm ci` |
-| `task run` | Firefox with the built extension loaded; Vite rebuilds and web-ext reloads on every change (`scripts/run.mjs`) |
+| `task run` | Firefox with the debug build loaded (the debug gate; `SMC_DEBUG=0` for the release's); Vite rebuilds and web-ext reloads on every change (`scripts/run.mjs`) |
+| `task debug:install` (`-- --remove`) | the debug gate's native host registered for Firefox, once per machine (`docs/guides/debug.md`); writes into the user's home |
 | `task extension` | the extension built into `dist/extension/` (Q12): the Vue pages by Vite, the rest of `src/` as it is |
 | `task check` | Biome, changes nothing |
 | `task format` | Biome with safe fixes |

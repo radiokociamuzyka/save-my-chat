@@ -14,24 +14,22 @@ labelled `request` (`task github:devlog`), closed when it leaves this file.
 
 ---
 
-## RR8. The second try: gathering in its own window, Claude's rows, what the readers see in front of you
+## RR9. The debug gate opened once, and the readers tried again
 
-*Why:* RR7 found lists seen and chats not read on Claude, ChatGPT and
-Gemini, and AI Mode listing nothing. Gathering now opens its chats in a
-window of its own, where the tab is shown (a background tab may never
-draw a chat), and scrolls lists and chats until they are whole; Claude
-reads your `[data-perf-row]` rows. Whether ChatGPT's and Gemini's
-selectors were the trouble too can only be seen on a chat in front of
-you.
+*Why:* the agent cannot see the live webapps; with the gate it can,
+while you are there to point at what it should read. The readers'
+fixes of RR8 (ChatGPT's list and rows, Claude's values) wait for the
+same live look.
 
 *How:*
-1. With this release, gather a few chats on Claude, ChatGPT or Gemini.
-   Does each line end *gathered*? On a list of 40 or more, does the
-   popup find them all after its scrolling?
-2. On one chat of ChatGPT, Gemini and Claude each, in front of you: open
-   the toolbar button. If it sees no messages, **Copy report** under
-   *What the reader saw* and paste it here (selectors and counts, no
-   text of the chat). For Claude: what value does `data-perf-row` hold
-   on your messages and on Claude's (F12, any row)?
-3. AI Mode: where are your past AI Mode chats listed, and are they
-   links? An item's **Copy → Outer HTML**, text replaced, is enough.
+1. Once: `task debug:install` (writes the native host's manifest into
+   `~/.mozilla/native-messaging-hosts/` and a launcher into
+   `~/.local/share/save-my-chat/`; `-- --remove` undoes it).
+2. `task run` (now the debug build), open the extension's options, tab
+   **Debug**, **Allow native messaging and connect**.
+3. In Claude Code in this repository, allow the `save-my-chat-debug`
+   server of `.mcp.json` (`/mcp`), and tell Cleo which tab to look at.
+4. With the gate or without: gather on ChatGPT again; does the list
+   reach the end? Is a gathered ChatGPT or Claude chat read?
+5. `resources/samples/.map.json`, your public shares, when you have
+   them.
