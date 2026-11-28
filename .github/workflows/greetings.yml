@@ -1,0 +1,21 @@
+name: Greetings
+
+# NOTE: todo - radical change to recognize first-time contributors for perform some onboard and tutorial guidance... or something like that
+# NOTE: todo - (all of them multilingual) yt videos, some tutorial thingies like written guides and audio podcasts
+
+#on: [pull_request_target, issues]
+
+on: workflow_dispatch
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+    - uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        issue-message: "Message that will be displayed on users' first issue"
+        pr-message: "Message that will be displayed on users' first pull request"
