@@ -72,3 +72,23 @@ what we have to be done by list of chats we want to support."
   Hugging Face login), so no chat could be seen.
 - The readers read live are `verified: true` in `chats.yaml`.
 
+## 2026-11-28, the signed-in four (the chat, word for word)
+
+> so let's bring these readers too. proceede please
+
+> alright, besides gradio everywhere you can do what has to be done
+
+**Decision:** Sett signed in; each read live through the gate, an optional reader each:
+
+- **Microsoft Copilot**, now at `copilot.com` (`copilot.microsoft.com` declared too): its
+  question and answer test ids, the screen reader's "You said:" / "Copilot said:" left out.
+- **Mistral Le Chat**: by author role and message id, chats and "Vibe Work" (`/work/`); a code
+  block's language header left out (18 messages read).
+- **Perplexity**: its chats are sessions now (`/session/<id>`); the question's bubble and the
+  answer's final text, the steps left out. Its long threads are not read whole yet: it
+  fills older blocks only on a real scroll (things-to-check).
+- **HuggingChat**: by message type and role, an answer's tools panel left out.
+- The privacy statement, the manual and the store listing name them all; AMO's listing
+  summary changed with it (Sett's to copy in).
+- The Gradio space, Sett's to leave aside for now, waits with Q15 a.
+

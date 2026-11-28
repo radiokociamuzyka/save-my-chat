@@ -37,7 +37,7 @@ machine. That is all it does. The formal statement: [Privacy statement](../state
 | Permission | Why |
 | --- | --- |
 | access to `www.google.com` and `github.com` | the pages its readers read |
-| access to `chatgpt.com`, `claude.ai`, `gemini.google.com`, `chat.deepseek.com`, `grok.com`, `x.com` (optional, asked when you **Allow** one in the Readers tab) | the pages of those readers; on `x.com`, Grok's pages only (`/i/grok`) are read |
+| access to `chatgpt.com`, `claude.ai`, `gemini.google.com`, `copilot.com`, `www.perplexity.ai`, `chat.mistral.ai`, `chat.deepseek.com`, `huggingface.co`, `aistudio.google.com`, `notebook.google.com`, `grok.com`, `x.com` (optional, asked when you **Allow** one in the Readers tab) | the pages of those readers; on `x.com` Grok's pages only (`/i/grok`), on `huggingface.co` HuggingChat's (`/chat`) |
 | `scripting` | to put a reader into such a page |
 | `storage` | its settings, your prototypes, the library |
 | `downloads` | to write the file you save |
