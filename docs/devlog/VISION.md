@@ -58,3 +58,14 @@ same whichever service it came from.
   click, and the whole library packed into one `.zip` (Sett, 2026-11-27).
 - **Phase 6, release.** Icons, store listing, privacy statement; listed on
   AMO, the first signing with it (until then a temporary add-on).
+
+## Predicted scenarios
+
+What may come, and what is done then.
+
+- **AMO's reviewers refuse access beyond a list of AI chat providers**
+  (Q15, Sett 2026-11-28). The optional `https://*/*` and `http://*/*`,
+  asked for only at an address the user types, carry the readers of
+  self-hosted webapps (Open WebUI, a Gradio space). If a review says no
+  to them, Q15 is opened again with that review in it: b) prototypes
+  from a template, c) the fixed `*.hf.space`, or another way.
