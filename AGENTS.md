@@ -126,6 +126,7 @@ src/                     the extension's source: built into dist/extension/ (web
     readers.js           the list of default readers, written from resources/data/chats.yaml (task chats)
   readers/               one default reader per chat webapp, each calls SaveMyChat.reader({...})
     drafted-snippets/    Sett's snippets as written, the sources readers are fitted from; not packaged
+  icons/                 the add-on's icons, 16 to 128 px, placed by task media from the logo (committed: builds need them)
   licenses/              GPL-3.0.txt: the GPL the LGPL of ZenFS supplements, shipped as LGPL 4(b) asks
   vendor/                not in git: every dependency of package.json copied unchanged at build (scripts/vendor.mjs, Q10)
   background/main.js     event page: registers enabled readers, answers "save" from the popup, downloads
@@ -142,7 +143,8 @@ src/                     the extension's source: built into dist/extension/ (web
                          DebugPanel (the debug build's gate: connect, point, picks),
                          PrototypesPanel (PrototypeEditor; prototypes.js: their checks and file); the kit and readers loaded first (main.js)
 resources/data/          declarations: chats.yaml, the chat webapps, their domains and conversation addresses (PP2)
-resources/media/         .index.json: Sett's media container (a Hugging Face bucket), the images fetched for a release
+resources/media/         .index.json: Sett's media container (a Hugging Face bucket); task media fetches its images here and
+                         sizes them into derived/ (all out of git but the index, README, .gitignore)
 resources/samples/       Sett's public shares (.map.json) and their pages sampled by the gate, DN_<host>/<name>/
 scripts/debug/           the debug gate's side on the machine: server.mjs (MCP, .mcp.json), host.mjs (native messaging),
                          install.mjs (task debug:install), tools.mjs (the tools), samples.mjs, manifest.mjs (the debug build's)
@@ -160,7 +162,8 @@ scripts/version.mjs      the one version: sync, bump, bump-commit (pre-commit ho
 scripts/release/         release.sh: what release.yml does on master, runnable by hand; amo.sh: a release to AMO, listed
 docs/changelog/          what happened per phase, the owner's words word for word, append-only
 docs/index.md, manual/   the user's manual, on Read the Docs with the guides (mkdocs.yml, .readthedocs.yaml)
-docs/guides/             how to write a reader, the unified format
+docs/guides/             how to write a reader, the unified format, the debug gate
+docs/statements/         the formal texts: privacy.md, listing.md (AMO); the site reads them raw from master
 docs/almanac/            what was learnt the hard way: cataclistics/ (a case per page), solutions/ (a topic each)
 docs/.agents/            agents' own domain
 .github/                 AUTHORS, bos.json, community files, workflows; Jarvis: copilot-instructions.md, prompts/
@@ -192,6 +195,7 @@ stamps the format, source and time. The format is described in
 | `task install` | `npm ci` |
 | `task run` | Firefox with the debug build loaded (the debug gate; `SMC_DEBUG=0` for the release's), on the profile kept in `dist/firefox-profile/`; Vite rebuilds and web-ext reloads on every change (`scripts/run.mjs`) |
 | `task debug:install` (`-- --remove`) | the debug gate's native host registered for Firefox, once per machine (`docs/guides/debug.md`); writes into the user's home |
+| `task media` (`-- --force`) | the media container's images fetched, sized by ffmpeg once, the small ones placed for the builds (`scripts/media.mjs`) |
 | `task extension` | the extension built into `dist/extension/` (Q12): the Vue pages by Vite, the rest of `src/` as it is |
 | `task check` | Biome, changes nothing |
 | `task format` | Biome with safe fixes |
