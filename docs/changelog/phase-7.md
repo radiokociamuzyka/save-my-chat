@@ -38,3 +38,19 @@ very long chat is never rendered whole, and a message is to be known by its id.
   messages known by the page's ids (Sett's scrapnote); six tries on a long ChatGPT
   chat shaped it, the last reading 500 messages in 17 minutes and still going.
   Seeing such a chat to its end, faster, is the next step.
+
+## 2026-11-28, the rest of the chats (the chat, word for word)
+
+> first keep rest of chats handled properly. now history of AI mode, handling deepseek and grok in both variants (x.com and grok.com)
+
+**Decision:** the long chat's speed waits; the other webapps first, each tried through the gate:
+
+- **AI Mode's history**: 215 threads listed from the buttons of its virtual history panel;
+  a thread opened by its button when gathered, saved under the list's address. On the way,
+  an address guessed from a thread's title started a new search in Sett's account, once; no
+  address is guessed on such a page since.
+- **Lists** go down one screen at a time from their top, every chat seen kept (a virtual list
+  shows 10 of 215), ending by Sett's check; ChatGPT's 47 and Claude's 12 still listed.
+- **DeepSeek**, **Grok** (grok.com) and **Grok on X**: optional readers, each list from the
+  page that links the chats (DeepSeek's sidebar, `/history`, `/i/grok/history`), long chats
+  read whole by their keys (26 and 20 messages where one read sees 5 and 7).
