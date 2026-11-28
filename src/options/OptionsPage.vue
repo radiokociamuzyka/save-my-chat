@@ -1,7 +1,9 @@
 <!-- The extension's options: the library, the viewer, the files, gathering, the readers, the prototypes, one tab each
-     (Q12: Vue, Bulma). The tab is kept in the address (#library), so a link opens it. -->
+     (Q12: Vue, Bulma); in the debug build (task run), the debug gate too. The tab is kept in the address (#library),
+     so a link opens it. -->
 <script setup>
 import { onMounted, ref } from "vue";
+import DebugPanel from "./DebugPanel.vue";
 import ExplorerPanel from "./ExplorerPanel.vue";
 import GatherPanel from "./GatherPanel.vue";
 import LibraryPanel from "./LibraryPanel.vue";
@@ -17,6 +19,9 @@ const TABS = [
 	{ id: "readers", name: "Readers", panel: ReadersPanel },
 	{ id: "prototypes", name: "Prototypes", panel: PrototypesPanel },
 ];
+// the debug build's manifest asks for native messaging (scripts/debug/manifest.mjs)
+const debugBuild = globalThis.browser?.runtime?.getManifest?.()?.optional_permissions?.includes("nativeMessaging");
+if (debugBuild) TABS.push({ id: "debug", name: "Debug", panel: DebugPanel });
 const fromHash = () => TABS.find((t) => `#${t.id}` === location.hash) ?? TABS[0];
 const tab = ref(fromHash());
 onMounted(() => window.addEventListener("hashchange", () => (tab.value = fromHash())));

@@ -110,8 +110,15 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 - [x] Gathering in a window of its own, where the chat is shown (RR7)
 - [ ] Readers of the webapps of Sett's drafts: Google AI Studio, Grok (grok.com, x.com), NotebookLM, and Open WebUI and a Gradio space after Q15
 - [ ] Each one's patterns checked on the live webapp, `verified: true`
+- [x] ChatGPT's list loaded whole: a step back before each scroll to its end, three quiet rounds, every chat seen kept (RR8)
+- [x] ChatGPT read by its transcript's rows, Claude's rows by `human` / `assistant` (RR8)
+- [x] The debug gate, in the debug build only: the Debug tab, native messaging to a host, an MCP server for the agent; outline, query, try, marks, the user pointing (RR8, Q15)
+- [ ] Self-hosted webapps' readers at an address the user types, `https://*/*` and `http://*/*` optional (Q15 a), with the first of them, Open WebUI
+- [ ] Samples of each webapp's pages from the public shares Sett lists in `resources/samples/.map.json`, saved by the gate's `sample`; tests reading them as fixtures
+- [ ] WebMCP: the gate's tools offered to an agent in the browser, when Firefox has `navigator.modelContext` (PP3)
 
 ## Phase 6: release
 
 - [ ] Icons, store listing, privacy statement
+- [ ] The media container (Sett's inquiry, `resources/media/.index.json`): its files fetched at build time for each release, the icon into the manifest's sizes, the poster and banner into the site and the Read the Docs pages
 - [x] The id settled for good and the first signing (`AMO_JWT_*` secrets, Sett), listed on AMO

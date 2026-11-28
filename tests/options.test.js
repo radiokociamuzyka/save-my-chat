@@ -5,6 +5,7 @@ import { runInThisContext } from "node:vm";
 import { flushPromises, mount } from "@vue/test-utils";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { open as openFiles } from "../src/explorer/repo.js";
+import DebugPanel from "../src/options/DebugPanel.vue";
 import ExplorerPanel from "../src/options/ExplorerPanel.vue";
 import LibraryPanel from "../src/options/LibraryPanel.vue";
 import OptionsPage from "../src/options/OptionsPage.vue";
@@ -409,5 +410,52 @@ describe("options: the stored files", () => {
 		await panel.find(".version button.read").trigger("click");
 		await vi.waitFor(() => expect(shown.chat?.title).toBe("Fix the build"));
 		expect(location.hash).toBe("#viewer");
+	});
+});
+
+describe("options: the debug gate (debug build only)", () => {
+	it("is a tab only when the manifest asks for native messaging", async () => {
+		firefox({ answer: () => [] });
+		location.hash = "";
+		globalThis.browser.runtime.getManifest = () => ({ optional_permissions: ["userScripts"] });
+		expect(
+			mount(OptionsPage)
+				.findAll(".tabs li")
+				.map((li) => li.text()),
+		).not.toContain("Debug");
+		globalThis.browser.runtime.getManifest = () => ({ optional_permissions: ["userScripts", "nativeMessaging"] });
+		expect(mount(OptionsPage).findAll(".tabs li").at(-1).text()).toBe("Debug");
+	});
+
+	it("connects after the permission is granted, lets the user point at a tab, shows the picks", async () => {
+		const pick = { at: "t", label: "user", text: "Hi?", suggest: [{ css: "[data-perf-row]", found: 3 }], note: "mine" };
+		const { state, data } = firefox({
+			stored: { debugPicks: [pick] },
+			answer: (msg) =>
+				msg.type === "save-my-chat:debug-connect" ? { connected: true, error: "" } : { connected: false, error: "" },
+		});
+		globalThis.browser.tabs = {
+			query: async () => [
+				{ id: 3, url: "https://github.com/copilot/c/1", title: "Copilot" },
+				{ id: 4, url: "https://open-webui.example/c/1", title: "Mine" },
+				{ id: 5, url: "about:blank", title: "blank" },
+			],
+		};
+		const panel = mount(DebugPanel);
+		await flushPromises();
+		expect(panel.find(".debug-state").text()).toBe("Not connected.");
+		expect(panel.findAll(".debug-tabs li")).toHaveLength(2);
+		expect(panel.find(".debug-tabs li:first-child button").text()).toBe("Point here");
+		expect(panel.find(".debug-tabs li:last-child button").text()).toBe("Allow this site");
+		expect(panel.find(".debug-picks").text()).toMatch(/user \[data-perf-row\] "Hi\?" - mine/);
+		await panel.find("button.connect").trigger("click");
+		await flushPromises();
+		expect(state.asked).toBe(1);
+		expect(state.sent.map((m) => m.type)).toContain("save-my-chat:debug-connect");
+		await panel.find("button.point").trigger("click");
+		expect(state.sent.at(-1)).toEqual({ type: "save-my-chat:debug-point", tabId: 3 });
+		await panel.find("button.forget").trigger("click");
+		await flushPromises();
+		expect(data.debugPicks).toEqual([]);
 	});
 });

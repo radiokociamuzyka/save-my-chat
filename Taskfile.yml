@@ -18,7 +18,9 @@ tasks:
       - npm ci
 
   run:
-    desc: Firefox with the built extension loaded (Q12), rebuilt and reloaded on every change of src/
+    desc: Firefox with the debug build loaded (Q12), rebuilt and reloaded on every change of src/; SMC_DEBUG=0 for the release's
+    env:
+      SMC_DEBUG: '{{.SMC_DEBUG | default "1"}}'
     cmds:
       - npm run vendor
       - npm run extension
@@ -73,6 +75,11 @@ tasks:
     desc: 'the version of package.json written into every copy (-- bump patch|minor|major to raise it)'
     cmds:
       - node scripts/version.mjs {{.CLI_ARGS | default "sync"}}
+
+  debug:install:
+    desc: "the debug gate's native host registered for Firefox, once per machine (-- --remove undoes it); writes into your home"
+    cmds:
+      - node scripts/debug/install.mjs {{.CLI_ARGS}}
 
   extension:
     desc: the extension built into dist/extension (Q12) - the Vue pages by Vite, the rest of src as it is

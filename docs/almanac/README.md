@@ -25,3 +25,4 @@ solved gets its case here, so the next one is recognised faster.
 - [ignored-site-dir](cataclistics/ignored-site-dir.md): the public site's folder was ignored as MkDocs' output
 - [shims-with-eval](cataclistics/shims-with-eval.md): a dependency's shims brought eval into the build
 - [licenses-met](cataclistics/licenses-met.md): two licenses met, LGPL-3.0 inside the MPL-2.0 extension
+- [commit-with-a-path](cataclistics/commit-with-a-path.md): a path given to git commit took only that path, the staged readers left out
