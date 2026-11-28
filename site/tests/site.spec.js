@@ -102,8 +102,10 @@ test("the options run on the site: the library, its search, the viewer, the read
 		"Claude",
 		"Gemini",
 		"DeepSeek",
+		"Google AI Studio",
 		"Grok",
 		"Grok on X",
+		"NotebookLM",
 	]);
 	await options.getByRole("link", { name: "Prototypes" }).click();
 	await options.getByRole("button", { name: "Make a prototype of GitHub Copilot" }).click();
