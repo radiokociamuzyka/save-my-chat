@@ -296,6 +296,21 @@ describe("readers", () => {
 		]);
 	});
 
+	it("deepseek tells its messages by an answer's markdown, keyed by the virtual list (live, 2026-11-28)", async () => {
+		const c = await read(
+			"deepseek",
+			"https://chat.deepseek.com/a/chat/s/1",
+			`<title>Typo greeting - DeepSeek</title><body><div class="ds-virtual-list"><div class="ds-virtual-list-items">
+			<div data-virtual-list-item-key="-2"><div class="d29f3d7d ds-message"><div class="ds-collapsible-text">dsadsa</div></div></div>
+			<div data-virtual-list-item-key="2"><div class="ds-message"><div class="ds-markdown ds-assistant-message-main-content">
+				<p class="ds-markdown-paragraph">Hello! A <strong>typo</strong>?</p></div></div>
+				<div class="ds-flex"><div class="ds-button" role="button" aria-label="Read aloud"></div></div></div>
+			</div></div></body>`,
+		);
+		expect(c.title).toBe("Typo greeting");
+		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual(["user: dsadsa", "assistant: Hello! A **typo**?"]);
+	});
+
 	it("gemini reads its custom elements, named by the sidebar's chat or the first question", async () => {
 		const page = (sidebar) => `<title>Gemini</title><body>${sidebar}
 			<user-query><span class="cdk-visually-hidden">You said</span><div class="query-text"><p class="query-text-line">Turtles?</p></div></user-query>

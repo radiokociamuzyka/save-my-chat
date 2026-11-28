@@ -134,7 +134,8 @@ The notes: `docs/devlog/scrapnote-*.md` of 2026-11-28.
 - [ ] The same end for lists: the box cannot go further down after a pause
 - [x] AI Mode's history: its threads listed from their buttons (`data-thread-id`, a virtual list: 215 of 215), each opened by a click when gathered and saved under the list's address (`smc-thread`); an address can't open a thread (`mtid` is no thread id)
 - [ ] AI Mode's notebooks (`button[data-journey-id]`, 12)
-- [ ] A DeepSeek reader: `.ds-message`, `.ds-collapsible-text` / `.ds-assistant-message-main-content`; its Cloudflare check met while gathering
+- [x] A DeepSeek reader, optional: `.ds-message` with or without `.ds-markdown`, keyed by its virtual list; live: 12 chats listed, a 26-message chat read whole (5 at once)
+- [ ] DeepSeek's Cloudflare check met while gathering; a DeepThink answer's reasoning
 - [ ] Grok on grok.com and on x.com, from a chat open in each
 - [ ] Samples of each webapp's pages from the public shares Sett lists in `resources/samples/.map.json`, saved by the gate's `sample`; tests reading them as fixtures
 - [ ] Each reader's patterns checked on the live webapp, `verified: true` in `chats.yaml`

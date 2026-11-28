@@ -94,7 +94,8 @@ chats:
 
   - id: deepseek
     name: DeepSeek
-    status: planned
+    status: optional
+    reader: readers/deepseek.js
     snippet: drafted-snippets/deepseek-online.js
     domains: [chat.deepseek.com]
     matches: ["https://chat.deepseek.com/*"]

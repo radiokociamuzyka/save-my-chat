@@ -47,5 +47,14 @@
 			origins: ["https://gemini.google.com/*"],
 			file: "readers/gemini.js",
 		},
+		{
+			id: "deepseek",
+			name: "DeepSeek",
+			matches: ["https://chat.deepseek.com/*"],
+			chats: ["https://chat.deepseek.com/a/chat/s/*"],
+			optional: true,
+			origins: ["https://chat.deepseek.com/*"],
+			file: "readers/deepseek.js",
+		},
 	];
 })();
