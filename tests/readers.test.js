@@ -169,6 +169,53 @@ describe("readers", () => {
 		]);
 	});
 
+	it("chatgpt reads the transcript's rows when the attributes say nothing, as on RR8's page", async () => {
+		const c = await read(
+			"chatgpt",
+			"https://chatgpt.com/c/1",
+			`<title>Rows - ChatGPT</title><body><main>
+			<div data-rail-chat-transcript="true" data-thread-find-target="conversation">
+				<div><div class="group/user-message flex"><p>Rows?</p></div><button>Edit</button></div>
+				<div><div class="markdown"><p>Rows <em>indeed</em>.</p></div></div>
+				<div>  </div>
+				<div><div class="group/user-message"><p>Two?</p></div></div>
+				<div><p>Two.</p></div>
+			</div></main></body>`,
+		);
+		expect(c.title).toBe("Rows");
+		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual([
+			"user: Rows?",
+			"assistant: Rows *indeed*.",
+			"user: Two?",
+			"assistant: Two.",
+		]);
+	});
+
+	it("chatgpt reads articles by their data-turn", async () => {
+		const c = await read(
+			"chatgpt",
+			"https://chatgpt.com/c/1",
+			`<title>ChatGPT</title><body><main>
+			<article data-turn="user" data-testid="conversation-turn-1"><p>Hi?</p></article>
+			<article data-turn="assistant" data-testid="conversation-turn-2"><p>Hello.</p></article></main></body>`,
+		);
+		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual(["user: Hi?", "assistant: Hello."]);
+	});
+
+	it("claude tells rows by Sett's values, human and assistant (RR8)", async () => {
+		const c = await read(
+			"claude",
+			"https://claude.ai/chat/1",
+			`<title>Values - Claude</title><body>
+			<div data-perf-row="human"><p>Mine</p></div>
+			<div data-perf-row="assistant"><p>Claude's, with <code>user</code> in it.</p></div></body>`,
+		);
+		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual([
+			"user: Mine",
+			"assistant: Claude's, with `user` in it.",
+		]);
+	});
+
 	it("claude reads Sett's [data-perf-row] rows, a row's role by its value or the user's message in it", async () => {
 		const c = await read(
 			"claude",
