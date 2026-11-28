@@ -146,6 +146,9 @@ describe("the debug gate in the background", () => {
 			disconnect: () => {},
 		};
 		const stored = given;
+		const session = {};
+		const made = []; // the tabs open made
+		const removed = [];
 		w.browser = {
 			permissions: { contains: async () => granted },
 			runtime: {
@@ -156,23 +159,50 @@ describe("the debug gate in the background", () => {
 				onMessage: { addListener: () => {} },
 			},
 			tabs: {
-				query: async () => [{ id: 4, windowId: 1, active: true, url: "https://claude.ai/chat/1", title: "Rows" }],
+				query: async () => [
+					{ id: 4, windowId: 1, active: true, url: "https://claude.ai/chat/1", title: "Rows" },
+					...made.map((id) => ({ id, windowId: 1, active: false })),
+				],
+				create: async () => {
+					made.push(10 + made.length);
+					return { id: made.at(-1) };
+				},
+				remove: async (ids) => {
+					removed.push(...ids);
+					made.splice(0, made.length, ...made.filter((id) => !ids.includes(id)));
+				},
 			},
 			storage: {
 				local: {
 					get: async (k) => ({ [k]: stored[k] }),
 					set: async (v) => Object.assign(stored, v),
 				},
+				session: {
+					get: async (k) => ({ [k]: session[k] }),
+					set: async (v) => Object.assign(session, v),
+				},
 			},
 		};
 		w.eval(load.source("debug/background.js"));
-		return { w, posted, port, listeners, stored };
+		return { w, posted, port, listeners, stored, removed };
 	}
 
 	it("has every tool the server lists, but the server's own", () => {
 		const { w } = background();
 		const theirs = TOOLS.filter((t) => !t.server).map((t) => t.name);
 		expect(Object.keys(w.SaveMyChat.debug.TOOLS).sort()).toEqual([...theirs, "snapshot"].sort());
+	});
+
+	it("closes only the tabs it opened", async () => {
+		const { w, removed } = background();
+		const { TOOLS: tools } = w.SaveMyChat.debug;
+		await tools.open({ url: "https://chatgpt.com/" });
+		await tools.open({ url: "https://claude.ai/" });
+		expect(await tools.close({ tabId: 4 })).toEqual({ closed: [], kept: [4] }); // the user's
+		expect(await tools.close({ tabId: 10 })).toEqual({ closed: [10], kept: [] });
+		expect(await tools.close()).toEqual({ closed: [11], kept: [] });
+		expect(await tools.close()).toEqual({ closed: [], kept: [] });
+		expect(removed).toEqual([10, 11]);
 	});
 
 	it("connects again on load when the user left it connected, not after a disconnect", async () => {

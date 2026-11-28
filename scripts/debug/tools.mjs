@@ -19,6 +19,12 @@ export const TOOLS = [
 		inputSchema: object({ url: { type: "string" } }, ["url"]),
 	},
 	{
+		name: "close",
+		description:
+			"Closes a tab the open tool opened (tabId), or all of them (no tabId), when you are done with them; the user's own tabs are never closed. Gives { closed, kept }.",
+		inputSchema: object({ ...tab }),
+	},
+	{
 		name: "outline",
 		description:
 			"The page as an indented outline: one line per element (tag#id.class[data-*]), its child count and the start of its own text; siblings alike folded into one line (×N). Start here on a new page, then narrow with a selector.",
