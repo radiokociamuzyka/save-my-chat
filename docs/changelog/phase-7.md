@@ -92,3 +92,11 @@ what we have to be done by list of chats we want to support."
   summary changed with it (Sett's to copy in).
 - The Gradio space, Sett's to leave aside for now, waits with Q15 a.
 
+
+## 2026-11-28, merges handed over for the day (the chat, word for word)
+
+> so then you can continue without me. I'm today at job on remote job for old colaborator at his company. I took care so we can still talk by window in my pocket to your relm here as tunelling like casual ssh thingy. if anything you need there just ask, but from now you will keep on your side PR merges for new versions today and after every session of using browser try to keep the tabs reducing. anything else as usual but with limited interventions from me - Cleo, i trust that your hands are good hands... regardless the lack of physical hands at all... you know what i mean xd. goodluck and have a fun. please proceede now. thank you in advance
+
+**Decision:** for today (2026-11-28) Cleo merges the pull requests `development` → `master`
+itself once their checks pass, each merge a release; after each session in the browser the
+tabs it opened are closed. Everything else as before, Sett asked only when needed.

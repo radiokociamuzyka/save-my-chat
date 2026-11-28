@@ -14,6 +14,10 @@
 (() => {
 	const SMC = globalThis.SaveMyChat;
 	const HOST = "save_my_chat_debug";
+	// the tabs the open tool made, in storage.local: storage.session is emptied by each reload
+	// of the extension (task run reloads it on every change); forgotten when Firefox starts,
+	// since tab ids begin again then
+	const OPENED = "debugOpened";
 	const PICKS = "debugPicks";
 	// the user connected and did not disconnect: connected again whenever the extension
 	// loads (task run reloads it on every change, each commit's version too, closing the port)
@@ -61,7 +65,20 @@
 		async open({ url }) {
 			if (!/^https?:\/\//.test(String(url))) throw new Error("url: an http(s) address");
 			const tab = await browser.tabs.create({ url, active: true });
+			const { [OPENED]: mine = [] } = await browser.storage.local.get(OPENED);
+			await browser.storage.local.set({ [OPENED]: [...mine, tab.id] });
 			return { tabId: tab.id };
+		},
+		// the tabs the agent opened, closed when it is done with them (Sett, 2026-11-28: keep
+		// the tabs few); a tab it did not open is the user's and stays
+		async close({ tabId } = {}) {
+			const { [OPENED]: mine = [] } = await browser.storage.local.get(OPENED);
+			const open = new Set((await browser.tabs.query({})).map((t) => t.id));
+			const asked = tabId === undefined ? mine : [tabArg({ tabId })];
+			const closing = asked.filter((id) => mine.includes(id) && open.has(id));
+			if (closing.length) await browser.tabs.remove(closing);
+			await browser.storage.local.set({ [OPENED]: mine.filter((id) => open.has(id) && !closing.includes(id)) });
+			return { closed: closing, kept: asked.filter((id) => !closing.includes(id)) };
 		},
 		outline: (args) => onPage(tabArg(args), "outline", args),
 		query: (args) => onPage(tabArg(args), "query", args),
@@ -164,6 +181,8 @@
 		if (msg?.type === "save-my-chat:debug-point") return TOOLS.point({ tabId: msg.tabId, on: msg.on ?? true });
 		if (msg?.type === "save-my-chat:debug-pick" && sender?.tab) return keep(msg.pick, sender.tab);
 	});
+
+	browser.runtime.onStartup?.addListener(() => browser.storage.local.remove(OPENED));
 
 	SMC.debug = { TOOLS, answer, connect, disconnect, resumed, state: () => state }; // for tests
 })();

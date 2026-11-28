@@ -34,8 +34,16 @@
 		},
 		detect: (_doc, url) => new URL(url).hostname === "chatgpt.com",
 		read(doc, _url, sets) {
-			// a message's own id, to know it again in another window of a long chat
-			const key = (el) => el.getAttribute("data-chatgpt-search-unit-key") || el.getAttribute("data-message-id");
+			// a message's own id, to know it again in another window of a long chat: its message
+			// ids first. A unit key is "fallback-turn-<n>:..." in a long chat, a place in what is
+			// drawn and not the message (live, 2026-11-28: one window of 10 taken 75 times), so
+			// such a key is never used
+			const key = (el) => {
+				const unit = el.getAttribute("data-chatgpt-search-unit-key");
+				const ids = el.getAttribute("data-chatgpt-search-message-ids") || el.getAttribute("data-message-id");
+				if (ids) return `${ids}:${unit?.split(":").at(-1) ?? ""}`;
+				return unit && !unit.startsWith("fallback-") ? unit : undefined;
+			};
 			let turns = SMC.turnsBy(doc, { user: sets.user, assistant: sets.assistant }, doc, { hidden: sets.hidden, key });
 			const transcriptCss = SMC.selector(sets.transcript, doc);
 			const transcript = transcriptCss && doc.querySelector(transcriptCss);

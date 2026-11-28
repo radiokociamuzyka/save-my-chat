@@ -196,6 +196,25 @@ describe("readers", () => {
 		]);
 	});
 
+	it("chatgpt knows a message by its message ids, never by a fallback unit key (live, 2026-11-28)", () => {
+		const url = "https://chatgpt.com/c/1";
+		const html = `<!doctype html><title>Long - ChatGPT</title><body><main><div data-rail-chat-transcript="true">
+			<div data-chatgpt-search-unit-key="fallback-turn-3:0:user" data-chatgpt-search-message-ids="m1"><p>Why?</p></div>
+			<div data-chatgpt-search-unit-key="fallback-turn-3:1:assistant" data-chatgpt-search-message-ids="m2"><p>So.</p></div>
+			<div data-chatgpt-search-unit-key="fallback-turn-4:0:user"><p>Again?</p></div>
+			<div data-chatgpt-search-unit-key="u5:1:assistant"><p>Yes.</p></div>
+		</div></main></body>`;
+		const w = load([...KIT, "readers/chatgpt.js"], { url, html });
+		const r = w.SaveMyChat.readers.get("chatgpt");
+		const sets = w.SaveMyChat.effective(r.selectors, {});
+		expect(r.read(w.document, url, sets).turns.map((t) => t.key)).toEqual([
+			"m1:user",
+			"m2:assistant",
+			undefined,
+			"u5:1:assistant",
+		]);
+	});
+
 	it("chatgpt reads the transcript's rows when the attributes say nothing, as on RR8's page", async () => {
 		const c = await read(
 			"chatgpt",

@@ -51,6 +51,7 @@ the extension that one site (the debug build may ask for any).
 | --- | --- |
 | `tabs` | the open tabs: id, address, title, the reader whose pages it is on |
 | `open` | an address opened in a new tab |
+| `close` | a tab `open` opened closed, or all of them; your own tabs are never closed |
 | `outline` | the page as indented lines, `tag#id.class[data-*]`, alike siblings folded (`×N`) |
 | `query` | what a selector finds: how many, their paths, attributes, text |
 | `element` | one element: its HTML, text, and selectors that find it, with their counts |

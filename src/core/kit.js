@@ -560,7 +560,7 @@
 		for (const r of readers.values()) {
 			if (!r.detect(doc, url)) continue;
 			const sets = effective(r.selectors, overrides ?? (await overridesOf(r.id)));
-			const box = chatBox(sets, doc);
+			let box = chatBox(sets, doc);
 			const kept = [];
 			let read;
 			let gap = false;
@@ -570,6 +570,12 @@
 				gap ||= !met;
 				return added;
 			};
+			// whether what is on screen now shares a message with what is kept
+			const meets = () => {
+				const known = new Set(kept.map(keyOf));
+				const now = r.read(doc, url, sets).turns;
+				return !now.length || now.some((t) => known.has(keyOf(t)));
+			};
 			box.scrollTop = box.scrollHeight; // the newest end
 			await pause(step);
 			take();
@@ -578,14 +584,25 @@
 			root.SaveMyChat.progress = progress;
 			let idle = 0; // steps up since a new message came
 			let fresh = Date.now(); // when one last came
+			let reach = 0; // the farthest from the end the view has been
+			let pulled = 0; // times the webapp pulled the view back
+			let late = 0; // times a window met nothing and was read again
+			let swapped = 0; // times the box was found again
 			for (let i = 0, quiet = 0; i < rounds && quiet < still && Date.now() - fresh < patience; i++) {
+				// a box the webapp replaced (ChatGPT, a fresh tab settling): the one in the page now.
+				// One kept out of the page is always at its top, never grows: the read ended at 10
+				if (!box.isConnected) {
+					box = chatBox(sets, doc);
+					swapped++;
+				}
 				const atTop = box.scrollTop <= 1;
 				const settle = atTop || idle >= stuck;
 				const height = box.scrollHeight;
 				if (settle) {
-					if (!atTop)
+					if (!atTop) {
 						box.scrollTop = 0; // stuck: to the top at once, all below is read
-					else {
+						reach = box.scrollHeight;
+					} else {
 						// a box already at its top asks the webapp for nothing (seen live, ChatGPT:
 						// stopped at 10 of a long chat): a step down and back up by as much. By as
 						// much, not to 0: older ones loaded meanwhile move the view down, and a
@@ -598,8 +615,27 @@
 					await pause(wait);
 					idle = 0;
 				} else {
-					box.scrollTop = Math.max(0, box.scrollTop - Math.max(box.clientHeight * 0.7, 100));
+					// up by a step from the farthest point reached, measured from the end: older
+					// messages loaded above move the top, not the end. A webapp that pulls the
+					// view back to its end (ChatGPT, seen live 2026-11-28) is put back there once
+					// (never past the top: older ones loaded there later would be stepped over)
+					reach = Math.min(
+						box.scrollHeight,
+						Math.max(reach, box.scrollHeight - box.scrollTop) + Math.max(box.clientHeight * 0.7, 100),
+					);
+					box.scrollTop = Math.max(0, box.scrollHeight - reach);
 					await pause(step);
+					if (box.scrollHeight - box.scrollTop < reach - box.clientHeight) {
+						pulled++;
+						box.scrollTop = Math.max(0, box.scrollHeight - reach);
+						await pause(step);
+					}
+					// a window sharing no message with what is kept may be one drawn late (ChatGPT,
+					// live): read again after a longer pause, the view left where it is
+					for (let again = 0; again < 2 && box.scrollTop > 1 && !meets(); again++) {
+						late++;
+						await pause(step * 2);
+					}
 				}
 				const added = take();
 				if (added) fresh = Date.now();
@@ -617,6 +653,9 @@
 					atTop,
 					settle,
 					idle,
+					pulled,
+					late,
+					swapped,
 					top: Math.round(box.scrollTop),
 				});
 			}
