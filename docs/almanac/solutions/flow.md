@@ -9,3 +9,4 @@ Branches, versions, merges and the automation of the BOS craft loop.
 - [ignored-site-dir](../cataclistics/ignored-site-dir.md): a tool's default output folder in `.gitignore` hid the site's sources: `git check-ignore -v`
 - [commit-with-a-path](../cataclistics/commit-with-a-path.md): `git commit -- <path>` commits only that path; stage, then commit without paths; a slip on `dev/*` is completed by the next commit, its message naming it
 - [folder-add-swept-owners-file](../cataclistics/folder-add-swept-owners-file.md): staging a folder took the owner's untracked note into an agent's commit; stage by name, check `git status` first, fetch the owner's branch before committing an edit of theirs
+- [amo-throttled](../cataclistics/amo-throttled.md): AMO throttles an add-on's uploads; a throttled upload is a warning that lets the site, wiki and feed run, the next release carries it
