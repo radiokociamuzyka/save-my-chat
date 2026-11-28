@@ -147,7 +147,10 @@
 		return el;
 	}
 
-	function turnsBy(doc, roles, scope = doc) {
+	// hidden: selectors of what a message holds but is not its text (a heading only a
+	// screen reader says, ChatGPT's "You said:"), left out of every message
+	function turnsBy(doc, roles, scope = doc, { hidden } = {}) {
+		const hiddenCss = selector(hidden, doc);
 		const sets = Object.entries(roles)
 			.map(([role, list]) => [role, selector(list, doc)])
 			.filter(([, css]) => css);
@@ -161,10 +164,9 @@
 		}
 		const placed = found.map((f) => {
 			const inner = found.filter((g) => g.role !== f.role && f.el.contains(g.el)).map((g) => g.el);
-			const others = sets
-				.filter(([r]) => r !== f.role)
-				.map(([, c]) => c)
-				.join(", ");
+			const others = [...sets.filter(([r]) => r !== f.role).map(([, c]) => c), ...(hiddenCss ? [hiddenCss] : [])].join(
+				", ",
+			);
 			return { at: ownStart(f.el, inner, doc), turn: turn(f.role, f.el, {}, others) };
 		});
 		// DOCUMENT_POSITION_FOLLOWING (4): b comes after a
@@ -400,9 +402,9 @@
 		return most;
 	}
 
-	// the reader's messages as elements: every part's selectors but the title's and
-	// the transcript's (what holds them all)
-	const NOT_MESSAGES = ["title", "transcript"];
+	// the reader's messages as elements: every part's selectors but the title's, the
+	// transcript's (what holds them all) and what is hidden in them
+	const NOT_MESSAGES = ["title", "transcript", "hidden"];
 	function messagesOf(sets, doc) {
 		const css = selector(
 			Object.entries(sets)

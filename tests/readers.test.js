@@ -169,6 +169,33 @@ describe("readers", () => {
 		]);
 	});
 
+	it("chatgpt reads its messages by their search unit keys, the hidden headings left out (live, 2026-11-28)", async () => {
+		const c = await read(
+			"chatgpt",
+			"https://chatgpt.com/c/1",
+			`<title>Graphics - ChatGPT</title><body><main>
+			<div data-rail-chat-transcript="true"><div class="contents"><div class="flex flex-col">
+			<div data-virtualized-turn=""><div data-turn-key="k1"><div>
+				<div><h4 class="sr-only" data-conversation-role="user">You said:<span>You</span></h4>
+					<div class="group/user-message" data-chatgpt-search-unit-key="u1:0:user"><div class="group/user-message"><p>Draw a cat?</p></div></div></div>
+				<div><div><h4 class="sr-only" data-conversation-role="assistant">ChatGPT said:<span>ChatGPT</span></h4>
+					<div data-chatgpt-search-unit-key="u1:5:assistant"><h4 class="sr-only" data-conversation-role="assistant">ChatGPT said:</h4><p>A <strong>cat</strong>.</p></div></div></div>
+			</div></div></div>
+			<div data-virtualized-turn=""><div data-turn-key="k2"><div>
+				<div data-chatgpt-search-unit-key="u2:0:user"><p>In Afrikaans?</p></div>
+				<div data-chatgpt-search-unit-key="u2:3:assistant"><p>'n Kat.</p></div>
+			</div></div></div>
+			</div></div></div></main></body>`,
+		);
+		expect(c.title).toBe("Graphics");
+		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual([
+			"user: Draw a cat?",
+			"assistant: A **cat**.",
+			"user: In Afrikaans?",
+			"assistant: 'n Kat.",
+		]);
+	});
+
 	it("chatgpt reads the transcript's rows when the attributes say nothing, as on RR8's page", async () => {
 		const c = await read(
 			"chatgpt",
