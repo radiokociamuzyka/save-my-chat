@@ -1,0 +1,8 @@
+{
+	"mcpServers": {
+		"save-my-chat-debug": {
+			"command": "node",
+			"args": ["scripts/debug/server.mjs"]
+		}
+	}
+}
