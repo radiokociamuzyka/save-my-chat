@@ -141,7 +141,7 @@ The notes: `docs/devlog/scrapnote-*.md` of 2026-11-28.
 - [x] Grok on grok.com, optional: its test ids, the 'You' / 'Grok' headings left out, keyed by `response-<uuid>`; the list from `/history` (the sidebar's chats are buttons); live: 5 chats, a 20-message chat read whole
 - [x] Grok on x.com, optional: X's turns (`data-turn-id`), the user's part and the quotable answer (grok.com's ids); the list from `/i/grok/history`; live: 5 chats, the same 20 messages as on grok.com
 - [ ] Samples of each webapp's pages from the public shares Sett lists in `resources/samples/.map.json`, saved by the gate's `sample`; tests reading them as fixtures
-- [ ] Each reader's patterns checked on the live webapp, `verified: true` in `chats.yaml`
+- [x] Each reader's patterns checked on the live webapp, `verified: true` in `chats.yaml`: AI Mode, GitHub Copilot, ChatGPT, Claude, Gemini (its list and title fixed), DeepSeek, AI Studio, Grok, Grok on X, NotebookLM
 
 ## Phase 8: artifacts, where they were born
 
@@ -152,7 +152,8 @@ The notes: `docs/devlog/scrapnote-*.md` of 2026-11-28.
 
 ## Phase 9: more webapps
 
-- [ ] A reader for each other `planned` chat of `resources/data/chats.yaml` (PP2): Microsoft Copilot, Perplexity, Mistral Le Chat, HuggingChat, Google AI Studio, NotebookLM, Google Colab's helper
-- [ ] Self-hosted webapps' readers at an address the user types, `https://*/*` and `http://*/*` optional (Q15 a), with the first of them, Open WebUI; a Gradio space
+- [x] Google AI Studio (turns by role, headers and thoughts left out, read whole) and NotebookLM (now notebook.google.com), optional readers, live
+- [ ] A reader for each other `planned` chat of `resources/data/chats.yaml` (PP2): Microsoft Copilot, Perplexity, Mistral Le Chat, HuggingChat - each waits for a chat Sett is signed in to; Google Colab's helper
+- [ ] Self-hosted webapps' readers at an address the user types, `https://*/*` and `http://*/*` optional (Q15 a), with the first of them: Sett's Gradio space (it asks for a Hugging Face login: a chat in it first), Open WebUI
 - [ ] WebMCP: the gate's tools offered to an agent in the browser, when Firefox has `navigator.modelContext` (PP3, approved)
 

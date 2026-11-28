@@ -54,3 +54,21 @@ very long chat is never rendered whole, and a message is to be known by its id.
 - **DeepSeek**, **Grok** (grok.com) and **Grok on X**: optional readers, each list from the
   page that links the chats (DeepSeek's sidebar, `/history`, `/i/grok/history`), long chats
   read whole by their keys (26 and 20 messages where one read sees 5 and 7).
+
+## 2026-11-28, after phase 6: the rest of the list
+
+Sett's order (word for word in `phase-6.md`): "after finishing that phase continue further
+what we have to be done by list of chats we want to support."
+
+**Decision:** the webapps of `chats.yaml` not yet read, each looked at through the gate:
+
+- **Gemini**, written before and read right live (48 messages read whole); its list now by
+  the bare address (`?hl=pl&pli=1` dropped) and the open chat named from the sidebar.
+- **Google AI Studio** and **NotebookLM** (moved to `notebook.google.com`): optional readers,
+  their headers and thoughts left out; AI Studio's turns, drawn only on screen, taught the
+  kit to fill in a message kept before its content was drawn.
+- **Copilot (Microsoft), Perplexity, Mistral Le Chat, HuggingChat** and **Sett's Gradio
+  space** wait: Sett is signed out of them in the `task run` Firefox (the space asks for a
+  Hugging Face login), so no chat could be seen.
+- The readers read live are `verified: true` in `chats.yaml`.
+
