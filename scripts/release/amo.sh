@@ -33,10 +33,27 @@ GH_NOTES="$(gh release view "$tag" --json body -q .body)" VERSION="$version" nod
   } }, null, "\t"));
 ' > "$work/metadata.json"
 
-npx web-ext sign --no-config-discovery --channel listed \
+# AMO throttles an add-on's submissions (seen 2026-11-28, v0.7.38: "Request was throttled.
+# Expected available in 5491 seconds."): a pause, not an error of the release. It is told in
+# the run's summary and the job ends well, so what follows a release (the site, the wiki, the
+# feed) still runs; the next release carries this one's changes to AMO, or this job is run
+# again once AMO allows. Any other refusal still fails.
+set +e
+out="$(npx web-ext sign --no-config-discovery --channel listed \
   --source-dir "$work/extension" --artifacts-dir "$work/signed" \
   --upload-source-code "$work/save-my-chat-$version-source.zip" \
   --amo-metadata "$work/metadata.json" \
   --approval-timeout 0 \
-  --api-key "$AMO_JWT_ISSUER" --api-secret "$AMO_JWT_SECRET"
+  --api-key "$AMO_JWT_ISSUER" --api-secret "$AMO_JWT_SECRET" 2>&1)"
+status=$?
+set -e
+echo "$out"
+if [ "$status" -ne 0 ] && grep -q "throttled" <<<"$out"; then
+  wait_s="$(grep -o 'available in [0-9]* seconds' <<<"$out" | grep -o '[0-9]*' || true)"
+  msg="$tag not submitted to AMO: AMO throttled the submission (available again in ${wait_s:-some} seconds). The next release carries its changes; or run this job again then."
+  echo "::warning::$msg"
+  [ -n "${GITHUB_STEP_SUMMARY:-}" ] && echo "$msg" >>"$GITHUB_STEP_SUMMARY"
+  exit 0
+fi
+[ "$status" -eq 0 ] || exit "$status"
 echo "$tag submitted to AMO's listed channel; Mozilla's review follows"
