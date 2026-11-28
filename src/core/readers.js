@@ -56,5 +56,14 @@
 			origins: ["https://chat.deepseek.com/*"],
 			file: "readers/deepseek.js",
 		},
+		{
+			id: "grok",
+			name: "Grok",
+			matches: ["https://grok.com/*"],
+			chats: ["https://grok.com/c/*"],
+			optional: true,
+			origins: ["https://grok.com/*"],
+			file: "readers/grok.js",
+		},
 	];
 })();

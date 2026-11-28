@@ -122,7 +122,8 @@ chats:
 
   - id: grok
     name: Grok
-    status: planned
+    status: optional
+    reader: readers/grok.js
     snippet: drafted-snippets/grok-com-grok.js
     domains: [grok.com]
     matches: ["https://grok.com/*"]

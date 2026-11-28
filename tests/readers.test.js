@@ -311,6 +311,23 @@ describe("readers", () => {
 		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual(["user: dsadsa", "assistant: Hello! A **typo**?"]);
 	});
 
+	it("grok reads its test ids, the 'You' / 'Grok' headings left out (live, 2026-11-28)", async () => {
+		const c = await read(
+			"grok",
+			"https://grok.com/c/1",
+			`<title>Memes - Grok</title><body><div data-testid="conversation-title">Technomancy and Memes</div>
+			<div role="log" data-testid="chat-transcript-scroller">
+			<div id="response-a1" data-user-message-row><div role="article" data-testid="user-message">
+				<h2 id="turn-heading-a1" data-no-copy="true">You</h2><span data-bubble-text><p>Memes?</p></span></div>
+				<div data-testid="user-message-actions"><button aria-label="Edit message"></button></div></div>
+			<div id="response-a2"><div role="article" data-testid="assistant-message">
+				<h2 id="turn-heading-a2" data-no-copy="true">Grok</h2><p>An <em>economy</em>.</p></div></div>
+			</div></body>`,
+		);
+		expect(c.title).toBe("Technomancy and Memes");
+		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual(["user: Memes?", "assistant: An *economy*."]);
+	});
+
 	it("gemini reads its custom elements, named by the sidebar's chat or the first question", async () => {
 		const page = (sidebar) => `<title>Gemini</title><body>${sidebar}
 			<user-query><span class="cdk-visually-hidden">You said</span><div class="query-text"><p class="query-text-line">Turtles?</p></div></user-query>

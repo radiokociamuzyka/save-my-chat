@@ -46,6 +46,7 @@ describe("in Firefox: the options", () => {
 			"Claude",
 			"Gemini",
 			"DeepSeek",
+			"Grok",
 		]);
 		// an optional reader's webapp is not allowed until the user says so
 		expect((await texts(driver, ".reader .access")).map((t) => t.replace(/\s+/g, " "))).toEqual([
@@ -53,6 +54,7 @@ describe("in Firefox: the options", () => {
 			"Not allowed on claude.ai yet. Allow on claude.ai",
 			"Not allowed on gemini.google.com yet. Allow on gemini.google.com",
 			"Not allowed on chat.deepseek.com yet. Allow on chat.deepseek.com",
+			"Not allowed on grok.com yet. Allow on grok.com",
 		]);
 		expect((await texts(driver, ".built-in")).length).toBeGreaterThan(0);
 		await shot(driver, "readers");
