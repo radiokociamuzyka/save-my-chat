@@ -15,12 +15,20 @@ const CHAT = {
 	],
 };
 
-// the site loads nothing from anywhere else: every request stays on localhost
+// the site loads nothing from anywhere else: every request stays on localhost, but the
+// statements, read raw from the repository's master (Sett, #7) - served from here in tests
+const RAW = "https://raw.githubusercontent.com/radiokociamuzyka/save-my-chat/master/docs/statements/";
 test.beforeEach(async ({ page }) => {
 	const away = [];
 	page.on("request", (r) => {
-		if (!r.url().startsWith("http://localhost:4321/")) away.push(r.url());
+		if (!r.url().startsWith("http://localhost:4321/") && !r.url().startsWith(RAW)) away.push(r.url());
 	});
+	await page.route(`${RAW}**`, (route) =>
+		route.fulfill({
+			contentType: "text/plain",
+			body: readFileSync(`docs/statements/${route.request().url().slice(RAW.length)}`, "utf8"),
+		}),
+	);
 	page.away = away;
 });
 test.afterEach(async ({ page }) => {
@@ -100,4 +108,16 @@ test("the options run on the site: the library, its search, the viewer, the read
 	await options.getByRole("link", { name: "Prototypes" }).click();
 	await options.getByRole("button", { name: "Make a prototype of GitHub Copilot" }).click();
 	await expect(options.locator("textarea.code")).toHaveValue(/SMC\.reader\(/);
+});
+
+test("the privacy page shows the statement as master holds it, and the banner and card are there", async ({ page }) => {
+	await page.goto("./privacy/");
+	await expect(page.getByRole("heading", { name: "Privacy statement" })).toBeVisible();
+	await expect(page.locator(".statement")).toContainText("it sends nothing anywhere");
+	await page.goto("./");
+	await expect(page.locator("img.banner")).toBeVisible();
+	await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+		"content",
+		/\/save-my-chat\/media\/social\.jpg$/,
+	);
 });

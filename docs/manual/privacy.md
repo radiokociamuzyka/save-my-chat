@@ -1,7 +1,7 @@
 # Privacy
 
 save-my-chat reads the page you have open and writes a file on your
-machine. That is all it does.
+machine. That is all it does. The formal statement: [Privacy statement](../statements/privacy.md).
 
 - **No network requests of its own.** It sends nothing anywhere: no
   telemetry, no accounts, no servers. Its manifest declares no data
