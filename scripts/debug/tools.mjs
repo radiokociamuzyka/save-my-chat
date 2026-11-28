@@ -106,6 +106,12 @@ export const TOOLS = [
 		inputSchema: object({ ...tab, whole: { type: "boolean" } }, ["tabId"]),
 	},
 	{
+		name: "open-item",
+		description:
+			"What gathering does once a listed address has loaded: the tab's reader opens the chat it names, when it has no address of its own (AI Mode's threads, by their button). Gives whether it opened one.",
+		inputSchema: object({ ...tab }, ["tabId"]),
+	},
+	{
 		name: "inspect",
 		description:
 			"What the tab's reader sees, without the text: each selector candidate and how many it finds, the messages per role.",

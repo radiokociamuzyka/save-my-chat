@@ -184,7 +184,9 @@
 		const turns = (read.turns || []).filter((t) => t?.text);
 		return {
 			format: FORMAT,
-			source: { reader: reader.id, service: reader.service, url: String(url) },
+			// a reader may name the conversation's own address (AI Mode: its thread's, the
+			// page's changing with every load)
+			source: { reader: reader.id, service: reader.service, url: String(read.url || url) },
 			title: (read.title || "").trim() || "Untitled conversation",
 			savedAt: now.toISOString(),
 			turns,
@@ -431,10 +433,16 @@
 		return 0;
 	}
 
-	// The whole list: its links to chats, scrolled to its end until no more come.
-	// Every chat seen on the way is kept: a long list may drop from the page the
-	// ones scrolled past (a virtual list), as long chats may.
-	async function loadList(doc = root.document, url = root.location?.href, patterns = [], options) {
+	// The whole list, kept as it scrolls down to its end. A list may be virtual (AI Mode's
+	// history: 215 threads, 10 in the page at a time) or grow as its end is reached
+	// (ChatGPT's sidebar), so it goes down one screen at a time, every chat seen kept - a
+	// jump to the end would skip a virtual list's middle. At the end, as for a long chat
+	// (Sett's check): a step up and back, a pause, and more come, or the list grows? When
+	// not, `still` times in a row, that is the end.
+	//   The items: the reader's own listItems(doc) (elements), else the links listed.
+	async function loadList(doc = root.document, url = root.location?.href, patterns = [], options = {}) {
+		const { wait = 2000, step = 300, still = 3, rounds = 3000 } = options;
+		const own = [...readers.values()].find((r) => r.list && r.detect(doc, url));
 		const seen = new Map();
 		const keep = () => {
 			for (const chat of listed(doc, url, patterns)) {
@@ -443,8 +451,8 @@
 			}
 			return seen.size;
 		};
-		const links = () => {
-			keep();
+		const items = () => {
+			if (own?.listItems) return [...own.listItems(doc)];
 			return [...doc.querySelectorAll("a[href]")].filter((a) => {
 				try {
 					const href = new URL(a.getAttribute("href"), doc.baseURI);
@@ -455,8 +463,30 @@
 				}
 			});
 		};
-		await loadAll(doc, links, "bottom", { ...options, count: keep });
+		// from its top, whatever it was left at (seen live: a panel left at its end read 10 of 215)
+		const start = scroller(items()[0], doc);
+		start.scrollTop = 0;
+		await pause(step);
 		keep();
+		for (let i = 0, quiet = 0; i < rounds && quiet < still; i++) {
+			const box = scroller(items().at(-1), doc);
+			const before = seen.size;
+			const height = box.scrollHeight;
+			const atEnd = box.scrollTop + box.clientHeight >= box.scrollHeight - 2;
+			if (atEnd) {
+				const nudge = Math.min(box.clientHeight / 2, 200);
+				box.scrollTop -= nudge;
+				await pause(Math.min(step, 150));
+				box.scrollTop += nudge;
+				await pause(wait);
+			} else {
+				box.scrollTop += Math.max(box.clientHeight * 0.7, 100);
+				await pause(step);
+			}
+			keep();
+			if (seen.size > before || box.scrollHeight > height) quiet = 0;
+			else if (atEnd) quiet++;
+		}
 		return [...seen.values()];
 	}
 
@@ -589,6 +619,13 @@
 		return null;
 	}
 
+	// A chat listed without an address of its own is opened in its page by its reader's
+	// open(doc, url) (AI Mode's threads: by their button). Gives whether it was opened.
+	async function openItem(doc = root.document, url = root.location?.href) {
+		for (const r of readers.values()) if (r.open && r.detect(doc, url)) return Boolean(await r.open(doc, url));
+		return false;
+	}
+
 	function present(doc = root.document, url = root.location?.href) {
 		for (const r of readers.values()) if (r.detect(doc, url)) return { id: r.id, name: r.name };
 		return null;
@@ -611,6 +648,9 @@
 		readers,
 		readPage,
 		readWhole,
+		openItem,
+		scroller,
+		pause,
 		joined,
 		inspect,
 		present,
@@ -635,6 +675,7 @@
 					? loadList(undefined, undefined, msg.patterns)
 					: Promise.resolve(listed(undefined, undefined, msg.patterns));
 			if (msg?.type === "save-my-chat:load") return loadChat();
+			if (msg?.type === "save-my-chat:open-item") return openItem();
 		});
 	}
 })();

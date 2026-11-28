@@ -41,7 +41,49 @@ describe("the chats a page lists", () => {
 		]);
 	});
 
-	it("of AI Mode are its links with udm=50, wherever it stands in the address", () => {
+	it("of AI Mode are opened by their thread's button, found in the virtual panel, and saved under the list's address", async () => {
+		const w = load([...KIT, "readers/google-ai-mode.js"], {
+			url: "https://www.google.com/search?udm=50&smc-thread=T17",
+			html: `<body><div id="panel" style="overflow-y: auto"></div><div id="chat"></div></body>`,
+		});
+		const panel = w.document.getElementById("panel");
+		let top = 0;
+		const clicked = [];
+		const draw = () => {
+			const first = Math.floor(top / 40);
+			panel.replaceChildren(
+				...Array.from({ length: 6 }, (_, i) => {
+					const b = w.document.createElement("button");
+					b.setAttribute("data-thread-id", `T${first + i}`);
+					b.textContent = `Thread ${first + i}`;
+					b.addEventListener("click", () => {
+						clicked.push(first + i);
+						w.history.pushState({}, "", `/search?q=Thread+${first + i}&udm=50&mtid=fresh${first + i}`);
+						w.document.getElementById("chat").innerHTML =
+							'<div class="ilZyRc">Thread question?</div><div class="CKgc1d"><p>An answer.</p></div>';
+					});
+					return b;
+				}),
+			);
+		};
+		draw();
+		Object.defineProperty(panel, "clientHeight", { get: () => 200 });
+		Object.defineProperty(panel, "scrollHeight", { get: () => 1200 });
+		Object.defineProperty(panel, "scrollTop", {
+			get: () => top,
+			set: (v) => ((top = Math.max(0, Math.min(v, 1000))), draw()),
+		});
+		w.SaveMyChat.pause = () => Promise.resolve(); // the panel draws at once here
+		expect(await w.SaveMyChat.openItem()).toBe(true);
+		expect(clicked).toEqual([17]);
+		const c = await w.SaveMyChat.readPage(w.document, w.location.href, {});
+		expect(c.source.url).toBe("https://www.google.com/search?udm=50&smc-thread=T17");
+		expect(c.title).toBe("Thread 17");
+		expect(c.turns.map((t) => t.role)).toEqual(["user", "assistant"]);
+		expect(await w.SaveMyChat.openItem(w.document, "https://www.google.com/search?udm=50&q=x")).toBe(false);
+	});
+
+	it("of AI Mode, without its reader, are its links with udm=50, wherever it stands in the address", () => {
 		const w = load(KIT, {
 			url: "https://www.google.com/search?q=a&udm=50",
 			html: `<body><a href="/search?udm=50&q=turtles&mstk=x">Turtles</a><a href="/search?q=b">plain</a></body>`,
@@ -51,46 +93,103 @@ describe("the chats a page lists", () => {
 		]);
 	});
 
-	it("are loaded whole: the list scrolled to its end until no more chats come (RR7)", async () => {
-		const w = load(KIT, { url: "https://chatgpt.com/", html: `<body><nav id="side"></nav></body>` });
+	// A list in a box that scrolls: `items` in it, 50 px each, those within the view (and a
+	// few around) in the page when `virtual`, all when not; `grow(n)` brings n more once its
+	// end has been reached, after `late` ms.
+	function sidebar({ items = 20, view = 300, virtual = false, batches = [], late = 1, link = true } = {}) {
+		const w = load(KIT, {
+			url: "https://chatgpt.com/",
+			html: `<body><nav id="side" style="overflow-y: auto"></nav></body>`,
+		});
 		const side = w.document.getElementById("side");
-		const add = (n) => {
-			for (let i = 0; i < n; i++) {
-				const a = w.document.createElement("a");
-				a.href = `/c/${side.children.length + 1}`;
-				a.textContent = `Chat ${side.children.length + 1}`;
-				side.append(a);
-			}
+		let total = items;
+		let top = 0;
+		const draw = () => {
+			const first = virtual ? Math.max(0, Math.floor(top / 50) - 2) : 0;
+			const last = virtual ? Math.min(total, Math.ceil((top + view) / 50) + 2) : total;
+			side.replaceChildren(
+				...Array.from({ length: last - first }, (_, i) => {
+					const a = w.document.createElement(link ? "a" : "div");
+					a.setAttribute("href", `/c/${first + i + 1}`);
+					a.textContent = `Chat ${first + i + 1}`;
+					return a;
+				}),
+			);
 		};
-		add(20);
-		const batches = [11, 16, 0, 0];
-		w.HTMLElement.prototype.scrollIntoView = () => add(batches.shift() ?? 0); // the webapp loading on scroll
-		const all = await w.SaveMyChat.loadList(w.document, w.location.href, ["https://chatgpt.com/c/*"], { wait: 1 });
+		draw();
+		let loading = false;
+		Object.defineProperty(side, "clientHeight", { get: () => view });
+		Object.defineProperty(side, "scrollHeight", { get: () => total * 50 });
+		Object.defineProperty(side, "scrollTop", {
+			get: () => top,
+			set: (v) => {
+				top = Math.max(0, Math.min(v, total * 50 - view));
+				draw();
+				if (top + view < total * 50 - 2 || loading || !batches.length) return;
+				loading = true;
+				setTimeout(() => {
+					total += batches.shift();
+					loading = false;
+					draw();
+				}, late);
+			},
+		});
+		return w;
+	}
+
+	it("are loaded whole: the list scrolled down until no more chats come (RR7)", async () => {
+		const w = sidebar({ batches: [11, 16] });
+		const all = await w.SaveMyChat.loadList(w.document, w.location.href, ["https://chatgpt.com/c/*"], {
+			wait: 5,
+			step: 1,
+		});
 		expect(all).toHaveLength(47);
 	});
 
-	it("keep the chats a virtual list drops as it is scrolled, and wait for a slow batch (RR8)", async () => {
-		const w = load(KIT, { url: "https://chatgpt.com/", html: `<body><nav id="side"></nav></body>` });
-		const side = w.document.getElementById("side");
-		let next = 1;
-		const show = (n) => {
-			side.replaceChildren(); // only the newest batch stays on the page
-			for (let i = 0; i < n; i++) {
-				const a = w.document.createElement("a");
-				a.href = `/c/${next}`;
-				a.textContent = `Chat ${next++}`;
-				side.append(a);
-			}
+	it("keep every chat of a virtual list, its middle not skipped, and wait for a slow batch (RR8)", async () => {
+		const w = sidebar({ items: 60, virtual: true, batches: [17], late: 8 });
+		expect(w.SaveMyChat.listed(w.document, w.location.href, ["https://chatgpt.com/c/*"]).length).toBeLessThan(15);
+		const all = await w.SaveMyChat.loadList(w.document, w.location.href, ["https://chatgpt.com/c/*"], {
+			wait: 5,
+			step: 1,
+		});
+		expect(all).toHaveLength(77);
+		expect(all.at(-1)).toEqual({ url: "https://chatgpt.com/c/77", title: "Chat 77" });
+	});
+
+	it("of AI Mode are its history's thread buttons, all of a virtual list (live, 2026-11-28)", async () => {
+		const w = load([...KIT, "readers/google-ai-mode.js"], {
+			url: "https://www.google.com/search?q=a&udm=50",
+			html: `<body><div id="panel" style="overflow-y: auto"></div><a href="/search?udm=50&q=x">in-page</a></body>`,
+		});
+		const panel = w.document.getElementById("panel");
+		let top = 0;
+		const draw = () => {
+			const first = Math.max(0, Math.floor(top / 40) - 1);
+			panel.replaceChildren(
+				...Array.from({ length: Math.min(10, 25 - first) }, (_, i) => {
+					const b = w.document.createElement("button");
+					b.setAttribute("data-thread-id", `T${first + i}`);
+					b.setAttribute("aria-label", `Thread ${first + i}, ${first + i + 1} z 25`);
+					b.innerHTML = `<div><div>Thread ${first + i}</div></div>`;
+					return b;
+				}),
+			);
 		};
-		show(20);
-		const batches = [10, 0, 0, 7, 0, 0, 0]; // a batch late by two rounds
-		w.HTMLElement.prototype.scrollIntoView = () => {
-			const n = batches.shift() ?? 0;
-			if (n) show(n);
-		};
-		const all = await w.SaveMyChat.loadList(w.document, w.location.href, ["https://chatgpt.com/c/*"], { wait: 1 });
-		expect(all).toHaveLength(37);
-		expect(all.at(-1)).toEqual({ url: "https://chatgpt.com/c/37", title: "Chat 37" });
+		draw();
+		Object.defineProperty(panel, "clientHeight", { get: () => 200 });
+		Object.defineProperty(panel, "scrollHeight", { get: () => 1000 });
+		Object.defineProperty(panel, "scrollTop", {
+			get: () => top,
+			set: (v) => {
+				top = Math.max(0, Math.min(v, 800));
+				draw();
+			},
+		});
+		panel.scrollTop = 800; // left at its end
+		const all = await w.SaveMyChat.loadList(w.document, w.location.href, [], { wait: 2, step: 1 });
+		expect(all).toHaveLength(25);
+		expect(all[3]).toEqual({ url: "https://www.google.com/search?udm=50&smc-thread=T3", title: "Thread 3" });
 	});
 
 	it("are answered by a prototype's bridge, with the patterns the background sent", async () => {
@@ -222,8 +321,11 @@ describe("gathering, one chat at a time", () => {
 		await real.finish();
 		expect(sent).toEqual([
 			"window https://a/1 focused=false",
+			"save-my-chat:open-item", // a chat without an address of its own is opened by its reader
 			"tab 51 https://a/2",
+			"save-my-chat:open-item",
 			"window https://a/3 focused=false",
+			"save-my-chat:open-item",
 			"close window 2",
 		]);
 		expect(listeners.size).toBe(0);

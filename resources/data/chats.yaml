@@ -94,7 +94,8 @@ chats:
 
   - id: deepseek
     name: DeepSeek
-    status: planned
+    status: optional
+    reader: readers/deepseek.js
     snippet: drafted-snippets/deepseek-online.js
     domains: [chat.deepseek.com]
     matches: ["https://chat.deepseek.com/*"]
@@ -121,7 +122,8 @@ chats:
 
   - id: grok
     name: Grok
-    status: planned
+    status: optional
+    reader: readers/grok.js
     snippet: drafted-snippets/grok-com-grok.js
     domains: [grok.com]
     matches: ["https://grok.com/*"]
@@ -130,11 +132,12 @@ chats:
 
   - id: x-grok
     name: Grok on X
-    status: planned
+    status: optional
+    reader: readers/x-grok.js
     snippet: drafted-snippets/x-com-grok.js
     domains: [x.com]
     matches: ["https://x.com/i/grok*"]
-    chats: ["https://x.com/i/grok?conversation=*"]
+    chats: ["https://x.com/i/grok/c/*"]
     verified: false
 
   - id: notebooklm
