@@ -9,8 +9,8 @@ save-my-chat
 
 ## Summary (at most 250 characters)
 
-Saves your conversations from AI chat webapps - ChatGPT, Claude, Gemini, Google's AI Mode,
-GitHub Copilot, DeepSeek, Grok - on your own machine, as Markdown or JSON, in one clear
+Saves your conversations from AI chat webapps - ChatGPT, Claude, Gemini, Copilot, Perplexity,
+Mistral, DeepSeek, Grok and more - on your own machine, as Markdown or JSON, in one clear
 format. Nothing is sent anywhere.
 
 ## Description
@@ -26,8 +26,9 @@ read or JSON to keep, in one format whatever the webapp.
 - **Your own readers**: when a webapp changes, fix its selectors in the Readers tab, or
   write a reader of your own (prototypes).
 
-Readers: Google Search AI Mode, GitHub Copilot; ChatGPT, Claude, Gemini, DeepSeek, Grok and
-Grok on X once you allow each in the Readers tab.
+Readers: Google Search AI Mode, GitHub Copilot; ChatGPT, Claude, Gemini, Microsoft Copilot,
+Perplexity, Mistral Le Chat, DeepSeek, HuggingChat, Google AI Studio, NotebookLM, Grok and Grok
+on X once you allow each in the Readers tab.
 
 Private by design: no telemetry, no servers, nothing sent anywhere - but a chat you make a
 GitHub gist yourself.
