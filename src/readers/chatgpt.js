@@ -1,16 +1,15 @@
 // ChatGPT, a conversation at https://chatgpt.com/c/<id> (or /g/<gpt>/c/<id>).
-// Each message carried the role of its author in an attribute,
-// data-message-author-role="user" or "assistant", and sat in an <article>
-// data-turn="user" | "assistant". On the live page of RR8 (Sett's snippet,
-// drafted-snippets/chatgpt.js) the user's messages are told by the class
-// group/user-message, and every message is a child of one transcript,
-// [data-rail-chat-transcript] (data-thread-find-target="conversation"). When
-// the attributes give no answer of ChatGPT's, the transcript's children are read
-// as rows: one holding a user's message is the user's, any other ChatGPT's.
-// NOTE: unverified - the transcript and the class are Sett's, seen 2026-11-28;
-// the reader has not been run on the live page (docs/.agents/things-to-check.md).
-// A new selector goes in front of its set (or as an override in the Readers tab);
-// keep the old ones.
+// Seen live through the debug gate (2026-11-28, scrapnote "live look: ChatGPT"): each
+// message carries data-chatgpt-search-unit-key="<uuid>:<n>:user" or ":assistant", and
+// starts with a heading only a screen reader says, h4[data-conversation-role] ("You
+// said:", "ChatGPT said:"), left out. Sett matched the marks of both roles. The older
+// hooks stay behind: data-message-author-role, article[data-turn], the class
+// group/user-message (Sett's snippet, RR8), and the transcript's children read as rows
+// when no answer is found otherwise.
+// The transcript is virtualized ([data-virtualized-turn]): only the turns near the screen
+// are in the page, so a long chat is whole only once collected while it scrolls (phase 7).
+// A new selector goes in front of its set (or as an override in the Readers tab); keep
+// the old ones.
 (() => {
 	const SMC = globalThis.SaveMyChat;
 
@@ -20,12 +19,24 @@
 		service: "chatgpt.com",
 		selectors: {
 			transcript: ["[data-rail-chat-transcript]", "[data-thread-find-target='conversation']"],
-			user: ["[data-message-author-role='user']", "article[data-turn='user']", "[class~='group/user-message']"],
-			assistant: ["[data-message-author-role='assistant']", "article[data-turn='assistant']"],
+			user: [
+				"[data-chatgpt-search-unit-key$=':user']",
+				"[data-message-author-role='user']",
+				"article[data-turn='user']",
+				"[class~='group/user-message']",
+			],
+			assistant: [
+				"[data-chatgpt-search-unit-key$=':assistant']",
+				"[data-message-author-role='assistant']",
+				"article[data-turn='assistant']",
+			],
+			hidden: ["h4[data-conversation-role]"],
 		},
 		detect: (_doc, url) => new URL(url).hostname === "chatgpt.com",
 		read(doc, _url, sets) {
-			let turns = SMC.turnsBy(doc, { user: sets.user, assistant: sets.assistant });
+			// a message's own id, to know it again in another window of a long chat
+			const key = (el) => el.getAttribute("data-chatgpt-search-unit-key") || el.getAttribute("data-message-id");
+			let turns = SMC.turnsBy(doc, { user: sets.user, assistant: sets.assistant }, doc, { hidden: sets.hidden, key });
 			const transcriptCss = SMC.selector(sets.transcript, doc);
 			const transcript = transcriptCss && doc.querySelector(transcriptCss);
 			if (transcript && !turns.some((t) => t.role === "assistant")) {
