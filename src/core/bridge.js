@@ -33,6 +33,7 @@
 				? SMC.loadList(undefined, undefined, [].concat(ask.patterns || []))
 				: SMC.listed(undefined, undefined, [].concat(ask.patterns || []));
 		if (type === "save-my-chat:load") return SMC.loadChat(undefined, undefined, {});
+		if (type === "save-my-chat:open-item") return SMC.openItem();
 		return null;
 	}
 

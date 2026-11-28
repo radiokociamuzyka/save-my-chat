@@ -50,6 +50,9 @@ export function firefox(browser = globalThis.browser, { ready = READY, poll = PO
 			tabId = win.tabs[0].id;
 		}
 		await until(tabId);
+		// a chat listed without an address of its own (AI Mode's threads) is opened in its
+		// page by its reader; any other page answers false, and is read as it is
+		await ask({ type: "save-my-chat:open-item", tabId });
 		return tabId;
 	}
 

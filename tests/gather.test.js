@@ -41,6 +41,48 @@ describe("the chats a page lists", () => {
 		]);
 	});
 
+	it("of AI Mode are opened by their thread's button, found in the virtual panel, and saved under the list's address", async () => {
+		const w = load([...KIT, "readers/google-ai-mode.js"], {
+			url: "https://www.google.com/search?udm=50&smc-thread=T17",
+			html: `<body><div id="panel" style="overflow-y: auto"></div><div id="chat"></div></body>`,
+		});
+		const panel = w.document.getElementById("panel");
+		let top = 0;
+		const clicked = [];
+		const draw = () => {
+			const first = Math.floor(top / 40);
+			panel.replaceChildren(
+				...Array.from({ length: 6 }, (_, i) => {
+					const b = w.document.createElement("button");
+					b.setAttribute("data-thread-id", `T${first + i}`);
+					b.textContent = `Thread ${first + i}`;
+					b.addEventListener("click", () => {
+						clicked.push(first + i);
+						w.history.pushState({}, "", `/search?q=Thread+${first + i}&udm=50&mtid=fresh${first + i}`);
+						w.document.getElementById("chat").innerHTML =
+							'<div class="ilZyRc">Thread question?</div><div class="CKgc1d"><p>An answer.</p></div>';
+					});
+					return b;
+				}),
+			);
+		};
+		draw();
+		Object.defineProperty(panel, "clientHeight", { get: () => 200 });
+		Object.defineProperty(panel, "scrollHeight", { get: () => 1200 });
+		Object.defineProperty(panel, "scrollTop", {
+			get: () => top,
+			set: (v) => ((top = Math.max(0, Math.min(v, 1000))), draw()),
+		});
+		w.SaveMyChat.pause = () => Promise.resolve(); // the panel draws at once here
+		expect(await w.SaveMyChat.openItem()).toBe(true);
+		expect(clicked).toEqual([17]);
+		const c = await w.SaveMyChat.readPage(w.document, w.location.href, {});
+		expect(c.source.url).toBe("https://www.google.com/search?udm=50&smc-thread=T17");
+		expect(c.title).toBe("Thread 17");
+		expect(c.turns.map((t) => t.role)).toEqual(["user", "assistant"]);
+		expect(await w.SaveMyChat.openItem(w.document, "https://www.google.com/search?udm=50&q=x")).toBe(false);
+	});
+
 	it("of AI Mode, without its reader, are its links with udm=50, wherever it stands in the address", () => {
 		const w = load(KIT, {
 			url: "https://www.google.com/search?q=a&udm=50",
@@ -279,8 +321,11 @@ describe("gathering, one chat at a time", () => {
 		await real.finish();
 		expect(sent).toEqual([
 			"window https://a/1 focused=false",
+			"save-my-chat:open-item", // a chat without an address of its own is opened by its reader
 			"tab 51 https://a/2",
+			"save-my-chat:open-item",
 			"window https://a/3 focused=false",
+			"save-my-chat:open-item",
 			"close window 2",
 		]);
 		expect(listeners.size).toBe(0);

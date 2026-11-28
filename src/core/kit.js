@@ -184,7 +184,9 @@
 		const turns = (read.turns || []).filter((t) => t?.text);
 		return {
 			format: FORMAT,
-			source: { reader: reader.id, service: reader.service, url: String(url) },
+			// a reader may name the conversation's own address (AI Mode: its thread's, the
+			// page's changing with every load)
+			source: { reader: reader.id, service: reader.service, url: String(read.url || url) },
 			title: (read.title || "").trim() || "Untitled conversation",
 			savedAt: now.toISOString(),
 			turns,
@@ -617,6 +619,13 @@
 		return null;
 	}
 
+	// A chat listed without an address of its own is opened in its page by its reader's
+	// open(doc, url) (AI Mode's threads: by their button). Gives whether it was opened.
+	async function openItem(doc = root.document, url = root.location?.href) {
+		for (const r of readers.values()) if (r.open && r.detect(doc, url)) return Boolean(await r.open(doc, url));
+		return false;
+	}
+
 	function present(doc = root.document, url = root.location?.href) {
 		for (const r of readers.values()) if (r.detect(doc, url)) return { id: r.id, name: r.name };
 		return null;
@@ -639,6 +648,9 @@
 		readers,
 		readPage,
 		readWhole,
+		openItem,
+		scroller,
+		pause,
 		joined,
 		inspect,
 		present,
@@ -663,6 +675,7 @@
 					? loadList(undefined, undefined, msg.patterns)
 					: Promise.resolve(listed(undefined, undefined, msg.patterns));
 			if (msg?.type === "save-my-chat:load") return loadChat();
+			if (msg?.type === "save-my-chat:open-item") return openItem();
 		});
 	}
 })();
