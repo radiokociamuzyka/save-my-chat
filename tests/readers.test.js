@@ -400,6 +400,68 @@ describe("readers", () => {
 		]);
 	});
 
+	it("microsoft-copilot reads its question and answer, the screen reader's headings left out (live)", async () => {
+		const c = await read(
+			"microsoft-copilot",
+			"https://copilot.com/chat/conversation/1",
+			`<title>Bars in cages - Microsoft Copilot</title><body><div id="llm-web-ui-messageList-scrollable-container">
+			<div data-message-index="0"><div data-testid="chatQuestion"><div role="article" class="fai-UserMessage">
+				<h5 class="fai-UserMessage__accessibleHeading">You said:</h5><div class="fai-UserMessage__message">Hi there?</div></div></div>
+			<div data-testid="copilot-message-reply-div"><div role="article" class="fai-CopilotMessage">
+				<h6 class="fai-CopilotMessage__accessibleHeading">Copilot said:</h6><p>Greetings.</p></div></div></div></div></body>`,
+		);
+		expect(c.title).toBe("Bars in cages");
+		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual(["user: Hi there?", "assistant: Greetings."]);
+	});
+
+	it("mistral-le-chat reads by author role, the time rows and a code block's header left out (live)", async () => {
+		const c = await read(
+			"mistral-le-chat",
+			"https://chat.mistral.ai/chat/1",
+			`<title>Meeting Assistant | Le Chat</title><body>
+			<div data-message-author-role="user" data-message-id="u1"><div dir="auto"><p>Pseudocode?</p></div><div>Mar 6, 1:29pm</div></div>
+			<div data-message-author-role="assistant" data-message-id="a1"><div data-message-part-type="answer">
+				<p>Here:</p><div data-testid="code-block"><div><div><div><i role="img" aria-label="python icon"></i><span>python</span></div>
+				<div><button aria-label="Copy">Copy</button></div></div><pre><code>class A: pass</code></pre></div></div></div>
+				<div>Mar 6, 1:29pm</div></div></body>`,
+		);
+		expect(c.title).toBe("Meeting Assistant");
+		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual([
+			"user: Pseudocode?",
+			"assistant: Here:\n\n```\nclass A: pass\n```",
+		]);
+	});
+
+	it("perplexity reads the question's bubble and the answer's final text, the steps left out (live)", async () => {
+		const c = await read(
+			"perplexity",
+			"https://www.perplexity.ai/session/1",
+			`<title>hey there buddy - Perplexity</title><body><div>
+			<div data-workflow-entry="18"><div data-message-bubble="right"><div data-renderer="lm"><p>Our plan?</p></div></div>
+				<span data-testid="toggle-query-expand-button"><button>Read more</button></span></div>
+			<div data-workflow-final-text><div><button>Finished</button></div><div data-renderer="lm"><p>It holds.</p></div></div>
+			</div></body>`,
+		);
+		expect(c.title).toBe("hey there buddy");
+		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual(["user: Our plan?", "assistant: It holds."]);
+	});
+
+	it("hugging-chat reads its messages by type and role, an answer's tools left out (live)", async () => {
+		const c = await read(
+			"hugging-chat",
+			"https://huggingface.co/chat/conversation/1",
+			`<title>Python cache hub - HuggingChat</title><body>
+			<div data-message-id="m1" data-message-type="user" role="presentation"><p>python cache hub?</p></div>
+			<div data-message-id="m2" data-message-role="assistant" role="presentation"><div>Called 4 tools</div>
+				<div class="prose"><p>The <code>HF_HOME</code> cache.</p></div></div></body>`,
+		);
+		expect(c.title).toBe("Python cache hub");
+		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual([
+			"user: python cache hub?",
+			"assistant: The `HF_HOME` cache.",
+		]);
+	});
+
 	it("gemini reads its custom elements, named by the sidebar's chat or the first question", async () => {
 		const page = (sidebar) => `<title>Gemini</title><body>${sidebar}
 			<user-query><span class="cdk-visually-hidden">You said</span><div class="query-text"><p class="query-text-line">Turtles?</p></div></user-query>

@@ -80,7 +80,7 @@ describe("options: the page", () => {
 		window.dispatchEvent(new HashChangeEvent("hashchange"));
 		await flushPromises();
 		expect(page.find(".tabs li.is-active").text()).toBe("Readers");
-		expect(page.findAll(".reader")).toHaveLength(10);
+		expect(page.findAll(".reader")).toHaveLength(14);
 	});
 });
 
@@ -119,7 +119,11 @@ describe("options: readers and their selectors", () => {
 			"ChatGPT",
 			"Claude",
 			"Gemini",
+			"Microsoft Copilot",
+			"Perplexity",
+			"Mistral Le Chat",
 			"DeepSeek",
+			"HuggingChat",
 			"Google AI Studio",
 			"Grok",
 			"Grok on X",
@@ -231,7 +235,11 @@ describe("options: prototypes", () => {
 			"Make a prototype of ChatGPT",
 			"Make a prototype of Claude",
 			"Make a prototype of Gemini",
+			"Make a prototype of Microsoft Copilot",
+			"Make a prototype of Perplexity",
+			"Make a prototype of Mistral Le Chat",
 			"Make a prototype of DeepSeek",
+			"Make a prototype of HuggingChat",
 			"Make a prototype of Google AI Studio",
 			"Make a prototype of Grok",
 			"Make a prototype of Grok on X",
@@ -282,7 +290,7 @@ describe("options: prototypes", () => {
 		await panel.find("button.delete-prototype").trigger("click");
 		await flushPromises();
 		expect(data.prototypes).toEqual({});
-		expect(panel.findAll("button.copy")).toHaveLength(10);
+		expect(panel.findAll("button.copy")).toHaveLength(14);
 	});
 
 	it("imports a file of prototypes turned off, skipping broken ones and fields it does not know", async () => {

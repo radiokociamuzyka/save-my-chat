@@ -1,7 +1,7 @@
 {
 	"manifest_version": 3,
 	"name": "save-my-chat",
-	"version": "0.7.41",
+	"version": "0.7.42",
 	"description": "Saves a conversation from an AI chat webapp on your machine, in one clear unified format.",
 	"background": {
 		"scripts": ["core/kit.js", "core/markdown.js", "core/readers.js", "core/library.js", "background/main.js"]
@@ -32,7 +32,12 @@
 		"https://chatgpt.com/*",
 		"https://claude.ai/*",
 		"https://gemini.google.com/*",
+		"https://copilot.com/*",
+		"https://copilot.microsoft.com/*",
+		"https://www.perplexity.ai/*",
+		"https://chat.mistral.ai/*",
 		"https://chat.deepseek.com/*",
+		"https://huggingface.co/*",
 		"https://aistudio.google.com/*",
 		"https://grok.com/*",
 		"https://x.com/*",

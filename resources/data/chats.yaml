@@ -70,27 +70,30 @@ chats:
 
   - id: microsoft-copilot
     name: Microsoft Copilot
-    status: planned
-    domains: [copilot.microsoft.com]
-    matches: ["https://copilot.microsoft.com/*"]
-    chats: ["https://copilot.microsoft.com/chats/*"]
-    verified: false
+    status: optional
+    reader: readers/microsoft-copilot.js
+    domains: [copilot.com, copilot.microsoft.com]
+    matches: ["https://copilot.com/*", "https://copilot.microsoft.com/*"]
+    chats: ["https://copilot.com/chat/conversation/*", "https://copilot.microsoft.com/chat/conversation/*"]
+    verified: true
 
   - id: perplexity
     name: Perplexity
-    status: planned
+    status: optional
+    reader: readers/perplexity.js
     domains: [www.perplexity.ai]
     matches: ["https://www.perplexity.ai/*"]
-    chats: ["https://www.perplexity.ai/search/*"]
-    verified: false
+    chats: ["https://www.perplexity.ai/session/*", "https://www.perplexity.ai/search/*"]
+    verified: true
 
   - id: mistral-le-chat
     name: Mistral Le Chat
-    status: planned
+    status: optional
+    reader: readers/mistral-le-chat.js
     domains: [chat.mistral.ai]
     matches: ["https://chat.mistral.ai/*"]
-    chats: ["https://chat.mistral.ai/chat/*"]
-    verified: false
+    chats: ["https://chat.mistral.ai/chat/*", "https://chat.mistral.ai/work/*"]
+    verified: true
 
   - id: deepseek
     name: DeepSeek
@@ -104,11 +107,12 @@ chats:
 
   - id: hugging-chat
     name: HuggingChat
-    status: planned
+    status: optional
+    reader: readers/hugging-chat.js
     domains: [huggingface.co]
     matches: ["https://huggingface.co/chat/*"]
     chats: ["https://huggingface.co/chat/conversation/*"]
-    verified: false
+    verified: true
 
   # named by Sett's drafts (RR7, 2026-11-27), each waiting for its snippet
   - id: google-ai-studio
