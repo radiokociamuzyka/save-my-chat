@@ -122,4 +122,10 @@ point was added.
   a tab that was never shown (a background tab may be throttled: the
   30 seconds may not do), and how a webapp takes a few dozen chats
   opened one after another. A sidebar loading more on scroll lists only
-  what it has shown.
+  what it has shown.- **2026-11-28. A long ChatGPT chat read whole, to its start.** 736 messages in 17
+  minutes from a fresh tab, the same twice (734 before a new exchange), no copies. Not
+  known: what sits at the two places where a question follows a question (an answer with
+  no text, an image or a stopped one, or a missed answer), and which window gave the
+  warning "older messages came without meeting the newer ones" (one window, each run).
+  Whether gathering, which opens such a chat in a window of its own, keeps it in front for
+  17 minutes. Not tried on DeepSeek's long chats with these changes.

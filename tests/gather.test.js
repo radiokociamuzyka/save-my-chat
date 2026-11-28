@@ -456,12 +456,22 @@ describe("a long chat read whole, while it scrolls into its past (phase 7)", () 
 	// ones and moves the view down by their height, keeping the screen in place.
 	// moved: the webapp loads only when the box moves to its top, not when it stays there
 	//   push(v): what the webapp makes of a move to v (a webapp pushing the view back)
-	function virtual({ total = 30, loaded = 10, batch = 6, view = 300, skip = 0, moved = false, push = (v) => v } = {}) {
+	//   swap: the webapp replaces its box with a new one when it first loads older ones
+	function virtual({
+		total = 30,
+		loaded = 10,
+		batch = 6,
+		view = 300,
+		skip = 0,
+		moved = false,
+		push = (v) => v,
+		swap = false,
+	} = {}) {
 		const w = load([...KIT, "readers/chatgpt.js"], {
 			url: "https://chatgpt.com/c/1",
 			html: `<!doctype html><title>Long - ChatGPT</title><body><main id="box" style="overflow-y: auto"></main></body>`,
 		});
-		const box = w.document.getElementById("box");
+		let box = w.document.getElementById("box");
 		let from = total - loaded; // the oldest loaded
 		let top = 0;
 		const height = () => (total - from) * 100;
@@ -479,27 +489,38 @@ describe("a long chat read whole, while it scrolls into its past (phase 7)", () 
 			);
 		};
 		let loading = false;
-		Object.defineProperty(box, "clientHeight", { get: () => view });
-		Object.defineProperty(box, "scrollHeight", { get: height });
-		Object.defineProperty(box, "scrollTop", {
-			get: () => top,
-			set: (v) => {
-				const was = top;
-				top = Math.max(0, Math.min(push(v), height() - view));
-				draw();
-				if (top > 0 || from === 0 || loading || (moved && was === 0)) return;
-				loading = true;
-				setTimeout(() => {
-					const more = Math.min(from, batch + skip);
-					from -= more;
-					if (skip) from += skip; // a webapp that lost some: a gap
-					skip = 0;
-					top += (more - (more === batch + skip ? 0 : 0)) * 100;
-					loading = false;
+		const install = (el) => {
+			Object.defineProperty(el, "clientHeight", { get: () => view });
+			Object.defineProperty(el, "scrollHeight", { get: height });
+			Object.defineProperty(el, "scrollTop", {
+				get: () => top,
+				set: (v) => {
+					const was = top;
+					top = Math.max(0, Math.min(push(v), height() - view));
 					draw();
-				}, 2);
-			},
-		});
+					if (top > 0 || from === 0 || loading || (moved && was === 0)) return;
+					loading = true;
+					setTimeout(() => {
+						const more = Math.min(from, batch + skip);
+						from -= more;
+						if (skip) from += skip; // a webapp that lost some: a gap
+						skip = 0;
+						top += (more - (more === batch + skip ? 0 : 0)) * 100;
+						loading = false;
+						if (swap) {
+							swap = false;
+							const next = w.document.createElement("main");
+							next.style.overflowY = "auto";
+							box.replaceWith(next);
+							box = next;
+							install(box);
+						}
+						draw();
+					}, 2);
+				},
+			});
+		};
+		install(box);
 		box.scrollTop = height();
 		return w;
 	}
@@ -598,6 +619,23 @@ describe("a long chat read whole, while it scrolls into its past (phase 7)", () 
 		const c = await w.SaveMyChat.readWhole(w.document, w.location.href, {}, { wait: 5, step: 1, stuck: 5 });
 		expect(c.turns).toHaveLength(12);
 		expect(w.SaveMyChat.progress.done).toBe(true);
+	});
+
+	it("goes back to where it was when the webapp pulls the view to its end (ChatGPT, live)", async () => {
+		// every other move away from the end is undone: the view lands at the end again
+		let moves = 0;
+		const w = virtual({ total: 30, loaded: 10, push: (v) => (++moves % 2 ? 1e9 : v) });
+		const c = await w.SaveMyChat.readWhole(w.document, w.location.href, {}, { wait: 10, step: 1 });
+		expect(c.turns.map((t) => t.text)).toEqual(Array.from({ length: 30 }, (_, n) => `message ${n}`));
+		expect(c.warnings).toBeUndefined();
+		expect(w.SaveMyChat.progress.pulled).toBeGreaterThan(0);
+	});
+
+	it("follows the box the webapp puts in place of its first one (ChatGPT, a fresh tab)", async () => {
+		const w = virtual({ total: 30, loaded: 10, swap: true });
+		const c = await w.SaveMyChat.readWhole(w.document, w.location.href, {}, { wait: 10, step: 1 });
+		expect(c.turns).toHaveLength(30);
+		expect(w.SaveMyChat.progress.swapped).toBe(1);
 	});
 
 	it("reads a chat loaded already the same, its middle not skipped", async () => {
