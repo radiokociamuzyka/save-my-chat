@@ -16,6 +16,20 @@
 			assistant: [".CKgc1d"],
 		},
 		detect: (_doc, url) => new URL(url).searchParams.get("udm") === "50",
+		// The history (seen live through the debug gate, 2026-11-28): no links, but a button
+		// per thread in its side panel, button[data-thread-id], aria-label "<title>, <n> z
+		// <total>", 10 in the page at a time of a virtual list. A thread opens by its button
+		// only: its address's mtid is not its thread id, and an address made of the title
+		// and an id starts a new search (it did, once). So each is listed under an address
+		// naming its id, smc-thread, which opens an empty AI Mode page and sends no search;
+		// gathering them is clicking their buttons (phase 7, next).
+		listItems: (doc) => doc.querySelectorAll("button[data-thread-id]"),
+		list(doc) {
+			return [...doc.querySelectorAll("button[data-thread-id]")].map((b) => ({
+				url: `https://www.google.com/search?udm=50&smc-thread=${encodeURIComponent(b.getAttribute("data-thread-id"))}`,
+				title: (b.textContent || b.getAttribute("aria-label") || "").replace(/\s+/g, " ").trim(),
+			}));
+		},
 		read(doc, url, sets) {
 			const q = (new URL(url).searchParams.get("q") || "").trim();
 			const turns = SMC.turnsBy(doc, { user: sets.user, assistant: sets.assistant });
