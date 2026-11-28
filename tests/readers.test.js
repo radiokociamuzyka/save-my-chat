@@ -343,6 +343,63 @@ describe("readers", () => {
 		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual(["user: Memes?", "assistant: An *economy*."]);
 	});
 
+	it("gemini lists its chats by their bare address, named by their label, and names the open one (live)", async () => {
+		const w = load([...KIT, "readers/gemini.js"], {
+			url: "https://gemini.google.com/app/abc?hl=pl&pli=1",
+			html: `<!doctype html><body><nav>
+				<a href="/app/abc?hl=pl&pli=1" aria-label="Irritation explained" aria-current="page"><span><span dir="auto">Irritation explained</span></span></a>
+				<a href="/app/def?hl=pl&pli=1" aria-label="Another"><span dir="auto">Another</span></a>
+				<a href="/app">New chat</a></nav>
+				<user-query><div class="query-text">Why?</div></user-query><model-response><message-content><p>Because.</p></message-content></model-response></body>`,
+		});
+		expect(w.SaveMyChat.listed(w.document, w.location.href, [])).toEqual([
+			{ url: "https://gemini.google.com/app/abc", title: "Irritation explained" },
+			{ url: "https://gemini.google.com/app/def", title: "Another" },
+		]);
+		expect((await w.SaveMyChat.readPage(w.document, w.location.href, {})).title).toBe("Irritation explained");
+	});
+
+	it("google-ai-studio reads its turns by role, headers and thoughts left out (live, 2026-11-28)", async () => {
+		const c = await read(
+			"google-ai-studio",
+			"https://aistudio.google.com/prompts/1",
+			`<title>CosmJS Custom Cha | Google AI Studio</title><body><h1 class="mode-title">CosmJS Custom Chain</h1>
+			<ms-chat-turn id="turn-1"><div data-turn-role="User"><div class="turn-content">
+				<div class="author-label" role="heading">User <span class="timestamp">11:06 PM</span></div><p>An example?</p></div></div></ms-chat-turn>
+			<ms-chat-turn id="turn-2"><div data-turn-role="Model"><div class="turn-content">
+				<div class="author-label" role="heading">Model <span class="timestamp">11:06 PM</span></div>
+				<ms-thought-chunk>Thoughts: investigating</ms-thought-chunk></div></div></ms-chat-turn>
+			<ms-chat-turn id="turn-3"><div data-turn-role="Model"><div class="turn-content">
+				<div class="author-label" role="heading">Model</div><p>Use <code>cosmjs</code>.</p></div></div></ms-chat-turn></body>`,
+		);
+		expect(c.title).toBe("CosmJS Custom Chain");
+		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual(["user: An example?", "assistant: Use `cosmjs`."]);
+	});
+
+	it("notebooklm reads a notebook's chat, the answer's thoughts left out, and names its notebooks (live)", async () => {
+		const c = await read(
+			"notebooklm",
+			"https://notebook.google.com/notebook/1",
+			`<title>BOS Architecture - Gemini Notebook</title><body><div class="chat-message-pair">
+			<chat-message><div class="from-user-container"><mat-card-content class="message-content">Tell me of BOS</mat-card-content></div></chat-message>
+			<chat-message><div class="to-user-container"><mat-card-content class="message-content">
+				<thinking-chain-view>Thoughts expand_more</thinking-chain-view><p><strong>BOS</strong> is a workshop.</p></mat-card-content></div></chat-message>
+			</div></body>`,
+		);
+		expect(c.title).toBe("BOS Architecture");
+		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual([
+			"user: Tell me of BOS",
+			"assistant: **BOS** is a workshop.",
+		]);
+		const w = load([...KIT, "readers/notebooklm.js"], {
+			url: "https://notebook.google.com/",
+			html: `<!doctype html><body><a href="/notebook/n1" aria-labelledby="t1 s1"></a><span id="t1">BOS Architecture</span></body>`,
+		});
+		expect(w.SaveMyChat.listed(w.document, w.location.href, [])).toEqual([
+			{ url: "https://notebook.google.com/notebook/n1", title: "BOS Architecture" },
+		]);
+	});
+
 	it("gemini reads its custom elements, named by the sidebar's chat or the first question", async () => {
 		const page = (sidebar) => `<title>Gemini</title><body>${sidebar}
 			<user-query><span class="cdk-visually-hidden">You said</span><div class="query-text"><p class="query-text-line">Turtles?</p></div></user-query>

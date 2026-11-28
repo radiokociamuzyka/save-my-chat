@@ -5,7 +5,7 @@
 // message does not. The messages sit in a virtual list, .ds-virtual-list, each item keyed
 // by data-virtual-list-item-key. The list of chats: the sidebar's links /a/chat/s/<id>.
 // A Cloudflare check may stand over the page (#cf-overlay) before it is drawn.
-// NOTE: unverified beyond short chats; a "DeepThink" answer's reasoning was not seen.
+// Read whole live (26 messages). NOTE: a "DeepThink" answer's reasoning was not seen.
 // A new selector goes in front of its set (or as an override in the Readers tab); keep the
 // old ones.
 (() => {
