@@ -136,7 +136,8 @@ The notes: `docs/devlog/scrapnote-*.md` of 2026-11-28.
 - [ ] A long chat's whole read seen to its end live, and faster: 500 messages took 17 min, ChatGPT's own loading pace; gathering's waits (the event page kept alive meanwhile?) checked
 - [ ] The same end for lists: the box cannot go further down after a pause
 - [x] AI Mode's history: its threads listed from their buttons (`data-thread-id`, a virtual list: 215 of 215), each opened by a click when gathered and saved under the list's address (`smc-thread`); an address can't open a thread (`mtid` is no thread id)
-- [ ] AI Mode's notebooks (`button[data-journey-id]`, 12)
+- [x] AI Mode's notebooks looked at live (`button[data-journey-id]`, 12, each opened by its button, its address then `ajid=<id>`): a name, instructions, sources (files, sites, copied text) and threads; Sett's 12 hold no thread, so there is no chat to read yet: their sources go to phase 8
+- [x] The gate's `close`: the tabs it opened closed after a session, never the user's (Sett, 2026-11-28)
 - [x] A DeepSeek reader, optional: `.ds-message` with or without `.ds-markdown`, keyed by its virtual list; live: 12 chats listed, a 26-message chat read whole (5 at once)
 - [ ] DeepSeek's Cloudflare check met while gathering; a DeepThink answer's reasoning
 - [x] Grok on grok.com, optional: its test ids, the 'You' / 'Grok' headings left out, keyed by `response-<uuid>`; the list from `/history` (the sidebar's chats are buttons); live: 5 chats, a 20-message chat read whole
@@ -149,6 +150,7 @@ The notes: `docs/devlog/scrapnote-*.md` of 2026-11-28.
 - [ ] What each webapp's artifacts are and where they live in its page: ChatGPT's images and files, Claude's artifacts, Grok's library (notes: the artifacts scrapnote)
 - [ ] The unified format's attachments: a turn names its files, `save-my-chat/1` (a version bump of `format.md`)
 - [ ] Artifacts saved beside their chat and linked in its Markdown where they were born; in the zip, the viewer and the explorer
+- [ ] AI Mode's notebooks: a notebook's sources (`.h30KKd[aria-label]` > `.vhVYm`, a name and a kind each; sites by their link) and its threads, saved with it, once a notebook with a thread is seen
 - [ ] Fetching a file a page does not hold already is a network request: a `Q<n>` for Sett before it is built (rule 4)
 
 ## Phase 9: more webapps
