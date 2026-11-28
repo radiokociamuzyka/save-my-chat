@@ -296,6 +296,53 @@ describe("readers", () => {
 		]);
 	});
 
+	it("deepseek tells its messages by an answer's markdown, keyed by the virtual list (live, 2026-11-28)", async () => {
+		const c = await read(
+			"deepseek",
+			"https://chat.deepseek.com/a/chat/s/1",
+			`<title>Typo greeting - DeepSeek</title><body><div class="ds-virtual-list"><div class="ds-virtual-list-items">
+			<div data-virtual-list-item-key="-2"><div class="d29f3d7d ds-message"><div class="ds-collapsible-text">dsadsa</div></div></div>
+			<div data-virtual-list-item-key="2"><div class="ds-message"><div class="ds-markdown ds-assistant-message-main-content">
+				<p class="ds-markdown-paragraph">Hello! A <strong>typo</strong>?</p></div></div>
+				<div class="ds-flex"><div class="ds-button" role="button" aria-label="Read aloud"></div></div></div>
+			</div></div></body>`,
+		);
+		expect(c.title).toBe("Typo greeting");
+		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual(["user: dsadsa", "assistant: Hello! A **typo**?"]);
+	});
+
+	it("grok reads its test ids, the 'You' / 'Grok' headings left out (live, 2026-11-28)", async () => {
+		const c = await read(
+			"grok",
+			"https://grok.com/c/1",
+			`<title>Memes - Grok</title><body><div data-testid="conversation-title">Technomancy and Memes</div>
+			<div role="log" data-testid="chat-transcript-scroller">
+			<div id="response-a1" data-user-message-row><div role="article" data-testid="user-message">
+				<h2 id="turn-heading-a1" data-no-copy="true">You</h2><span data-bubble-text><p>Memes?</p></span></div>
+				<div data-testid="user-message-actions"><button aria-label="Edit message"></button></div></div>
+			<div id="response-a2"><div role="article" data-testid="assistant-message">
+				<h2 id="turn-heading-a2" data-no-copy="true">Grok</h2><p>An <em>economy</em>.</p></div></div>
+			</div></body>`,
+		);
+		expect(c.title).toBe("Technomancy and Memes");
+		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual(["user: Memes?", "assistant: An *economy*."]);
+	});
+
+	it("x-grok reads X's turns, the user's part and the quotable answer (live, 2026-11-28)", async () => {
+		const c = await read(
+			"x-grok",
+			"https://x.com/i/grok/c/1",
+			`<title>Memes / X</title><body><main><div class="space-y-4">
+			<div class="space-y-4" data-turn-id="t1">
+				<div class="group/user flex"><div><div class="rounded-chat">Memes?</div><div><button aria-label="Edit message"></button></div></div></div>
+				<div class="group flex" data-quotable-message="r1"><div><p>An <em>economy</em>.</p></div>
+					<div><button aria-label="Good response"></button></div></div></div>
+			</div></main></body>`,
+		);
+		expect(c.title).toBe("Memes");
+		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual(["user: Memes?", "assistant: An *economy*."]);
+	});
+
 	it("gemini reads its custom elements, named by the sidebar's chat or the first question", async () => {
 		const page = (sidebar) => `<title>Gemini</title><body>${sidebar}
 			<user-query><span class="cdk-visually-hidden">You said</span><div class="query-text"><p class="query-text-line">Turtles?</p></div></user-query>

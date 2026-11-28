@@ -136,7 +136,7 @@
 				error: error.message,
 			}));
 		// loading a whole list or chat scrolls and waits: minutes, not seconds
-		const long = type === "save-my-chat:load" || extra.load || extra.whole;
+		const long = type === "save-my-chat:load" || type === "save-my-chat:open-item" || extra.load || extra.whole;
 		if (proto) return askPrototype(tabId, type, long ? 600_000 : 5000, extra);
 		try {
 			return await browser.tabs.sendMessage(tabId, { ...extra, type });
@@ -264,6 +264,7 @@
 		if (msg?.type === "save-my-chat:list") return list(msg).catch(() => null);
 		if (msg?.type === "save-my-chat:collect") return collect(msg);
 		if (msg?.type === "save-my-chat:load") return ask(msg.tabId, msg.type);
+		if (msg?.type === "save-my-chat:open-item") return ask(msg.tabId, msg.type).catch(() => false);
 	});
 
 	SMC.background = { register, ask, enabledReaders, prototypeOf, list, collect }; // for tests
