@@ -5,6 +5,8 @@ import pkg from "../../package.json";
 import YAML from "../../resources/data/chats.yaml?raw";
 
 export const REPO = "https://github.com/radiokociamuzyka/save-my-chat";
+// the repository's files as master holds them, read raw: the statements (Sett, issue #7)
+export const RAW = "https://raw.githubusercontent.com/radiokociamuzyka/save-my-chat/master/";
 export const DOCS = "https://save-my-chat.readthedocs.io/en/latest/";
 export const AMO = "https://addons.mozilla.org/firefox/addon/save-my-chat/";
 

@@ -191,3 +191,12 @@ body {
 .island {
 	margin-bottom: 2rem;
 }
+
+/* the banner (task media), the width of the column */
+.banner {
+	display: block;
+	width: 100%;
+	height: auto;
+	border-radius: 6px;
+	margin-bottom: 1rem;
+}
