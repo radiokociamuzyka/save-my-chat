@@ -132,7 +132,8 @@ The notes: `docs/devlog/scrapnote-*.md` of 2026-11-28.
 - [x] Long chats collected while they scroll: each turn kept by its key, scrolled up until the box, after a pause, cannot go further into the past (virtualized: ChatGPT, DeepSeek); live: a ChatGPT chat, 500 messages in 17 min and still going
 - [ ] A long chat's whole read seen to its end live, and faster: 500 messages took 17 min, ChatGPT's own loading pace; gathering's waits (the event page kept alive meanwhile?) checked
 - [ ] The same end for lists: the box cannot go further down after a pause
-- [ ] AI Mode's history: its threads' buttons (`data-thread-id`) made addresses (`mtid`), the in-page anchor left out; then its notebooks
+- [x] AI Mode's history: its threads listed from their buttons (`data-thread-id`, a virtual list: 215 of 215), each opened by a click when gathered and saved under the list's address (`smc-thread`); an address can't open a thread (`mtid` is no thread id)
+- [ ] AI Mode's notebooks (`button[data-journey-id]`, 12)
 - [ ] A DeepSeek reader: `.ds-message`, `.ds-collapsible-text` / `.ds-assistant-message-main-content`; its Cloudflare check met while gathering
 - [ ] Grok on grok.com and on x.com, from a chat open in each
 - [ ] Samples of each webapp's pages from the public shares Sett lists in `resources/samples/.map.json`, saved by the gate's `sample`; tests reading them as fixtures
