@@ -3,17 +3,21 @@
 // kit, the readers, src/vendor/ - as it is. web-ext runs, lints and packs
 // dist/extension/. Not minified, file names without hashes: what AMO's reviewers
 // read stays close to the source uploaded with it.
-import { cpSync, existsSync, readdirSync, readFileSync } from "node:fs";
+import { cpSync, existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
+import { debugManifest } from "./scripts/debug/manifest.mjs";
 import { facts, notice } from "./scripts/notice.mjs";
 
 const SRC = new URL("src/", import.meta.url).pathname;
 const OUT = new URL("dist/extension/", import.meta.url).pathname;
 export const PAGES = ["popup", "options"];
-// not part of the extension: Sett's snippets (Q5)
-const LEFT_OUT = ["readers/drafted-snippets"];
+// The debug build (task run): the debug gate, src/debug/, and its manifest
+// (scripts/debug/manifest.mjs); never what is packed for AMO (task build).
+export const DEBUG = process.env.SMC_DEBUG === "1";
+// not part of the extension: Sett's snippets (Q5); the debug gate but in a debug build
+const LEFT_OUT = ["readers/drafted-snippets", ...(DEBUG ? [] : ["debug"])];
 
 const copied = (from) => !LEFT_OUT.some((left) => from.startsWith(`${SRC}${left}`));
 
@@ -43,6 +47,10 @@ function copyRest() {
 				});
 			}
 			if (!existsSync(`${OUT}manifest.json`)) throw new Error("the build has no manifest.json");
+			if (DEBUG) {
+				const manifest = JSON.parse(readFileSync(`${OUT}manifest.json`, "utf8"));
+				writeFileSync(`${OUT}manifest.json`, `${JSON.stringify(debugManifest(manifest), null, "\t")}\n`);
+			}
 		},
 	};
 }
