@@ -84,6 +84,8 @@
 		},
 		read: (args) => SMC.background.ask(tabArg(args), "save-my-chat:read", args.whole ? { whole: true } : {}),
 		inspect: (args) => SMC.background.ask(tabArg(args), "save-my-chat:inspect"),
+		// what gathering does after loading a listed address: its reader opens the chat (AI Mode: a click)
+		"open-item": (args) => SMC.background.ask(tabArg(args), "save-my-chat:open-item"),
 		list: (args) => SMC.background.list({ tabId: tabArg(args), load: Boolean(args.load) }),
 		// what the tab's reader reads with these selectors in front of its own (as the
 		// Readers tab's overrides would put them), without keeping them
