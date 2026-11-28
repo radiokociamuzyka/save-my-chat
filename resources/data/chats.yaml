@@ -46,7 +46,7 @@ chats:
     matches: ["https://chatgpt.com/*"]
     chats: ["https://chatgpt.com/c/*", "https://chatgpt.com/g/*/c/*"]
     note: messages carry data-message-author-role, user or assistant (unverified)
-    verified: false
+    verified: true
 
   - id: claude
     name: Claude
@@ -56,7 +56,7 @@ chats:
     matches: ["https://claude.ai/*"]
     chats: ["https://claude.ai/chat/*"]
     note: user messages are [data-testid=user-message], answers .font-claude-response (unverified)
-    verified: false
+    verified: true
 
   - id: gemini
     name: Gemini
@@ -66,7 +66,7 @@ chats:
     matches: ["https://gemini.google.com/*"]
     chats: ["https://gemini.google.com/app/*"]
     note: custom elements user-query (.query-text) and model-response (message-content) (unverified)
-    verified: false
+    verified: true
 
   - id: microsoft-copilot
     name: Microsoft Copilot
@@ -100,7 +100,7 @@ chats:
     domains: [chat.deepseek.com]
     matches: ["https://chat.deepseek.com/*"]
     chats: ["https://chat.deepseek.com/a/chat/s/*"]
-    verified: false
+    verified: true
 
   - id: hugging-chat
     name: HuggingChat
@@ -119,7 +119,7 @@ chats:
     domains: [aistudio.google.com]
     matches: ["https://aistudio.google.com/*"]
     chats: ["https://aistudio.google.com/prompts/*"]
-    verified: false
+    verified: true
 
   - id: grok
     name: Grok
@@ -129,7 +129,7 @@ chats:
     domains: [grok.com]
     matches: ["https://grok.com/*"]
     chats: ["https://grok.com/c/*"]
-    verified: false
+    verified: true
 
   - id: x-grok
     name: Grok on X
@@ -139,7 +139,7 @@ chats:
     domains: [x.com]
     matches: ["https://x.com/i/grok*"]
     chats: ["https://x.com/i/grok/c/*"]
-    verified: false
+    verified: true
 
   - id: notebooklm
     name: NotebookLM
@@ -150,4 +150,4 @@ chats:
     matches: ["https://notebook.google.com/*", "https://notebooklm.google.com/*"]
     chats: ["https://notebook.google.com/notebook/*", "https://notebooklm.google.com/notebook/*"]
     note: a notebook's chat beside its sources
-    verified: false
+    verified: true
