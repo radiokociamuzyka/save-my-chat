@@ -65,5 +65,14 @@
 			origins: ["https://grok.com/*"],
 			file: "readers/grok.js",
 		},
+		{
+			id: "x-grok",
+			name: "Grok on X",
+			matches: ["https://x.com/i/grok*"],
+			chats: ["https://x.com/i/grok/c/*"],
+			optional: true,
+			origins: ["https://x.com/*"],
+			file: "readers/x-grok.js",
+		},
 	];
 })();

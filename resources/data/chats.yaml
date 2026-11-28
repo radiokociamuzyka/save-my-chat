@@ -132,11 +132,12 @@ chats:
 
   - id: x-grok
     name: Grok on X
-    status: planned
+    status: optional
+    reader: readers/x-grok.js
     snippet: drafted-snippets/x-com-grok.js
     domains: [x.com]
     matches: ["https://x.com/i/grok*"]
-    chats: ["https://x.com/i/grok?conversation=*"]
+    chats: ["https://x.com/i/grok/c/*"]
     verified: false
 
   - id: notebooklm

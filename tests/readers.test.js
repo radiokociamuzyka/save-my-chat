@@ -328,6 +328,21 @@ describe("readers", () => {
 		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual(["user: Memes?", "assistant: An *economy*."]);
 	});
 
+	it("x-grok reads X's turns, the user's part and the quotable answer (live, 2026-11-28)", async () => {
+		const c = await read(
+			"x-grok",
+			"https://x.com/i/grok/c/1",
+			`<title>Memes / X</title><body><main><div class="space-y-4">
+			<div class="space-y-4" data-turn-id="t1">
+				<div class="group/user flex"><div><div class="rounded-chat">Memes?</div><div><button aria-label="Edit message"></button></div></div></div>
+				<div class="group flex" data-quotable-message="r1"><div><p>An <em>economy</em>.</p></div>
+					<div><button aria-label="Good response"></button></div></div></div>
+			</div></main></body>`,
+		);
+		expect(c.title).toBe("Memes");
+		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual(["user: Memes?", "assistant: An *economy*."]);
+	});
+
 	it("gemini reads its custom elements, named by the sidebar's chat or the first question", async () => {
 		const page = (sidebar) => `<title>Gemini</title><body>${sidebar}
 			<user-query><span class="cdk-visually-hidden">You said</span><div class="query-text"><p class="query-text-line">Turtles?</p></div></user-query>

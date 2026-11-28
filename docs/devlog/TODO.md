@@ -137,7 +137,7 @@ The notes: `docs/devlog/scrapnote-*.md` of 2026-11-28.
 - [x] A DeepSeek reader, optional: `.ds-message` with or without `.ds-markdown`, keyed by its virtual list; live: 12 chats listed, a 26-message chat read whole (5 at once)
 - [ ] DeepSeek's Cloudflare check met while gathering; a DeepThink answer's reasoning
 - [x] Grok on grok.com, optional: its test ids, the 'You' / 'Grok' headings left out, keyed by `response-<uuid>`; the list from `/history` (the sidebar's chats are buttons); live: 5 chats, a 20-message chat read whole
-- [ ] Grok on x.com
+- [x] Grok on x.com, optional: X's turns (`data-turn-id`), the user's part and the quotable answer (grok.com's ids); the list from `/i/grok/history`; live: 5 chats, the same 20 messages as on grok.com
 - [ ] Samples of each webapp's pages from the public shares Sett lists in `resources/samples/.map.json`, saved by the gate's `sample`; tests reading them as fixtures
 - [ ] Each reader's patterns checked on the live webapp, `verified: true` in `chats.yaml`
 
