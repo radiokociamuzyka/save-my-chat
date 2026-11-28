@@ -146,3 +146,44 @@ a release - the icon into the manifest's sizes, the poster and banner
 into the site and the Read the Docs pages - is a TODO of phase 6, where
 icons and the store listing are; it fetches at build time only, never
 from the extension.
+
+### RR9, the first try (issue #133, word for word)
+
+> attempts brings errors at step 2 
+>
+> if firefox were closed dialog windows pops up and tells that profile does not exist
+>
+> if other window were open it makes error message in shell. 
+>
+> this is fill output of `task run` in second case:
+
+(The output that followed: `npm run extension`'s build stopped by
+"Error: Found another Vite build process for this project (PID
+1626923). Pass --bypass-lock to bypass this check.", then
+`task: Failed to run task "run": exit status 1`.)
+
+> any ideas?
+
+And in the chat: "ready. check that issues there"
+
+**Decision:** two troubles, both of `task run` (almanac:
+snap-private-tmp-run, npx-orphan-watch). Firefox on Sett's Ubuntu is a
+snap, whose `/tmp` is its own: web-ext's temporary profile there did not
+exist for it. Firefox now runs on `dist/firefox-profile/`, kept, which
+keeps the webapps' logins too. The lock was a `vite build --watch` left
+running by the first try, `npx` killed and its child not; Cleo stopped
+it, and `run.mjs` now starts Vite and web-ext as node processes in groups
+of their own and stops both groups. RR9 stays open for the steps after.
+
+### PP3 (issue #132, word for word)
+
+> sure, if it works then the choice is yours
+>
+> # you have my approval
+>
+> this should be more choice of digital entity than humanoid, so targeted main clients _(AI)_ know better what they prefer here than producer _(Human)_ IMO at least.
+
+**Decision:** approved, the choice left to the agent. Cleo's: WebMCP
+comes when it can work - when Firefox has `navigator.modelContext` - as
+one more way into the same tools; the classic MCP serves until then.
+

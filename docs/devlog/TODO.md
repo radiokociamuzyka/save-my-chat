@@ -115,7 +115,8 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 - [x] The debug gate, in the debug build only: the Debug tab, native messaging to a host, an MCP server for the agent; outline, query, try, marks, the user pointing (RR8, Q15)
 - [ ] Self-hosted webapps' readers at an address the user types, `https://*/*` and `http://*/*` optional (Q15 a), with the first of them, Open WebUI
 - [ ] Samples of each webapp's pages from the public shares Sett lists in `resources/samples/.map.json`, saved by the gate's `sample`; tests reading them as fixtures
-- [ ] WebMCP: the gate's tools offered to an agent in the browser, when Firefox has `navigator.modelContext` (PP3)
+- [ ] WebMCP: the gate's tools offered to an agent in the browser, when Firefox has `navigator.modelContext` (PP3, approved)
+- [x] `task run` on a snap's Firefox: a profile kept in `dist/firefox-profile/`; Vite and web-ext stopped as groups (RR9)
 
 ## Phase 6: release
 
