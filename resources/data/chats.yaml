@@ -143,10 +143,11 @@ chats:
 
   - id: notebooklm
     name: NotebookLM
-    status: planned
+    status: optional
+    reader: readers/notebooklm.js
     snippet: drafted-snippets/notebook-lm-grabbing.js
-    domains: [notebooklm.google.com]
-    matches: ["https://notebooklm.google.com/*"]
-    chats: ["https://notebooklm.google.com/notebook/*"]
+    domains: [notebook.google.com, notebooklm.google.com]
+    matches: ["https://notebook.google.com/*", "https://notebooklm.google.com/*"]
+    chats: ["https://notebook.google.com/notebook/*", "https://notebooklm.google.com/notebook/*"]
     note: a notebook's chat beside its sources
     verified: false

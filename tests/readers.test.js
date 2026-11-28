@@ -376,6 +376,30 @@ describe("readers", () => {
 		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual(["user: An example?", "assistant: Use `cosmjs`."]);
 	});
 
+	it("notebooklm reads a notebook's chat, the answer's thoughts left out, and names its notebooks (live)", async () => {
+		const c = await read(
+			"notebooklm",
+			"https://notebook.google.com/notebook/1",
+			`<title>BOS Architecture - Gemini Notebook</title><body><div class="chat-message-pair">
+			<chat-message><div class="from-user-container"><mat-card-content class="message-content">Tell me of BOS</mat-card-content></div></chat-message>
+			<chat-message><div class="to-user-container"><mat-card-content class="message-content">
+				<thinking-chain-view>Thoughts expand_more</thinking-chain-view><p><strong>BOS</strong> is a workshop.</p></mat-card-content></div></chat-message>
+			</div></body>`,
+		);
+		expect(c.title).toBe("BOS Architecture");
+		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual([
+			"user: Tell me of BOS",
+			"assistant: **BOS** is a workshop.",
+		]);
+		const w = load([...KIT, "readers/notebooklm.js"], {
+			url: "https://notebook.google.com/",
+			html: `<!doctype html><body><a href="/notebook/n1" aria-labelledby="t1 s1"></a><span id="t1">BOS Architecture</span></body>`,
+		});
+		expect(w.SaveMyChat.listed(w.document, w.location.href, [])).toEqual([
+			{ url: "https://notebook.google.com/notebook/n1", title: "BOS Architecture" },
+		]);
+	});
+
 	it("gemini reads its custom elements, named by the sidebar's chat or the first question", async () => {
 		const page = (sidebar) => `<title>Gemini</title><body>${sidebar}
 			<user-query><span class="cdk-visually-hidden">You said</span><div class="query-text"><p class="query-text-line">Turtles?</p></div></user-query>

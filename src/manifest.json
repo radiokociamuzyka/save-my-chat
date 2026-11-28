@@ -1,7 +1,7 @@
 {
 	"manifest_version": 3,
 	"name": "save-my-chat",
-	"version": "0.7.33",
+	"version": "0.7.34",
 	"description": "Saves a conversation from an AI chat webapp on your machine, in one clear unified format.",
 	"background": {
 		"scripts": ["core/kit.js", "core/markdown.js", "core/readers.js", "core/library.js", "background/main.js"]
@@ -35,7 +35,9 @@
 		"https://chat.deepseek.com/*",
 		"https://aistudio.google.com/*",
 		"https://grok.com/*",
-		"https://x.com/*"
+		"https://x.com/*",
+		"https://notebook.google.com/*",
+		"https://notebooklm.google.com/*"
 	],
 	"host_permissions": ["https://www.google.com/*", "https://github.com/*"],
 	"browser_specific_settings": {
