@@ -30,3 +30,4 @@ solved gets its case here, so the next one is recognised faster.
 - [npx-orphan-watch](cataclistics/npx-orphan-watch.md): a Vite watcher outlived `task run` and locked the next one
 - [verify-beside-task-run](cataclistics/verify-beside-task-run.md): the checks could not build while `task run` was running
 - [folder-add-swept-owners-file](cataclistics/folder-add-swept-owners-file.md): a folder added to a commit swept the owner's new file into it
+- [amo-throttled](cataclistics/amo-throttled.md): AMO throttled an upload, and the site, wiki and feed were skipped
