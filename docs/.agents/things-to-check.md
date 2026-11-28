@@ -12,12 +12,12 @@ point was added.
 
 ## Not verified
 
-- **2026-11-28. Copilot (Microsoft), Perplexity, Mistral Le Chat, HuggingChat and the
-  Gradio space have no reader yet**: Sett was signed out of them in the `task run`
-  Firefox (the Gradio space asks for a Hugging Face login), so no chat was seen. Each
-  waits for a chat in front of the gate. The readers checked live are `verified: true`
-  in `chats.yaml`: AI Mode, Copilot (GitHub), ChatGPT, Claude, Gemini, DeepSeek, AI
-  Studio, Grok, Grok on X, NotebookLM.
+- **2026-11-28. Perplexity's long threads**: its thread is a virtual list whose older
+  blocks stay empty, and it holds the view at the bottom (setting `scrollTop` is undone;
+  in front, steps up are ignored) - it seems to fill them only on a real wheel or touch
+  scroll, which the extension does not fake. Its reader reads what is drawn: the newest
+  question and answer. Microsoft Copilot, Mistral and HuggingChat were tried on short
+  chats only. Sett's Gradio space waits (a Hugging Face login, Sett's to do; Q15 a with it).
 
 - **2026-11-28. `task run`'s watcher missed a change made only in `src/debug/`**
   (a new gate tool): touching `src/core/kit.js` rebuilt it all. Why the debug folder's

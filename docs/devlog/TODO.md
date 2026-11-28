@@ -154,7 +154,9 @@ The notes: `docs/devlog/scrapnote-*.md` of 2026-11-28.
 ## Phase 9: more webapps
 
 - [x] Google AI Studio (turns by role, headers and thoughts left out, read whole) and NotebookLM (now notebook.google.com), optional readers, live
-- [ ] A reader for each other `planned` chat of `resources/data/chats.yaml` (PP2): Microsoft Copilot, Perplexity, Mistral Le Chat, HuggingChat - each waits for a chat Sett is signed in to; Google Colab's helper
+- [x] Microsoft Copilot (now copilot.com), Perplexity (sessions), Mistral Le Chat (chats and Vibe Work), HuggingChat: optional readers, read live
+- [ ] Perplexity's long threads read whole: it holds its view at the bottom and fills older blocks only on a real scroll
+- [ ] Google Colab's helper
 - [ ] Self-hosted webapps' readers at an address the user types, `https://*/*` and `http://*/*` optional (Q15 a), with the first of them: Sett's Gradio space (it asks for a Hugging Face login: a chat in it first), Open WebUI
 - [ ] WebMCP: the gate's tools offered to an agent in the browser, when Firefox has `navigator.modelContext` (PP3, approved)
 

@@ -12,8 +12,10 @@ machine; it sends nothing anywhere, unless you click to make a chat a GitHub gis
 - The conversation on a page of a chat webapp it has a reader for, when you open its
   toolbar button, save, or gather the chats a page lists.
 - Only the pages of the webapps it reads, each named in the Readers tab: Google Search's
-  AI Mode and GitHub Copilot from the start; ChatGPT, Claude, Gemini, DeepSeek, Grok and
-  Grok on X only once you allow each one there. On x.com, only Grok's pages.
+  AI Mode and GitHub Copilot from the start; ChatGPT, Claude, Gemini, Microsoft Copilot,
+  Perplexity, Mistral Le Chat, DeepSeek, HuggingChat, Google AI Studio, NotebookLM, Grok and
+  Grok on X only once you allow each one there. On x.com, only Grok's pages; on
+  huggingface.co, only HuggingChat's.
 
 ## What it keeps, and where
 
@@ -45,7 +47,7 @@ website content and personal communications, optional).
 | Permission | Why |
 | --- | --- |
 | access to `www.google.com`, `github.com` | the pages of its first readers |
-| access to `chatgpt.com`, `claude.ai`, `gemini.google.com`, `chat.deepseek.com`, `grok.com`, `x.com` (optional) | the pages of those readers, once you allow each |
+| access to `chatgpt.com`, `claude.ai`, `gemini.google.com`, `copilot.com`, `www.perplexity.ai`, `chat.mistral.ai`, `chat.deepseek.com`, `huggingface.co`, `aistudio.google.com`, `notebook.google.com`, `grok.com`, `x.com` (optional) | the pages of those readers, once you allow each |
 | `scripting` | to put a reader into such a page |
 | `storage` | the library and the settings |
 | `downloads` | to write the file you save |
