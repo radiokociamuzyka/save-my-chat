@@ -56,6 +56,14 @@ same whichever service it came from.
   conversation addresses (Q10). And a backup: the conversations a
   webapp lists, gathered one by one into the library at the user's
   click, and the whole library packed into one `.zip` (Sett, 2026-11-27).
+- **Phase 7, the readers on the live pages.** Each reader looked at and
+  tried through the debug gate on the live webapp, in small steps: lists
+  and long chats loaded while the page is shown, virtualized chats
+  collected as they scroll, until the page cannot go further.
+- **Phase 8, artifacts.** What a conversation made - images, files,
+  documents - saved beside it and linked in it where it was born.
+- **Phase 9, more webapps.** The other planned readers, the self-hosted
+  ones (Q15), WebMCP when Firefox has it.
 - **Phase 6, release.** Icons, store listing, privacy statement; listed on
   AMO, the first signing with it (until then a temporary add-on).
 
