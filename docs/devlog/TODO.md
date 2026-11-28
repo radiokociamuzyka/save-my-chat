@@ -124,7 +124,7 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 Small steps, each tried through the debug gate before it is ticked (Sett, 2026-11-28).
 The notes: `docs/devlog/scrapnote-*.md` of 2026-11-28.
 
-- [ ] ChatGPT read by `[data-chatgpt-search-unit-key$=":user"]` / `":assistant"`, its hidden `h4[data-conversation-role]` left out (marks matched by Sett)
+- [x] ChatGPT read by `[data-chatgpt-search-unit-key$=":user"]` / `":assistant"`, its hidden `h4[data-conversation-role]` left out (marks matched by Sett)
 - [ ] A list loaded with its tab in front: the popup's tab, and the Gather window's (ChatGPT: 31 hidden, 47 shown)
 - [ ] Claude's listed addresses without their query (`?artifact=`), titles without "Includes an artifact"
 - [x] The gate reconnects by itself after the extension reloads, when it was connected (each commit's version bump reloads it under `task run`, closing the port)
