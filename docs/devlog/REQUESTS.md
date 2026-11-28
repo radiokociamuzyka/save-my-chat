@@ -25,8 +25,12 @@ same live look.
 1. Once: `task debug:install` (writes the native host's manifest into
    `~/.mozilla/native-messaging-hosts/` and a launcher into
    `~/.local/share/save-my-chat/`; `-- --remove` undoes it).
-2. `task run` (now the debug build), open the extension's options, tab
-   **Debug**, **Allow native messaging and connect**.
+2. `task run` (now the debug build; since RR9's first try it runs
+   Firefox on a profile kept in `dist/firefox-profile/`, so log in to
+   the webapps there once), open the extension's options (the toolbar
+   button's menu, **Library and settings**), tab **Debug**, **Allow
+   native messaging and connect**. Firefox, a snap, may ask once whether
+   it may start `save_my_chat_debug`: allow it.
 3. In Claude Code in this repository, allow the `save-my-chat-debug`
    server of `.mcp.json` (`/mcp`), and tell Cleo which tab to look at.
 4. With the gate or without: gather on ChatGPT again; does the list
