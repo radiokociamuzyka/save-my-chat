@@ -28,3 +28,4 @@ solved gets its case here, so the next one is recognised faster.
 - [commit-with-a-path](cataclistics/commit-with-a-path.md): a path given to git commit took only that path, the staged readers left out
 - [snap-private-tmp-run](cataclistics/snap-private-tmp-run.md): `task run`'s profile did not exist for a snap's Firefox
 - [npx-orphan-watch](cataclistics/npx-orphan-watch.md): a Vite watcher outlived `task run` and locked the next one
+- [verify-beside-task-run](cataclistics/verify-beside-task-run.md): the checks could not build while `task run` was running
