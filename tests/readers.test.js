@@ -343,6 +343,22 @@ describe("readers", () => {
 		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual(["user: Memes?", "assistant: An *economy*."]);
 	});
 
+	it("gemini lists its chats by their bare address, named by their label, and names the open one (live)", async () => {
+		const w = load([...KIT, "readers/gemini.js"], {
+			url: "https://gemini.google.com/app/abc?hl=pl&pli=1",
+			html: `<!doctype html><body><nav>
+				<a href="/app/abc?hl=pl&pli=1" aria-label="Irritation explained" aria-current="page"><span><span dir="auto">Irritation explained</span></span></a>
+				<a href="/app/def?hl=pl&pli=1" aria-label="Another"><span dir="auto">Another</span></a>
+				<a href="/app">New chat</a></nav>
+				<user-query><div class="query-text">Why?</div></user-query><model-response><message-content><p>Because.</p></message-content></model-response></body>`,
+		});
+		expect(w.SaveMyChat.listed(w.document, w.location.href, [])).toEqual([
+			{ url: "https://gemini.google.com/app/abc", title: "Irritation explained" },
+			{ url: "https://gemini.google.com/app/def", title: "Another" },
+		]);
+		expect((await w.SaveMyChat.readPage(w.document, w.location.href, {})).title).toBe("Irritation explained");
+	});
+
 	it("gemini reads its custom elements, named by the sidebar's chat or the first question", async () => {
 		const page = (sidebar) => `<title>Gemini</title><body>${sidebar}
 			<user-query><span class="cdk-visually-hidden">You said</span><div class="query-text"><p class="query-text-line">Turtles?</p></div></user-query>
