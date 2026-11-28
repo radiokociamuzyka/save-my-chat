@@ -53,21 +53,14 @@ export function firefox(browser = globalThis.browser, { ready = READY, poll = PO
 		return tabId;
 	}
 
-	// A webapp draws its chat after the page loads, and a long one brings its older
-	// messages as it is scrolled up (RR7): the page is scrolled to the top until no more
-	// come, then asked until the reader sees the same messages twice, then read.
+	// A webapp draws its chat after the page loads: the page is asked until the reader sees
+	// the same messages twice, then collected - read whole, as it scrolls into its past
+	// (kit readWhole; phase 7: a long chat holds only the messages near the screen).
 	async function collect(tabId) {
 		let before = 0;
-		let scrolled = false;
 		for (let end = Date.now() + ready; Date.now() < end; await sleep(poll)) {
 			const now = counted(await ask({ type: "save-my-chat:inspect", tabId }));
-			if (now && !scrolled) {
-				await ask({ type: "save-my-chat:load", tabId }); // as long as the chat takes
-				scrolled = true;
-				end = Date.now() + ready;
-				continue;
-			}
-			if (now && now === before) return ask({ type: "save-my-chat:collect", tabId });
+			if (now && now === before) return ask({ type: "save-my-chat:collect", tabId }); // as long as the chat takes
 			before = now;
 		}
 		throw new Error(before ? "the chat kept changing" : "the reader saw no messages");

@@ -38,6 +38,10 @@ Claude Code ──stdio──> scripts/debug/server.mjs   (the MCP server, .mcp.
 3. In Claude Code in this repository, allow the `save-my-chat-debug`
    server (`/mcp`).
 
+Once connected, the gate connects again by itself whenever the extension
+reloads (`task run` reloads it on every change); **Disconnect** stops
+that until the next **Connect**.
+
 On a site no reader covers, the Debug tab's **Allow this site** grants
 the extension that one site (the debug build may ask for any).
 
@@ -55,6 +59,7 @@ the extension that one site (the debug build may ask for any).
 | `read` / `inspect` | what the tab's reader reads now; what it sees, without the text |
 | `try` | what the reader would read with given selectors in front of its own, not kept |
 | `list` | the chats the page lists (`load: true` scrolls the list to its end) |
+| `scroll` | a box moved to its top or bottom, then a wait: where it stands before, right after and after the wait, and a count |
 | `sample` | the page and what is read from it saved into `resources/samples/`, for a share listed in `.map.json` only |
 
 The tools take data, never code: selectors go to `querySelectorAll`,

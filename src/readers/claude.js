@@ -6,8 +6,11 @@
 // ([data-testid="user-message"]) inside the row: a row without one is Claude's. The older layout, without rows (user-message
 // and font-claude-response), is read when no row is found. The page's title is
 // "<chat> - Claude".
-// NOTE: the rows and their values are Sett's, seen on 2026-11-27 and 28; this
-// reader has not been run on the live page. A new selector goes in front
+// Read right on the live page through the debug gate (2026-11-28).
+// Its list (sidebar, recents): links to /chat/<id>, some with ?artifact=<id>&frame_from=row
+// and a line "Includes an artifact" inside the link, beside the title in
+// [data-row-label] [dir="auto"]: listed by the address alone and by that title, so a chat
+// is one chat. A new selector goes in front
 // of its set (or as an override in the Readers tab); keep the old ones.
 (() => {
 	const SMC = globalThis.SaveMyChat;
@@ -31,6 +34,18 @@
 			assistant: [".font-claude-response", ".font-claude-message"],
 		},
 		detect: (_doc, url) => new URL(url).hostname === "claude.ai",
+		list(doc) {
+			return [...doc.querySelectorAll("a[href*='/chat/']")].flatMap((a) => {
+				const href = new URL(a.getAttribute("href"), doc.baseURI);
+				if (!/^\/chat\/[\w-]+$/.test(href.pathname)) return [];
+				const label = a.querySelector("[data-row-label] [dir='auto']") ?? a;
+				const title = label.textContent
+					.replace(/\s+/g, " ")
+					.replace(/\s*Includes an artifact$/, "")
+					.trim();
+				return [{ url: href.origin + href.pathname, title }];
+			});
+		},
 		read(doc, _url, sets) {
 			const rowCss = SMC.selector(sets.row, doc);
 			const userCss = SMC.selector(sets.user, doc);

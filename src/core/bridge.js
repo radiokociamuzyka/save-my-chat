@@ -25,7 +25,8 @@
 			const seen = SMC.present();
 			return seen && { ...seen, prototype: true };
 		}
-		if (type === "save-my-chat:read") return SMC.readPage(undefined, undefined, {});
+		if (type === "save-my-chat:read")
+			return ask.whole ? SMC.readWhole(undefined, undefined, {}) : SMC.readPage(undefined, undefined, {});
 		if (type === "save-my-chat:inspect") return SMC.inspect(undefined, undefined, {});
 		if (type === "save-my-chat:list")
 			return ask.load

@@ -241,6 +241,11 @@ describe("background: gathering (phase 5)", () => {
 		expect(asked).toEqual([{ type: "save-my-chat:list", patterns: ["https://github.com/copilot/c/*"], load: false }]);
 		expect(found).toMatchObject({ reader: "github-copilot", name: "GitHub Copilot" });
 		expect(found.chats.map((c) => c.savedAt)).toEqual([chat.savedAt, null]);
+		const shown = [];
+		w.browser.tabs.update = async (tab, how) => shown.push([tab, how]);
+		await send({ type: "save-my-chat:list", tabId: 7, load: true });
+		expect(shown).toEqual([[7, { active: true }]]); // loaded whole only in front
+		expect(asked.at(-1).load).toBe(true);
 		const elsewhere = background({ url: "https://example.org/" });
 		expect(await elsewhere.send({ type: "save-my-chat:list", tabId: 7 })).toBeNull();
 	});
