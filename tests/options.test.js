@@ -80,7 +80,7 @@ describe("options: the page", () => {
 		window.dispatchEvent(new HashChangeEvent("hashchange"));
 		await flushPromises();
 		expect(page.find(".tabs li.is-active").text()).toBe("Readers");
-		expect(page.findAll(".reader")).toHaveLength(8);
+		expect(page.findAll(".reader")).toHaveLength(10);
 	});
 });
 
@@ -120,8 +120,10 @@ describe("options: readers and their selectors", () => {
 			"Claude",
 			"Gemini",
 			"DeepSeek",
+			"Google AI Studio",
 			"Grok",
 			"Grok on X",
+			"NotebookLM",
 		]);
 		expect(state.asked).toBe(0);
 		const chatgpt = panel.findAll(".reader")[2];
@@ -230,8 +232,10 @@ describe("options: prototypes", () => {
 			"Make a prototype of Claude",
 			"Make a prototype of Gemini",
 			"Make a prototype of DeepSeek",
+			"Make a prototype of Google AI Studio",
 			"Make a prototype of Grok",
 			"Make a prototype of Grok on X",
+			"Make a prototype of NotebookLM",
 		]);
 		await copies[1].trigger("click");
 		await flushPromises();
@@ -278,7 +282,7 @@ describe("options: prototypes", () => {
 		await panel.find("button.delete-prototype").trigger("click");
 		await flushPromises();
 		expect(data.prototypes).toEqual({});
-		expect(panel.findAll("button.copy")).toHaveLength(8);
+		expect(panel.findAll("button.copy")).toHaveLength(10);
 	});
 
 	it("imports a file of prototypes turned off, skipping broken ones and fields it does not know", async () => {

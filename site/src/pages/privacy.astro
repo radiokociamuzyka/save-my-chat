@@ -1,0 +1,17 @@
+---
+// The privacy statement, as master holds it (docs/statements/privacy.md), read raw from the
+// repository when the page is opened.
+
+import { RAW } from "../chats.js";
+import SiteStatement from "../components/SiteStatement.vue";
+import Page from "../layouts/Page.astro";
+---
+
+<Page title="save-my-chat: privacy" description="What save-my-chat reads, keeps and sends: nothing leaves your machine but a gist you make yourself.">
+	<main>
+		<div class="island"><SiteStatement name="privacy" client:only="vue" /></div>
+		<div class="site">
+			<p class="small">Read from <a href={`${RAW}docs/statements/privacy.md`}>the repository's master</a>, as it is now.</p>
+		</div>
+	</main>
+</Page>

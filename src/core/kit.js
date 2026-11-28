@@ -515,11 +515,21 @@
 			kept.push(...older);
 			return { added: older.length, met: true };
 		}
-		const known = new Set(kept.map(keyOf));
+		const known = new Map(kept.map((t, i) => [keyOf(t), i]));
+		// a message kept while its content was not drawn yet (AI Studio keeps every turn in
+		// the page, its content only on screen): the fuller copy replaces it
+		let filled = 0;
+		for (const t of older) {
+			const i = known.get(keyOf(t));
+			if (i !== undefined && t.key && t.text.length > kept[i].text.length) {
+				kept[i] = t;
+				filled++;
+			}
+		}
 		const at = older.findIndex((t) => known.has(keyOf(t)));
 		const before = (at >= 0 ? older.slice(0, at) : older).filter((t) => !known.has(keyOf(t)));
 		kept.unshift(...before);
-		return { added: before.length, met: at >= 0 };
+		return { added: before.length + filled, met: at >= 0 };
 	}
 
 	// The box the chat scrolls in: around its transcript when the reader names one, else

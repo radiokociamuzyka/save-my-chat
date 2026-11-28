@@ -81,6 +81,11 @@ tasks:
     cmds:
       - node scripts/debug/install.mjs {{.CLI_ARGS}}
 
+  media:
+    desc: "the images of Sett's media container (resources/media/.index.json) fetched, sized by ffmpeg once, and the small ones placed for the builds (-- --force sizes them again)"
+    cmds:
+      - node scripts/media.mjs {{.CLI_ARGS}}
+
   extension:
     desc: the extension built into dist/extension (Q12) - the Vue pages by Vite, the rest of src as it is
     cmds:

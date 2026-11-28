@@ -12,19 +12,17 @@ point was added.
 
 ## Not verified
 
-- **2026-11-28. The debug gate has not run in a real Firefox.** Its
-  pieces are tested apart (tests/debug.test.js: the page's tools in
-  jsdom, the host and the MCP server over a real socket with the
-  extension played by the test); the native host was not installed on
-  Sett's machine by Cleo (RR9 asks Sett to). Unknown: whether Firefox
-  keeps the event page alive while the native port is open (MDN says an
-  open port does), and whether `executeScript` returns the page tools'
-  promises' values in Firefox 142 as in the tests.
-- **2026-11-28. ChatGPT's transcript rows and Claude's `human` /
-  `assistant` values** come from Sett's snippets, not from a page Cleo
-  saw; the load-and-wait's step back is a guess at ChatGPT's
-  IntersectionObserver.
+- **2026-11-28. Copilot (Microsoft), Perplexity, Mistral Le Chat, HuggingChat and the
+  Gradio space have no reader yet**: Sett was signed out of them in the `task run`
+  Firefox (the Gradio space asks for a Hugging Face login), so no chat was seen. Each
+  waits for a chat in front of the gate. The readers checked live are `verified: true`
+  in `chats.yaml`: AI Mode, Copilot (GitHub), ChatGPT, Claude, Gemini, DeepSeek, AI
+  Studio, Grok, Grok on X, NotebookLM.
 
+- **2026-11-28. `task run`'s watcher missed a change made only in `src/debug/`**
+  (a new gate tool): touching `src/core/kit.js` rebuilt it all. Why the debug folder's
+  files were not seen was not found; a change there is followed by a look at
+  `dist/extension/debug/` before it is tried.
 - **2026-11-26. `release.yml` has not run yet.** It runs on the first
   merge of `development` into `master`: tag, release with the zip,
   `master` back into `development`. Unsigned until the AMO secrets exist.
@@ -125,10 +123,3 @@ point was added.
   30 seconds may not do), and how a webapp takes a few dozen chats
   opened one after another. A sidebar loading more on scroll lists only
   what it has shown.
-- **2026-11-27. The readers of ChatGPT, Claude and Gemini, unverified.**
-  Written from those webapps' known structure (ChatGPT's
-  `data-message-author-role`, Claude's `data-testid="user-message"` and
-  `.font-claude-response`, Gemini's `user-query .query-text` and
-  `model-response message-content`), tested on made-up pages only.
-  Gemini's title comes from the sidebar's selected chat, a guess. Each
-  says `NOTE: unverified`, `verified: false` in chats.yaml. RR7 asks.

@@ -586,6 +586,10 @@ describe("a long chat read whole, while it scrolls into its past (phase 7)", () 
 		expect(kept.map((x) => x.key)).toEqual(["u2", "u3", "u4", "u5", "u6", "u7"]);
 		expect(JSON.stringify(kept[0])).toBe('{"role":"user","text":"ok"}'); // the key stays out of the format
 		expect(w.SaveMyChat.joined(kept, [t(0), t(1)])).toEqual({ added: 2, met: false });
+		// a message kept empty (its content not drawn yet), seen again with its text
+		const late = [t(8, ""), t(9, "answer")];
+		expect(w.SaveMyChat.joined(late, [t(8, "the question"), t(9, "answer")])).toEqual({ added: 1, met: true });
+		expect(late.map((x) => x.text)).toEqual(["the question", "answer"]);
 	});
 
 	it("goes to the top at once when stepping up keeps being pushed back, and ends", async () => {
