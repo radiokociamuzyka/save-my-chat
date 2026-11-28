@@ -41,3 +41,19 @@ list of chats we want to support. proceede."
   the site's Privacy page reads the statement raw from `master` when opened, the one thing
   the site loads from elsewhere; Read the Docs shows both.
 - Filling AMO's listing in is Sett's (RR10).
+
+### RR10 (issue #160, word for word)
+
+> done, but while releasing error stops some things for unknown reason - please investigate it
+
+And in the chat: "it hits error, RR10 has comment"
+
+**Decision:** AMO's listing is filled in. The error was the release of v0.7.38 (PR #161): its
+tag, packed extension and merge back went well, but AMO refused the upload - "Request was
+throttled. Expected available in 5491 seconds." - after the day's many releases. The job's
+failure failed the release workflow, and the site, the wiki and the feed, which run only
+after a release that went well, were skipped: the site did not get the Privacy page and
+the banner. `amo.sh` now tells a throttled upload in the run's summary and ends well (the
+next release carries its changes to AMO, or the job is run again once AMO allows); any other
+refusal still fails. Almanac: amo-throttled.
+
