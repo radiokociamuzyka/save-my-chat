@@ -11,7 +11,12 @@ import { debugManifest } from "./scripts/debug/manifest.mjs";
 import { facts, notice } from "./scripts/notice.mjs";
 
 const SRC = new URL("src/", import.meta.url).pathname;
-const OUT = new URL("dist/extension/", import.meta.url).pathname;
+// Where the build goes: dist/extension/, which task run and web-ext use; or, for the
+// checks (scripts/lint.mjs), SMC_OUT=dist/verify with a Vite cache of its own. Vite locks
+// a build per cache folder, so the checks can build while task run watches (RR9).
+const OUT_DIR = process.env.SMC_OUT || "dist/extension";
+const OUT = new URL(`${OUT_DIR}/`, import.meta.url).pathname;
+const CACHE = process.env.SMC_OUT ? `node_modules/.vite-${OUT_DIR.split("/").at(-1)}` : "node_modules/.vite";
 export const PAGES = ["popup", "options"];
 // The debug build (task run): the debug gate, src/debug/, and its manifest
 // (scripts/debug/manifest.mjs); never what is packed for AMO (task build).
@@ -76,6 +81,7 @@ function thirdParty() {
 export default defineConfig({
 	root: SRC,
 	base: "/",
+	cacheDir: new URL(CACHE, import.meta.url).pathname,
 	plugins: [vue(), copyRest(), thirdParty()],
 	resolve: {
 		// a dependency of isomorphic-git's whose shims hold eval, in its native form (rule 5;
