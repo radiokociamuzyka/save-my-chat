@@ -133,8 +133,9 @@ The notes: `docs/devlog/scrapnote-*.md` of 2026-11-28.
 - [x] The gate reconnects by itself after the extension reloads, when it was connected (each commit's version bump reloads it under `task run`, closing the port)
 - [x] A `scroll` tool for the gate: a box to its top or bottom, its position before and after, to watch a webapp load
 - [x] Long chats collected while they scroll: each turn kept by its key, scrolled up until the box, after a pause, cannot go further into the past (virtualized: ChatGPT, DeepSeek); live: a ChatGPT chat, 500 messages in 17 min and still going
-- [ ] A long chat's whole read seen to its end live, and faster: 500 messages took 17 min, ChatGPT's own loading pace; gathering's waits (the event page kept alive meanwhile?) checked
-- [ ] The same end for lists: the box cannot go further down after a pause
+- [x] A long chat's whole read seen to its end live: ChatGPT, 736 messages in 17 min from a fresh tab, the same twice; keyed by message ids (its unit keys renumber), stepping from the end and putting back a view ChatGPT pulls there (almanac: chatgpt-fallback-keys)
+- [ ] A long chat gathered (in a window of its own, 17 min): the event page kept alive meanwhile? the two questions in a row and the one gap warning of the ChatGPT chat looked at
+- [x] The same end for lists: the box cannot go further down after a pause; live: ChatGPT's 47 in 11 s, three more scrolls to the bottom with 4 s waits brought none (AI Mode's 215 of 215 before)
 - [x] AI Mode's history: its threads listed from their buttons (`data-thread-id`, a virtual list: 215 of 215), each opened by a click when gathered and saved under the list's address (`smc-thread`); an address can't open a thread (`mtid` is no thread id)
 - [x] AI Mode's notebooks looked at live (`button[data-journey-id]`, 12, each opened by its button, its address then `ajid=<id>`): a name, instructions, sources (files, sites, copied text) and threads; Sett's 12 hold no thread, so there is no chat to read yet: their sources go to phase 8
 - [x] The gate's `close`: the tabs it opened closed after a session, never the user's (Sett, 2026-11-28)
