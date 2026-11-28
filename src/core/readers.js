@@ -57,6 +57,15 @@
 			file: "readers/deepseek.js",
 		},
 		{
+			id: "google-ai-studio",
+			name: "Google AI Studio",
+			matches: ["https://aistudio.google.com/*"],
+			chats: ["https://aistudio.google.com/prompts/*"],
+			optional: true,
+			origins: ["https://aistudio.google.com/*"],
+			file: "readers/google-ai-studio.js",
+		},
+		{
 			id: "grok",
 			name: "Grok",
 			matches: ["https://grok.com/*"],

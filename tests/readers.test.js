@@ -359,6 +359,23 @@ describe("readers", () => {
 		expect((await w.SaveMyChat.readPage(w.document, w.location.href, {})).title).toBe("Irritation explained");
 	});
 
+	it("google-ai-studio reads its turns by role, headers and thoughts left out (live, 2026-11-28)", async () => {
+		const c = await read(
+			"google-ai-studio",
+			"https://aistudio.google.com/prompts/1",
+			`<title>CosmJS Custom Cha | Google AI Studio</title><body><h1 class="mode-title">CosmJS Custom Chain</h1>
+			<ms-chat-turn id="turn-1"><div data-turn-role="User"><div class="turn-content">
+				<div class="author-label" role="heading">User <span class="timestamp">11:06 PM</span></div><p>An example?</p></div></div></ms-chat-turn>
+			<ms-chat-turn id="turn-2"><div data-turn-role="Model"><div class="turn-content">
+				<div class="author-label" role="heading">Model <span class="timestamp">11:06 PM</span></div>
+				<ms-thought-chunk>Thoughts: investigating</ms-thought-chunk></div></div></ms-chat-turn>
+			<ms-chat-turn id="turn-3"><div data-turn-role="Model"><div class="turn-content">
+				<div class="author-label" role="heading">Model</div><p>Use <code>cosmjs</code>.</p></div></div></ms-chat-turn></body>`,
+		);
+		expect(c.title).toBe("CosmJS Custom Chain");
+		expect(c.turns.map((t) => `${t.role}: ${t.text}`)).toEqual(["user: An example?", "assistant: Use `cosmjs`."]);
+	});
+
 	it("gemini reads its custom elements, named by the sidebar's chat or the first question", async () => {
 		const page = (sidebar) => `<title>Gemini</title><body>${sidebar}
 			<user-query><span class="cdk-visually-hidden">You said</span><div class="query-text"><p class="query-text-line">Turtles?</p></div></user-query>

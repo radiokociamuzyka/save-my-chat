@@ -113,7 +113,8 @@ chats:
   # named by Sett's drafts (RR7, 2026-11-27), each waiting for its snippet
   - id: google-ai-studio
     name: Google AI Studio
-    status: planned
+    status: optional
+    reader: readers/google-ai-studio.js
     snippet: drafted-snippets/google-aistudio-chat.js
     domains: [aistudio.google.com]
     matches: ["https://aistudio.google.com/*"]

@@ -102,6 +102,7 @@ test("the options run on the site: the library, its search, the viewer, the read
 		"Claude",
 		"Gemini",
 		"DeepSeek",
+		"Google AI Studio",
 		"Grok",
 		"Grok on X",
 	]);
