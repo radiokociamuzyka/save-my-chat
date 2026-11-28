@@ -16,3 +16,25 @@ And in the chat: "Q16 answered, task re-runned, continue"
 left in phases 7, 8 and 9 is done; phase 6 is the last. Meanwhile the
 versions follow the phase at work, 0.7.x now. Phase 7 opens, a small
 step at a time, each tried through the debug gate before it is ticked.
+
+## 2026-11-28, the gate connected again (the chat, word for word)
+
+> it awaits there to be connected with no errors (at least not visible ones) so i connect it for you. go ahead buddy, if you need anything from me Cleo then ask upfront. if no then don't hold your horses and begin the act
+
+And Sett's scrapnote of the same hour (`docs/devlog/scrapnote-1795841207909.md`): a
+very long chat is never rendered whole, and a message is to be known by its id.
+
+**Decision:** the first steps of phase 7, each tried through the gate:
+
+- the gate connects again by itself after the extension reloads (Sett's Connect was
+  made before the reload that brought it, so it was not seen at first);
+- ChatGPT read by its unit keys, the hidden headings left out: four of four, live;
+- a list loaded with its tab in front: a fresh ChatGPT tab in the background lists 21,
+  in front 47 in one run. A first try said otherwise and the change was dropped, then
+  brought back: that try ran before `task run`'s reload had brought the change in;
+- the gate's `scroll` and `progress`; `read` with `whole`;
+- Claude's list without `?artifact=` and "Includes an artifact";
+- a long chat read whole while it scrolls into its past, by Sett's check at the top,
+  messages known by the page's ids (Sett's scrapnote); six tries on a long ChatGPT
+  chat shaped it, the last reading 500 messages in 17 minutes and still going.
+  Seeing such a chat to its end, faster, is the next step.
