@@ -71,7 +71,10 @@ describe("the chats a page lists", () => {
 		Object.defineProperty(panel, "scrollHeight", { get: () => 1200 });
 		Object.defineProperty(panel, "scrollTop", {
 			get: () => top,
-			set: (v) => ((top = Math.max(0, Math.min(v, 1000))), draw()),
+			set: (v) => {
+				top = Math.max(0, Math.min(v, 1000));
+				draw();
+			},
 		});
 		w.SaveMyChat.pause = () => Promise.resolve(); // the panel draws at once here
 		expect(await w.SaveMyChat.openItem()).toBe(true);
