@@ -38,6 +38,10 @@ Claude Code ──stdio──> scripts/debug/server.mjs   (the MCP server, .mcp.
 3. In Claude Code in this repository, allow the `save-my-chat-debug`
    server (`/mcp`).
 
+Once connected, the gate connects again by itself whenever the extension
+reloads (`task run` reloads it on every change); **Disconnect** stops
+that until the next **Connect**.
+
 On a site no reader covers, the Debug tab's **Allow this site** grants
 the extension that one site (the debug build may ask for any).
 

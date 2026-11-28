@@ -116,7 +116,7 @@ describe("the debug gate in a page", () => {
 });
 
 describe("the debug gate in the background", () => {
-	function background({ granted = true } = {}) {
+	function background({ granted = true, stored: given = {} } = {}) {
 		const w = load(["core/kit.js", "core/readers.js"]);
 		const posted = [];
 		const listeners = [];
@@ -126,7 +126,7 @@ describe("the debug gate in the background", () => {
 			onDisconnect: { addListener: () => {} },
 			disconnect: () => {},
 		};
-		const stored = {};
+		const stored = given;
 		w.browser = {
 			permissions: { contains: async () => granted },
 			runtime: {
@@ -147,13 +147,27 @@ describe("the debug gate in the background", () => {
 			},
 		};
 		w.eval(load.source("debug/background.js"));
-		return { w, posted, port, listeners };
+		return { w, posted, port, listeners, stored };
 	}
 
 	it("has every tool the server lists, but the server's own", () => {
 		const { w } = background();
 		const theirs = TOOLS.filter((t) => !t.server).map((t) => t.name);
 		expect(Object.keys(w.SaveMyChat.debug.TOOLS).sort()).toEqual([...theirs, "snapshot"].sort());
+	});
+
+	it("connects again on load when the user left it connected, not after a disconnect", async () => {
+		const first = background();
+		await first.w.SaveMyChat.debug.resumed;
+		expect(first.port.name).toBeUndefined(); // never connected: not on load either
+		await first.w.SaveMyChat.debug.connect();
+		const again = background({ stored: first.stored });
+		expect(await again.w.SaveMyChat.debug.resumed).toEqual({ connected: true, error: "" });
+		expect(again.port.name).toBe("save_my_chat_debug");
+		await again.w.SaveMyChat.debug.disconnect();
+		const after = background({ stored: again.stored });
+		await after.w.SaveMyChat.debug.resumed;
+		expect(after.port.name).toBeUndefined();
 	});
 
 	it("connects to the native host once allowed, and answers by id", async () => {
