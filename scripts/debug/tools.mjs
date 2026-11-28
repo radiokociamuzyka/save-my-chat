@@ -66,6 +66,22 @@ export const TOOLS = [
 	},
 	{ name: "clear", description: "Takes the marks off the page.", inputSchema: object({ ...tab }, ["tabId"]) },
 	{
+		name: "scroll",
+		description:
+			"Scrolls the box a selector's element sits in (or the element, when it scrolls; default the page) to its top or bottom, or by some pixels, then waits: where it was, where the move left it, and where it is after the wait (scrollTop, scrollHeight, at the top or bottom), with how many elements `count` finds before and after. To watch a webapp load more as it is scrolled.",
+		inputSchema: object(
+			{
+				...tab,
+				selector: { type: "string", description: "an element in the box to scroll" },
+				to: { type: "string", enum: ["top", "bottom"] },
+				by: { type: "number", description: "pixels, instead of to (negative: up)" },
+				wait: { type: "number", description: "ms after the move (default 1500, at most 30000)" },
+				count: { type: "string", description: "a selector counted before and after" },
+			},
+			["tabId"],
+		),
+	},
+	{
 		name: "point",
 		description:
 			"Brings the tab to the front and lets the user point: they click elements and label each (user, assistant, title, list, other, with a note); read what they picked with the picks tool. on: false stops it.",

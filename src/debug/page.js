@@ -368,7 +368,43 @@
 		return { pointing };
 	}
 
-	const TOOLS = { outline, query, element, snapshot, highlight, clear, point, picks: () => picks };
+	// ---- scrolling: watching a webapp load (phase 7) ------------------------------
+	// Sett: "after scrolling as far as possible now checking if our position after pause to
+	// let loading be done we are yet able to scroll into further past". The box an element
+	// sits in (or the element, when it scrolls), moved to its top or bottom or by some
+	// pixels; where it was, where the move left it, and where it is after the wait.
+
+	function scrolls(el) {
+		const overflow = getComputedStyle(el).overflowY;
+		return /auto|scroll|overlay/.test(overflow) && el.scrollHeight > el.clientHeight;
+	}
+
+	function boxOf(selector) {
+		const el = rootOf(selector);
+		for (let e = el; e; e = e.parentElement) if (scrolls(e)) return e;
+		return document.scrollingElement || document.documentElement;
+	}
+
+	const where = (box) => ({
+		scrollTop: Math.round(box.scrollTop),
+		scrollHeight: box.scrollHeight,
+		clientHeight: box.clientHeight,
+		atTop: box.scrollTop <= 1,
+		atBottom: box.scrollTop + box.clientHeight >= box.scrollHeight - 2,
+	});
+
+	async function scroll({ selector, to = "bottom", by, wait = 1500, count } = {}) {
+		const box = boxOf(selector);
+		const counted = () => (count ? document.querySelectorAll(count).length : undefined);
+		const before = { ...where(box), count: counted() };
+		if (by) box.scrollTop += by;
+		else box.scrollTop = to === "top" ? 0 : box.scrollHeight;
+		const moved = where(box);
+		await new Promise((done) => setTimeout(done, Math.min(Number(wait) || 0, 30_000)));
+		return { box: signature(box), before, moved, after: { ...where(box), count: counted() } };
+	}
+
+	const TOOLS = { outline, query, element, snapshot, highlight, clear, point, scroll, picks: () => picks };
 
 	globalThis.SaveMyChatDebug = {
 		// what debug/background.js calls through scripting.executeScript: a name and its arguments

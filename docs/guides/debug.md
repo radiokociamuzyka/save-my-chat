@@ -59,6 +59,7 @@ the extension that one site (the debug build may ask for any).
 | `read` / `inspect` | what the tab's reader reads now; what it sees, without the text |
 | `try` | what the reader would read with given selectors in front of its own, not kept |
 | `list` | the chats the page lists (`load: true` scrolls the list to its end) |
+| `scroll` | a box moved to its top or bottom, then a wait: where it stands before, right after and after the wait, and a count |
 | `sample` | the page and what is read from it saved into `resources/samples/`, for a share listed in `.map.json` only |
 
 The tools take data, never code: selectors go to `querySelectorAll`,

@@ -107,6 +107,25 @@ describe("the debug gate in a page", () => {
 		expect(await run(w, "point", { on: false })).toEqual({ pointing: false });
 	});
 
+	it("scrolls the box an element sits in and says where it stands after the wait", async () => {
+		const w = page();
+		const m = w.document.getElementById("m");
+		m.style.overflowY = "auto";
+		Object.defineProperty(m, "scrollHeight", { get: () => 1000 + m.children.length * 100 });
+		Object.defineProperty(m, "clientHeight", { get: () => 300 });
+		let top = 400;
+		Object.defineProperty(m, "scrollTop", { get: () => top, set: (v) => (top = Math.max(0, v)) });
+		setTimeout(() => {
+			m.prepend(w.document.createElement("div")); // the webapp loads older ones...
+			top = 100; // ...and keeps what was on screen in place
+		}, 5);
+		const seen = await run(w, "scroll", { selector: ".row", to: "top", wait: 20, count: "#m > div" });
+		expect(seen.box).toBe("main#m");
+		expect(seen.before).toMatchObject({ scrollTop: 400, atTop: false, count: 3 });
+		expect(seen.moved).toMatchObject({ scrollTop: 0, atTop: true });
+		expect(seen.after).toMatchObject({ scrollTop: 100, atTop: false, scrollHeight: 1500, count: 4 });
+	});
+
 	it("snapshots the page without its scripts", async () => {
 		const shot = await run(page(), "snapshot");
 		expect(shot.html).toMatch(/^<!doctype html>\n<html>/);

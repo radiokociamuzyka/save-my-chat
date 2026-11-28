@@ -69,6 +69,7 @@
 		snapshot: (args) => onPage(tabArg(args), "snapshot", args),
 		highlight: (args) => onPage(tabArg(args), "highlight", args),
 		clear: (args) => onPage(tabArg(args), "clear", args),
+		scroll: (args) => onPage(tabArg(args), "scroll", args),
 		async point(args) {
 			const tabId = tabArg(args);
 			const tab = await browser.tabs.update(tabId, { active: true });
