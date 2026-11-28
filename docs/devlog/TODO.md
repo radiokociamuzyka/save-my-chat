@@ -129,7 +129,8 @@ The notes: `docs/devlog/scrapnote-*.md` of 2026-11-28.
 - [x] Claude's listed addresses without their query (`?artifact=`), titles without "Includes an artifact"
 - [x] The gate reconnects by itself after the extension reloads, when it was connected (each commit's version bump reloads it under `task run`, closing the port)
 - [x] A `scroll` tool for the gate: a box to its top or bottom, its position before and after, to watch a webapp load
-- [ ] Long chats collected while they scroll: each turn kept by its key, scrolled up until the box, after a pause, cannot go further into the past (virtualized: ChatGPT, DeepSeek)
+- [x] Long chats collected while they scroll: each turn kept by its key, scrolled up until the box, after a pause, cannot go further into the past (virtualized: ChatGPT, DeepSeek); live: a ChatGPT chat, 500 messages in 17 min and still going
+- [ ] A long chat's whole read seen to its end live, and faster: 500 messages took 17 min, ChatGPT's own loading pace; gathering's waits (the event page kept alive meanwhile?) checked
 - [ ] The same end for lists: the box cannot go further down after a pause
 - [ ] AI Mode's history: its threads' buttons (`data-thread-id`) made addresses (`mtid`), the in-page anchor left out; then its notebooks
 - [ ] A DeepSeek reader: `.ds-message`, `.ds-collapsible-text` / `.ds-assistant-message-main-content`; its Cloudflare check met while gathering
