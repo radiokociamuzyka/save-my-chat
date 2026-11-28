@@ -187,3 +187,36 @@ of their own and stops both groups. RR9 stays open for the steps after.
 comes when it can work - when Firefox has `navigator.modelContext` - as
 one more way into the same tools; the classic MCP serves until then.
 
+### RR9, the gate opened (in the chat, word for word)
+
+> i think we are ready to use our mcp. can you controll that firefox there?
+
+> alright, now we are logged in. look at how it looks inside there in a live ui
+
+> in opened tabs there you can find more than one chat app. look at them all and bring your notes into scrapnotes in dir devlog so your knowledge will be not lost. consider also check that scrolling down of sidebar where listed are conversation inside `chatgpt.com`. reading of long chats requires inspecting if loading of more content is performed or after scrolling as far as possible now checking if our position after pause to let loading be done we are yet able to scroll into further past. besides that all we need to export somehow artifacts and linked them inside where across all that conversations their where born. as someone said once: small steps method. all undone in phase 5 and before that waits for us pull from where they are now and with all other resulting steps from this all we now discuss should be placed in phase 7 and further ones if you think to split them more. and yes - marks maches! at least that `assistant` and `user` ones there.
+
+**Decision:** the gate works end to end on Sett's snap Firefox (the
+native host started through the desktop portal). Cleo looked at
+ChatGPT, Claude, AI Mode, DeepSeek, Grok and Grok on X; the notes are
+seven scrapnotes in `docs/devlog/` (structure only, no text of the
+conversations). What they found:
+
+- **ChatGPT** reads one message in four: its messages are found by
+  `data-chatgpt-search-unit-key` ending in `:user` / `:assistant`
+  (Sett: the marks match), a hidden heading to leave out; its chats are
+  virtualized. Its sidebar loads 31 chats in a background tab and 47 in
+  front: lists load only while shown.
+- **Claude** reads right; one listed address carries `?artifact=`.
+- **AI Mode's history** is buttons with thread ids (215), not links.
+- **DeepSeek**: `.ds-message`, virtualized, a Cloudflare check over it.
+- **Grok**: a chat open is needed on both.
+- **Long chats** are read while they scroll, each turn kept by its key,
+  until the page, after a pause, cannot go further into the past (Sett's
+  words); counting elements cannot tell it in a virtualized chat.
+- **Artifacts** saved beside their chats and linked where they were born.
+
+Phase 5's undone items and these steps go to phases 7 (the readers on
+the live pages), 8 (artifacts) and 9 (more webapps), in small steps;
+whether the release for everyone (phase 6) waits for them is Q16. RR9
+leaves REQUESTS.
+
