@@ -29,8 +29,12 @@ Claude Code ──stdio──> scripts/debug/server.mjs   (the MCP server, .mcp.
    manifest (`~/.mozilla/native-messaging-hosts/save_my_chat_debug.json`,
    only this extension may start it) and a launcher running `host.mjs`
    with your Node. `task debug:install -- --remove` undoes it.
-2. `task run`: Firefox with the debug build. Its options have a
-   **Debug** tab: **Allow native messaging and connect**.
+2. `task run`: Firefox with the debug build, on a profile kept in
+   `dist/firefox-profile/` (a snap's Firefox cannot see web-ext's
+   temporary one in `/tmp`; kept, it also keeps your logins to the
+   webapps). Its options have a **Debug** tab: **Allow native messaging
+   and connect**. A snap's Firefox starts the host through the desktop
+   portal, which may ask you once.
 3. In Claude Code in this repository, allow the `save-my-chat-debug`
    server (`/mcp`).
 
