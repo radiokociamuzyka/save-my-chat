@@ -26,3 +26,5 @@ solved gets its case here, so the next one is recognised faster.
 - [shims-with-eval](cataclistics/shims-with-eval.md): a dependency's shims brought eval into the build
 - [licenses-met](cataclistics/licenses-met.md): two licenses met, LGPL-3.0 inside the MPL-2.0 extension
 - [commit-with-a-path](cataclistics/commit-with-a-path.md): a path given to git commit took only that path, the staged readers left out
+- [snap-private-tmp-run](cataclistics/snap-private-tmp-run.md): `task run`'s profile did not exist for a snap's Firefox
+- [npx-orphan-watch](cataclistics/npx-orphan-watch.md): a Vite watcher outlived `task run` and locked the next one
