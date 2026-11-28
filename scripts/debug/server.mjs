@@ -52,7 +52,7 @@ export function ask(tool, args, { path = socketPath(), timeout = SHORT } = {}) {
 async function call(name, args = {}, options = {}) {
 	const tool = TOOLS.find((t) => t.name === name);
 	if (!tool) throw new Error(`no tool ${name}`);
-	const long = name === "list" ? Boolean(args.load) : false;
+	const long = (name === "list" && Boolean(args.load)) || (name === "read" && Boolean(args.whole));
 	const opts = { timeout: long ? LONG : SHORT, ...options };
 	if (name === "sample") {
 		const page = await ask("snapshot", { tabId: args.tabId }, opts);

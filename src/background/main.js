@@ -136,7 +136,7 @@
 				error: error.message,
 			}));
 		// loading a whole list or chat scrolls and waits: minutes, not seconds
-		const long = type === "save-my-chat:load" || extra.load;
+		const long = type === "save-my-chat:load" || extra.load || extra.whole;
 		if (proto) return askPrototype(tabId, type, long ? 600_000 : 5000, extra);
 		try {
 			return await browser.tabs.sendMessage(tabId, { ...extra, type });
@@ -148,8 +148,9 @@
 	}
 
 	// what the tab's reader read, checked; throws what the popup shows
-	async function readTab(tabId) {
-		const read = await ask(tabId, "save-my-chat:read");
+	// whole: a long chat read while it scrolls into its past (kit readWhole), for gathering
+	async function readTab(tabId, whole = false) {
+		const read = await ask(tabId, "save-my-chat:read", whole ? { whole } : {});
 		if (!read) throw new Error("No conversation found on this page.");
 		const { warnings = [], ...c } = read;
 		const problems = SMC.validate(c);
@@ -169,7 +170,7 @@
 	// The options page opens each in a background tab and asks for it here: kept in the
 	// library, no file written (the backup's zip comes after).
 	async function collect({ tabId }) {
-		const { c, warnings } = await readTab(tabId);
+		const { c, warnings } = await readTab(tabId, true);
 		const entry = await library.record(c);
 		return { title: c.title, turns: c.turns.length, warnings, key: entry.key };
 	}
@@ -183,10 +184,14 @@
 	}
 
 	// The chats a tab lists, each with when it was saved, if it was: { reader, name, chats };
-	// load: the page's list scrolled to its end first, until no more chats come (RR7)
+	// load: the page's list scrolled to its end first, until no more chats come (RR7). The
+	// tab is brought to the front of its window for it: ChatGPT loads more of its list only
+	// while its page is shown (seen live through the gate: a fresh tab in the background, 21
+	// chats and no more; in front, 47 in one run).
 	async function list({ tabId, load = false }) {
 		const reader = await defaultOf(tabId);
 		if (!reader) return null;
+		if (load) await browser.tabs.update(tabId, { active: true });
 		const chats = (await ask(tabId, "save-my-chat:list", { patterns: reader.chats ?? [], load })) ?? [];
 		const index = await library.entries();
 		return {

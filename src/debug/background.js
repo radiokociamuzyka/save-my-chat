@@ -15,6 +15,9 @@
 	const SMC = globalThis.SaveMyChat;
 	const HOST = "save_my_chat_debug";
 	const PICKS = "debugPicks";
+	// the user connected and did not disconnect: connected again whenever the extension
+	// loads (task run reloads it on every change, each commit's version too, closing the port)
+	const WANTED = "debugConnected";
 	const KEPT = 200; // picks kept, the newest
 
 	let port = null;
@@ -66,6 +69,8 @@
 		snapshot: (args) => onPage(tabArg(args), "snapshot", args),
 		highlight: (args) => onPage(tabArg(args), "highlight", args),
 		clear: (args) => onPage(tabArg(args), "clear", args),
+		scroll: (args) => onPage(tabArg(args), "scroll", args),
+		progress: (args) => onPage(tabArg(args), "progress", args),
 		async point(args) {
 			const tabId = tabArg(args);
 			const tab = await browser.tabs.update(tabId, { active: true });
@@ -77,7 +82,7 @@
 			if (clear) await browser.storage.local.set({ [PICKS]: [] });
 			return all;
 		},
-		read: (args) => SMC.background.ask(tabArg(args), "save-my-chat:read"),
+		read: (args) => SMC.background.ask(tabArg(args), "save-my-chat:read", args.whole ? { whole: true } : {}),
 		inspect: (args) => SMC.background.ask(tabArg(args), "save-my-chat:inspect"),
 		list: (args) => SMC.background.list({ tabId: tabArg(args), load: Boolean(args.load) }),
 		// what the tab's reader reads with these selectors in front of its own (as the
@@ -115,6 +120,7 @@
 		port = browser.runtime.connectNative(HOST);
 		state = { connected: true, error: "" };
 		port.onMessage.addListener(answer);
+		await browser.storage.local.set({ [WANTED]: true });
 		port.onDisconnect.addListener((p) => {
 			port = null;
 			const why = p.error?.message || browser.runtime.lastError?.message || "";
@@ -126,12 +132,22 @@
 		return state;
 	}
 
-	function disconnect() {
+	async function disconnect() {
 		port?.disconnect();
 		port = null;
 		state = { connected: false, error: "" };
+		await browser.storage.local.set({ [WANTED]: false });
 		return state;
 	}
+
+	// on load: the connection the user left open, opened again
+	const resumed = browser.storage.local
+		.get(WANTED)
+		.then(({ [WANTED]: wanted }) => (wanted ? connect() : state))
+		.catch((error) => {
+			state = { connected: false, error: error.message };
+			return state;
+		});
 
 	async function keep(pick, tab) {
 		const { [PICKS]: all = [] } = await browser.storage.local.get(PICKS);
@@ -141,11 +157,11 @@
 	browser.runtime.onMessage.addListener((msg, sender) => {
 		if (msg?.type === "save-my-chat:debug-connect")
 			return connect().catch((e) => ({ connected: false, error: e.message }));
-		if (msg?.type === "save-my-chat:debug-disconnect") return Promise.resolve(disconnect());
+		if (msg?.type === "save-my-chat:debug-disconnect") return disconnect();
 		if (msg?.type === "save-my-chat:debug-state") return Promise.resolve(state);
 		if (msg?.type === "save-my-chat:debug-point") return TOOLS.point({ tabId: msg.tabId, on: msg.on ?? true });
 		if (msg?.type === "save-my-chat:debug-pick" && sender?.tab) return keep(msg.pick, sender.tab);
 	});
 
-	SMC.debug = { TOOLS, answer, connect, disconnect, state: () => state }; // for tests
+	SMC.debug = { TOOLS, answer, connect, disconnect, resumed, state: () => state }; // for tests
 })();

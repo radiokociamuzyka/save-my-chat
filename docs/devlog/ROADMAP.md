@@ -25,4 +25,5 @@ archive (Q12's build step); 1.0.0 stays the version meant for everyone.
 
 Phases 7-9 hold what phase 5 left undone and what the first live look
 through the debug gate found (Sett, 2026-11-28). Whether phase 6, the
-release for everyone, comes before or after them is Q16.
+release for everyone, comes before or after them was Q16: after them,
+1.0.0 when phases 7-9 are done (Sett, 2026-11-28).
