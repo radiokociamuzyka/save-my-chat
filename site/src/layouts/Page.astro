@@ -11,7 +11,10 @@ const MENU = [
 	{ href: base, name: "save-my-chat" },
 	{ href: `${base}viewer/`, name: "Viewer" },
 	{ href: `${base}demo/`, name: "Try the pages" },
+	{ href: `${base}privacy/`, name: "Privacy" },
 ];
+// the card shown where a link to the site is shared (task media, from the banner)
+const card = new URL(`${base}media/social.jpg`, Astro.site).href;
 ---
 
 <!doctype html>
@@ -21,6 +24,12 @@ const MENU = [
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>{title}</title>
 		<meta name="description" content={description} />
+		<link rel="icon" type="image/png" href={`${base}favicon.png`} />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={card} />
+		<meta property="og:type" content="website" />
+		<meta name="twitter:card" content="summary_large_image" />
 	</head>
 	<body>
 		<div class:list={["page", { wide }]}>

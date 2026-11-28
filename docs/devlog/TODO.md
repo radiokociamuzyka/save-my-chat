@@ -115,8 +115,10 @@ Anonymised pages as `tests/fixtures/` come when an issue needs one.
 
 ## Phase 6: release
 
-- [ ] Icons, store listing, privacy statement
-- [ ] The media container (Sett's inquiry, `resources/media/.index.json`): its files fetched at build time for each release, the icon into the manifest's sizes, the poster and banner into the site and the Read the Docs pages
+- [x] Icons, store listing, privacy statement: the icon in the manifest (16-128 px), `docs/statements/privacy.md` and `listing.md`, the site's Privacy page reading it from `master` (Sett, #7)
+- [x] The media container (`resources/media/.index.json`): `task media` fetches, sizes by ffmpeg once, places the small ones for the builds; the logo the icon and favicon, the banner the site's header and card, the poster sized (Sett, #7)
+- [ ] AMO's listing filled in from `docs/statements/listing.md`, its images, the privacy policy linked (Sett's, RR10)
+- [ ] 1.0.0, the release for everyone, after phases 7-9 (Q16)
 - [x] The id settled for good and the first signing (`AMO_JWT_*` secrets, Sett), listed on AMO
 
 ## Phase 7: the readers on the live pages

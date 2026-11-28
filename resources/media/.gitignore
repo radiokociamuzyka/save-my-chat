@@ -1,0 +1,6 @@
+# Sett (issue #7): only the index, this README and this file in git; the images, fetched
+# from the bucket the index names, and their sizes (derived/) stay on the machine
+*
+!.gitignore
+!.index.json
+!README.md
