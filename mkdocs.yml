@@ -29,6 +29,7 @@ nav:
   - For developers:
       - How a reader is written: guides/readers.md
       - The unified format: guides/format.md
+      - The debug gate, an agent on the live pages: guides/debug.md
   - The wiki (devlog, changelog, almanac): https://github.com/radiokociamuzyka/save-my-chat/wiki
 
 theme:
