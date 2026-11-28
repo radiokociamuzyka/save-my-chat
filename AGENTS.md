@@ -190,7 +190,7 @@ stamps the format, source and time. The format is described in
 | Command | What it does |
 | --- | --- |
 | `task install` | `npm ci` |
-| `task run` | Firefox with the debug build loaded (the debug gate; `SMC_DEBUG=0` for the release's); Vite rebuilds and web-ext reloads on every change (`scripts/run.mjs`) |
+| `task run` | Firefox with the debug build loaded (the debug gate; `SMC_DEBUG=0` for the release's), on the profile kept in `dist/firefox-profile/`; Vite rebuilds and web-ext reloads on every change (`scripts/run.mjs`) |
 | `task debug:install` (`-- --remove`) | the debug gate's native host registered for Firefox, once per machine (`docs/guides/debug.md`); writes into the user's home |
 | `task extension` | the extension built into `dist/extension/` (Q12): the Vue pages by Vite, the rest of `src/` as it is |
 | `task check` | Biome, changes nothing |
