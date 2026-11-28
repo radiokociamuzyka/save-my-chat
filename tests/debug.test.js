@@ -146,7 +146,6 @@ describe("the debug gate in the background", () => {
 			disconnect: () => {},
 		};
 		const stored = given;
-		const session = {};
 		const made = []; // the tabs open made
 		const removed = [];
 		w.browser = {
@@ -176,10 +175,6 @@ describe("the debug gate in the background", () => {
 				local: {
 					get: async (k) => ({ [k]: stored[k] }),
 					set: async (v) => Object.assign(stored, v),
-				},
-				session: {
-					get: async (k) => ({ [k]: session[k] }),
-					set: async (v) => Object.assign(session, v),
 				},
 			},
 		};
