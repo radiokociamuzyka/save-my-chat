@@ -136,7 +136,7 @@
 				error: error.message,
 			}));
 		// loading a whole list or chat scrolls and waits: minutes, not seconds
-		const long = type === "save-my-chat:load" || extra.load;
+		const long = type === "save-my-chat:load" || extra.load || extra.whole;
 		if (proto) return askPrototype(tabId, type, long ? 600_000 : 5000, extra);
 		try {
 			return await browser.tabs.sendMessage(tabId, { ...extra, type });
@@ -148,8 +148,9 @@
 	}
 
 	// what the tab's reader read, checked; throws what the popup shows
-	async function readTab(tabId) {
-		const read = await ask(tabId, "save-my-chat:read");
+	// whole: a long chat read while it scrolls into its past (kit readWhole), for gathering
+	async function readTab(tabId, whole = false) {
+		const read = await ask(tabId, "save-my-chat:read", whole ? { whole } : {});
 		if (!read) throw new Error("No conversation found on this page.");
 		const { warnings = [], ...c } = read;
 		const problems = SMC.validate(c);
@@ -169,7 +170,7 @@
 	// The options page opens each in a background tab and asks for it here: kept in the
 	// library, no file written (the backup's zip comes after).
 	async function collect({ tabId }) {
-		const { c, warnings } = await readTab(tabId);
+		const { c, warnings } = await readTab(tabId, true);
 		const entry = await library.record(c);
 		return { title: c.title, turns: c.turns.length, warnings, key: entry.key };
 	}

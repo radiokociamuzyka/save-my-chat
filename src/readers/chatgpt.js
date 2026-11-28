@@ -34,7 +34,9 @@
 		},
 		detect: (_doc, url) => new URL(url).hostname === "chatgpt.com",
 		read(doc, _url, sets) {
-			let turns = SMC.turnsBy(doc, { user: sets.user, assistant: sets.assistant }, doc, { hidden: sets.hidden });
+			// a message's own id, to know it again in another window of a long chat
+			const key = (el) => el.getAttribute("data-chatgpt-search-unit-key") || el.getAttribute("data-message-id");
+			let turns = SMC.turnsBy(doc, { user: sets.user, assistant: sets.assistant }, doc, { hidden: sets.hidden, key });
 			const transcriptCss = SMC.selector(sets.transcript, doc);
 			const transcript = transcriptCss && doc.querySelector(transcriptCss);
 			if (transcript && !turns.some((t) => t.role === "assistant")) {

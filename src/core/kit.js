@@ -148,8 +148,11 @@
 	}
 
 	// hidden: selectors of what a message holds but is not its text (a heading only a
-	// screen reader says, ChatGPT's "You said:"), left out of every message
-	function turnsBy(doc, roles, scope = doc, { hidden } = {}) {
+	// screen reader says, ChatGPT's "You said:"), left out of every message.
+	// key(el): the page's own id of a message (Sett, 2026-11-28: a message known by its id,
+	// not its text, which two alike messages share), kept on the turn as `key`, not
+	// enumerable: it is for joining the windows of a long chat, not part of the format.
+	function turnsBy(doc, roles, scope = doc, { hidden, key } = {}) {
 		const hiddenCss = selector(hidden, doc);
 		const sets = Object.entries(roles)
 			.map(([role, list]) => [role, selector(list, doc)])
@@ -167,7 +170,10 @@
 			const others = [...sets.filter(([r]) => r !== f.role).map(([, c]) => c), ...(hiddenCss ? [hiddenCss] : [])].join(
 				", ",
 			);
-			return { at: ownStart(f.el, inner, doc), turn: turn(f.role, f.el, {}, others) };
+			const t = turn(f.role, f.el, {}, others);
+			const id = key?.(f.el);
+			if (id) Object.defineProperty(t, "key", { value: String(id), enumerable: false });
+			return { at: ownStart(f.el, inner, doc), turn: t };
 		});
 		// DOCUMENT_POSITION_FOLLOWING (4): b comes after a
 		placed.sort((a, b) => (a.at === b.at ? 0 : a.at.compareDocumentPosition(b.at) & 4 ? -1 : 1));
@@ -454,6 +460,135 @@
 		return [...seen.values()];
 	}
 
+	// ---- a long chat read whole, while it scrolls (phase 7) ------------------------
+	// A virtualized chat (ChatGPT, DeepSeek) holds only the messages near the screen, so
+	// counting elements cannot say whether more came, and one read holds the last screen
+	// only (seen live, 2026-11-28). So, from the newest end, the chat's box goes up one
+	// screen at a time, each window read and kept: a jump to the top would skip what lies
+	// between, which exists only while it is on screen. At the top, Sett's check: pause for
+	// the webapp to load, then can the box go further into the past now (it moved away from
+	// its top, keeping the screen in place, or grew)? When it cannot, `still` times in a row,
+	// that is the start. Each window is joined to what is kept where the two meet (a message
+	// by its role and text); one meeting nothing kept is put before it, with a warning.
+
+	// a message's identity: the page's id when the reader gives one, else its role and text
+	const keyOf = (t) => (t.key ? `#${t.key}` : `${t.role}\u0000${t.text}`);
+
+	// older: the window just read, in page order; kept: what is kept, oldest first.
+	// The window meets what is kept at its first message already kept - not only at the
+	// oldest kept one, which a virtualized page may no longer hold (seen live, ChatGPT: a
+	// window without it read as nothing new, for 600 rounds). What comes before that
+	// message, and is not kept, goes in front. Gives how many, and whether it met at all.
+	function joined(kept, older) {
+		if (!older.length) return { added: 0, met: true };
+		if (!kept.length) {
+			kept.push(...older);
+			return { added: older.length, met: true };
+		}
+		const known = new Set(kept.map(keyOf));
+		const at = older.findIndex((t) => known.has(keyOf(t)));
+		const before = (at >= 0 ? older.slice(0, at) : older).filter((t) => !known.has(keyOf(t)));
+		kept.unshift(...before);
+		return { added: before.length, met: at >= 0 };
+	}
+
+	// The box the chat scrolls in: around its transcript when the reader names one, else
+	// around all its messages - not the nearest box around the first message, which may be
+	// a message of its own that scrolls (ChatGPT's long user messages; seen live).
+	function chatBox(sets, doc) {
+		const transcript = selector(sets.transcript, doc);
+		const all = messagesOf(sets, doc)();
+		let start = (transcript && doc.querySelector(transcript)) || all[0];
+		while (start && all.length && !start.contains(all.at(-1))) start = start.parentElement;
+		for (let e = start; e; e = e.parentElement) {
+			const overflow = doc.defaultView.getComputedStyle(e).overflowY;
+			if (/auto|scroll|overlay/.test(overflow) && e.scrollHeight > e.clientHeight) return e;
+		}
+		return doc.scrollingElement || doc.documentElement;
+	}
+
+	//   wait: the pause at the top, for the webapp to load; step: the pause after a screen up.
+	//   Seen live: ChatGPT brings older messages 2 to 5 s after the top is reached, some later
+	//   still; so 3 s at the top, and the start taken after three quiet pauses, about 10 s.
+	//   stuck: steps up that met nothing new, after which the box goes to the top at once.
+	//   Seen live: ChatGPT measures the messages above as they come into view, pushing the
+	//   view down again and again, so stepping up never reached the top; what lies below is
+	//   read by then, so the jump skips nothing.
+	//   patience: no new message for so long, going up or waiting, is the start too.
+	async function readWhole(doc = root.document, url = root.location?.href, overrides, options = {}) {
+		const { wait = 3000, step = 300, still = 3, stuck = 40, patience = 60_000, rounds = 5000 } = options;
+		for (const r of readers.values()) {
+			if (!r.detect(doc, url)) continue;
+			const sets = effective(r.selectors, overrides ?? (await overridesOf(r.id)));
+			const box = chatBox(sets, doc);
+			const kept = [];
+			let read;
+			let gap = false;
+			const take = () => {
+				read = r.read(doc, url, sets);
+				const { added, met } = joined(kept, read.turns);
+				gap ||= !met;
+				return added;
+			};
+			box.scrollTop = box.scrollHeight; // the newest end
+			await pause(step);
+			take();
+			// how far it is, for whoever asks the page meanwhile (the debug gate's progress)
+			const progress = { started: Date.now(), round: 0, kept: kept.length, atTop: false, done: false };
+			root.SaveMyChat.progress = progress;
+			let idle = 0; // steps up since a new message came
+			let fresh = Date.now(); // when one last came
+			for (let i = 0, quiet = 0; i < rounds && quiet < still && Date.now() - fresh < patience; i++) {
+				const atTop = box.scrollTop <= 1;
+				const settle = atTop || idle >= stuck;
+				const height = box.scrollHeight;
+				if (settle) {
+					if (!atTop)
+						box.scrollTop = 0; // stuck: to the top at once, all below is read
+					else {
+						// a box already at its top asks the webapp for nothing (seen live, ChatGPT:
+						// stopped at 10 of a long chat): a step down and back up by as much. By as
+						// much, not to 0: older ones loaded meanwhile move the view down, and a
+						// jump to 0 would skip them.
+						const nudge = Math.min(box.clientHeight / 2, 200);
+						box.scrollTop += nudge;
+						await pause(Math.min(step, 150));
+						box.scrollTop = Math.max(0, box.scrollTop - nudge);
+					}
+					await pause(wait);
+					idle = 0;
+				} else {
+					box.scrollTop = Math.max(0, box.scrollTop - Math.max(box.clientHeight * 0.7, 100));
+					await pause(step);
+				}
+				const added = take();
+				if (added) fresh = Date.now();
+				idle = added ? 0 : idle + 1;
+				// Sett's check, after the pause: can the box go further into the past now? Told by
+				// the chat grown taller: the view kept away from the top is no sign of it on a
+				// page that pushes the view down as it measures (ChatGPT)
+				const further = box.scrollHeight > height;
+				// quiet: pauses at the top that brought nothing; a step up between them is no news
+				if (added || further) quiet = 0;
+				else if (settle) quiet++;
+				Object.assign(progress, {
+					round: i + 1,
+					kept: kept.length,
+					atTop,
+					settle,
+					idle,
+					top: Math.round(box.scrollTop),
+				});
+			}
+			progress.done = true;
+			const c = conversation(r, { ...read, turns: kept }, url);
+			const warnings = suspicions(c.turns);
+			if (gap) warnings.push("Older messages came without meeting the newer ones: some between them may be missing.");
+			return warnings.length ? { ...c, warnings } : c;
+		}
+		return null;
+	}
+
 	function present(doc = root.document, url = root.location?.href) {
 		for (const r of readers.values()) if (r.detect(doc, url)) return { id: r.id, name: r.name };
 		return null;
@@ -475,6 +610,8 @@
 		reader,
 		readers,
 		readPage,
+		readWhole,
+		joined,
 		inspect,
 		present,
 		listed,
@@ -491,7 +628,7 @@
 		root.SaveMyChat.listening = true;
 		root.browser.runtime.onMessage.addListener((msg) => {
 			if (msg?.type === "save-my-chat:present") return Promise.resolve(present());
-			if (msg?.type === "save-my-chat:read") return readPage();
+			if (msg?.type === "save-my-chat:read") return msg.whole ? readWhole() : readPage();
 			if (msg?.type === "save-my-chat:inspect") return inspect();
 			if (msg?.type === "save-my-chat:list")
 				return msg.load
